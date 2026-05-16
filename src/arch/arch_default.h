@@ -58,7 +58,7 @@
 	// #include "LoadingWindow/LoadingWindow_Emscripten.h"
 	// #include "USB/USBDriver_Impl_Libusb.h" // NO USB
 	#define DEFAULT_INPUT_DRIVER_LIST "GLFW"
-	#define DEFAULT_MOVIE_DRIVER_LIST "FFMpeg,Null"
+	#define DEFAULT_MOVIE_DRIVER_LIST "Null"
 	#define DEFAULT_SOUND_DRIVER_LIST "ALSA-sw,OSS,Null"
 #else
 	#error Which arch?

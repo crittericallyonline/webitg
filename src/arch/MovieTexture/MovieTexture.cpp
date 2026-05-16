@@ -4,11 +4,11 @@
 
 #include "global.h"
 #include "MovieTexture.h"
-#include "RageUtil.h"
-#include "RageLog.h"
+#include "../../RageUtil.h"
+#include "../../RageLog.h"
 #include "MovieTexture_Null.h"
-#include "Preference.h"
-#include "RageFile.h"
+#include "../../Preference.h"
+#include "../../RageFile.h"
 
 #include "Selector_MovieTexture.h"
 
@@ -16,14 +16,14 @@ static Preference<CString> g_sMovieDrivers( "MovieDrivers", "" ); // "" = DEFAUL
 
 static void DumpAVIDebugInfo(CString);
 
-#include "arch/arch_default.h"
+#include "../arch_default.h"
 
 /* Try drivers in order of preference until we find one that works. */
 RageMovieTexture *RageMovieTexture::Create( RageTextureID ID )
 {
 	DumpAVIDebugInfo( ID.filename );
 
-	CString drivers = g_sMovieDrivers;
+	CString drivers = g_sMovieDrivers.GetDefault();
 	if( drivers.empty() )	
 		drivers = DEFAULT_MOVIE_DRIVER_LIST;
 
