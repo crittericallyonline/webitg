@@ -1071,6 +1071,7 @@ void ScreenEvaluation::CommitScores(
 				if( fPercentGreats >= 1.f )
 					vPdas.push_back( AWARD_GREATS_100_PERCENT );
 			}
+			default: break;
 		}
 
 		// Max one PDA per stage

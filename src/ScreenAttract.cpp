@@ -107,6 +107,7 @@ void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventTy
 				ASSERT(0); break;
 			}
 			break;
+		default: break;
 		}
 	}
 

@@ -189,6 +189,7 @@ void ScreenGameplay::Init()
 				GAMESTATE->m_pPlayerState[p],
 				&STATSMAN->m_CurStageStats.m_player[p] );
 			break;
+		default: break;
 		}
 	}
 
@@ -1651,10 +1652,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 		case PLAY_MODE_ENDLESS:
 			PlayAnnouncer( "gameplay comment oni", SECONDS_BETWEEN_COMMENTS );
 			break;
-		default:
-			ASSERT(0);
+		default: ASSERT(0); break;
 		}
-		default: break;
 	}
 
 	//

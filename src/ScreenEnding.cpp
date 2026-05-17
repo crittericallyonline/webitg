@@ -221,6 +221,7 @@ void ScreenEnding::Init()
 		case MEMORY_CARD_STATE_NO_CARD:
 			m_sprRemoveMemoryCard[p].SetHidden( true );
 			break;
+		default: break;
 		}
 		SET_XY_AND_ON_COMMAND( m_sprRemoveMemoryCard[p] );
 		m_sprRemoveMemoryCard[p].AddCommand( ssprintf("CardRemovedP%dMessage",p+1), apActorCommands(new ActorCommands("hidden,1")) );
