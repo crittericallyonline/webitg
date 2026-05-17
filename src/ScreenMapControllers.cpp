@@ -325,6 +325,7 @@ void ScreenMapControllers::HandleScreenMessage( const ScreenMessage SM )
 	case SM_GoToNextScreen:
 		SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
 		break;
+	default: break;
 	}
 }
 

@@ -104,7 +104,7 @@ void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventTy
 				pScreen->Cancel( SM_GoToStartScreen );
 				break;
 			default:
-				ASSERT(0);
+				ASSERT(0); break;
 			}
 			break;
 		}
@@ -121,6 +121,7 @@ void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventTy
 		case MENU_BUTTON_RIGHT:
 			SCREENMAN->PostMessageToTopScreen( SM_BeginFadingOut, 0 );
 			break;
+		default: break;
 		}
 	}	
 

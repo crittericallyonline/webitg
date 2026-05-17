@@ -1358,6 +1358,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			{
 			case IET_SLOW_REPEAT:	fDelta *= 10;	break;
 			case IET_FAST_REPEAT:	fDelta *= 40;	break;
+			default: break;
 			}
 
 			if( EditB == EDIT_BUTTON_SAMPLE_LENGTH_DOWN || EditB == EDIT_BUTTON_SAMPLE_LENGTH_UP )
@@ -1529,6 +1530,7 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 	case IET_RELEASE:
 		// don't add or extend holds here
 		break;
+	default: break;
 	}
 }
 
@@ -1569,11 +1571,13 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 			{
 			case IET_SLOW_REPEAT:	fOffsetDelta *= 10;	break;
 			case IET_FAST_REPEAT:	fOffsetDelta *= 40;	break;
+			default: break;
 			}
 
 			m_pSong->m_Timing.m_fBeat0OffsetInSeconds += fOffsetDelta;
 		}
 		break;
+	default: break;
 	}
 
 	switch( StyleI.player )
@@ -1801,6 +1805,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			return;
 		case ANSWER_CANCEL:
 			break; // do nothing
+		default: break;
 		}
 	}
 	else if( SM == SM_Success )
@@ -2538,7 +2543,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				case expand_4_3:	fScale = 4.0f/3;	break;
 				case expand_3_2:	fScale = 1.5f;		break;
 				case expand_2x:		fScale = 2;			break;
-				default:		ASSERT(0);
+				default:		ASSERT(0); break;
 				}
 
 				switch( at )
@@ -2549,7 +2554,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				case expand_4_3:	NoteDataUtil::Scale( m_Clipboard, fScale );	break;
 				case expand_3_2:	NoteDataUtil::Scale( m_Clipboard, fScale );	break;
 				case expand_2x:		NoteDataUtil::Scale( m_Clipboard, fScale );	break;
-				default:		ASSERT(0);
+				default:		ASSERT(0); break;
 				}
 
 				int iOldClipboardBeats = m_NoteFieldEdit.m_iEndMarker - m_NoteFieldEdit.m_iBeginMarker;
@@ -2782,6 +2787,7 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 			NULL 
 			);
 		break;
+	default: break;
 	}
 }
 

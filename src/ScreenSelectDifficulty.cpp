@@ -131,6 +131,7 @@ void ScreenSelectDifficulty::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, SLEEP_AFTER_TWEEN_OFF_SECONDS );	// nofify parent that we're finished
 		StopTimer();
 		break;
+	default: break;
 	}
 }
 
@@ -185,6 +186,7 @@ static bool BothPlayersGameCommand( const GameCommand &mc )
 	case PLAY_MODE_ENDLESS:
 	case PLAY_MODE_RAVE:
 		return true;
+	default: break;
 	}
 
 	return false;

@@ -89,6 +89,7 @@ void ScreenEndlessBreak::Input(const DeviceInput &DeviceI, const InputEventType 
 	switch( MenuI.button )
 	{
 		case MENU_BUTTON_START: m_fCountdownSecs = 0; break;
+		default: break;
 	}
 	//Compiler bitching over this..
 	//Screen::Input( DeviceI, type, GameI, MenuI, StyleI );

@@ -47,6 +47,7 @@ void ScreenBranch::HandleScreenMessage( const ScreenMessage SM )
 			mc.ApplyToAllPlayers();
 		}
 		break;
+		default: break;
 	}
 }
 

@@ -134,6 +134,7 @@ void ScreenPrompt::HandleScreenMessage( const ScreenMessage SM )
 		else
 			this->HandleScreenMessage( SM_GoToNextScreen );
 		break;
+	default: break;
 	}
 
 	Screen::HandleScreenMessage( SM );
@@ -214,6 +215,7 @@ void ScreenPrompt::End( bool bCancelled )
 		if( m_pOnNo )
 			m_pOnNo(m_pCallbackData);
 		break;
+	default: break;
 	}
 
 	s_LastAnswer = bCancelled ? ANSWER_CANCEL : m_Answer;

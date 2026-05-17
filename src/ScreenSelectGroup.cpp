@@ -153,6 +153,7 @@ void ScreenSelectGroup::HandleScreenMessage( const ScreenMessage SM )
 	case SM_BeginFadingOut:
 		StartTransitioning( SM_GoToNextScreen );
 		return;
+	default: break;
 	}
 	Screen::HandleScreenMessage( SM );
 }

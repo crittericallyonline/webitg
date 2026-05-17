@@ -486,6 +486,7 @@ void ScreenOptions::Input( const DeviceInput& DeviceI, const InputEventType type
 			INPUTMAPPER->ResetKeyRepeat( MenuInput(MenuI.player, MENU_BUTTON_START) );
 			INPUTMAPPER->ResetKeyRepeat( MenuInput(MenuI.player, MENU_BUTTON_RIGHT) );
 			INPUTMAPPER->ResetKeyRepeat( MenuInput(MenuI.player, MENU_BUTTON_LEFT) );
+		default: break;
 		}
 	}
 
@@ -529,6 +530,7 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 	case SM_LoseFocus:
 		INPUTFILTER->ResetRepeatRate();
 		break;
+	default: break;
 	}
 }
 
@@ -781,6 +783,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 				return;
 			}
 		}
+		default: break;
 	}
 
 	//
@@ -1056,6 +1059,7 @@ void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat )
 				}
 				row.SetChoiceInRowWithFocus( p, min( iOldSelection, row.GetTextItemsSize()-1 ) );
 			}
+		default: break;
 		}
 
 		OnChange( p );

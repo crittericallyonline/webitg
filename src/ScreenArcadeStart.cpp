@@ -98,6 +98,7 @@ void ScreenArcadeStart::HandleScreenMessage( const ScreenMessage SM )
 	case SM_GoToPrevScreen:
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		break;
+	default: break;
 	}
 }
 

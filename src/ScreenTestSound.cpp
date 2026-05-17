@@ -191,6 +191,7 @@ void ScreenTestSound::Input( const DeviceInput& DeviceI, const InputEventType ty
 			obj.SetY(obj.GetY() + 10);
 			break;
 */
+		default: break;
 		}
 
 	}

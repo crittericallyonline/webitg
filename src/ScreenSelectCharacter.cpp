@@ -191,6 +191,7 @@ void ScreenSelectCharacter::HandleScreenMessage( const ScreenMessage SM )
 		if( !AllAreFinishedChoosing() )
 			ResetTimer();
 		return;
+	default: break;
 	}
 	Screen::HandleScreenMessage( SM );
 }
@@ -219,6 +220,7 @@ void ScreenSelectCharacter::BeforeRowChange( PlayerNumber pn )
 	case CHOOSING_HUMAN_CHARACTER:
 		m_sprCardArrows[pnAffected].SetEffectNone();
 		break;
+	default: break;
 	}
 }
 
@@ -231,6 +233,7 @@ void ScreenSelectCharacter::AfterRowChange( PlayerNumber pn )
 	case CHOOSING_HUMAN_CHARACTER:
 		m_sprCardArrows[pnAffected].SetEffectGlowShift();
 		break;
+	default: break;
 	}
 }
 
@@ -316,6 +319,7 @@ void ScreenSelectCharacter::Move( PlayerNumber pn, int deltaValue )
 		AfterValueChange(pn);
 		m_soundChange.PlayRandom();
 		break;
+	default: break;
 	}
 }
 
@@ -343,6 +347,7 @@ void ScreenSelectCharacter::MenuStart( PlayerNumber pn )
 	case CHOOSING_CPU_CHARACTER:
 		m_SelectionRow[pn] = FINISHED_CHOOSING;
 		break;
+	default: break;
 	}
 	AfterRowChange(pn);
 	AfterValueChange(pn);

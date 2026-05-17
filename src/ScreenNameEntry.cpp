@@ -391,6 +391,7 @@ void ScreenNameEntry::HandleScreenMessage( const ScreenMessage SM )
 			SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		}
 		break;
+	default: break;
 	}
 }
 

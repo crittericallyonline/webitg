@@ -192,6 +192,7 @@ void ScreenPlayerOptions::HandleScreenMessage( const ScreenMessage SM )
 				m_sprOptionsMessage.SetZoomY( 0 );
 			}
 			break;
+		default: break;
 		}
 	}
 

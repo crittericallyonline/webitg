@@ -292,6 +292,7 @@ void ScreenGameplay::Init()
 		SET_XY( *m_pCombinedLifeMeter );
 		this->AddChild( m_pCombinedLifeMeter );		
 		break;
+	default: break;
 	}
 
 	//
@@ -342,6 +343,7 @@ void ScreenGameplay::Init()
 	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
 		break;
+	default: break;
 	}
 
 	m_ShowScoreboard=false;
@@ -420,6 +422,7 @@ void ScreenGameplay::Init()
 		case PLAY_MODE_RAVE:
 			m_pSecondaryScoreDisplay[p] = new ScoreDisplayRave;
 			break;
+		default: break;
 		}
 
 		if( m_pSecondaryScoreDisplay[p] )
@@ -579,6 +582,7 @@ void ScreenGameplay::Init()
 			m_Draw.Load( THEME->GetPathB(m_sName,"draw") );
 			this->AddChild( &m_Draw );
 			break;
+		default: break;
 		}
 
 		m_textDebug.LoadFromFont( THEME->GetPathF("Common","normal") );
@@ -613,6 +617,7 @@ void ScreenGameplay::Init()
 			m_soundBattleTrickLevel2.Load(	THEME->GetPathS(m_sName,"battle trick level2"), true );
 			m_soundBattleTrickLevel3.Load(	THEME->GetPathS(m_sName,"battle trick level3"), true );
 			break;
+		default: break;
 		}
 	}
 
@@ -1501,6 +1506,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			case SongOptions::LIFE_BATTERY:
 				bAllowOniDie = true;
 				break;
+			default: break;
 			}
 			if( bAllowOniDie && ft == SongOptions::FAIL_IMMEDIATE )
 			{
@@ -1648,6 +1654,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		default:
 			ASSERT(0);
 		}
+		default: break;
 	}
 
 	//

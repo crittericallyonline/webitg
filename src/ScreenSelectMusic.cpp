@@ -899,6 +899,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 				break;
 			case MENU_BUTTON_SELECT:
 				return; break;
+			default: break;
 			}
 		}
 	}
@@ -960,6 +961,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 					{
 						Song *pCurSong = m_MusicWheel.GetSelectedSong();
 					}*/
+					default: break;
 				}
 			}
 			else if( bLeftIsDown )
@@ -978,6 +980,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 			}
 		}
 		break;
+	default: break;
 	}
 
 
@@ -1004,6 +1007,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 	// Do the default handler for Start after detecting codes.
 //	case MENU_BUTTON_START:	this->MenuStart( MenuI.player, type );	break;
 	case MENU_BUTTON_COIN:	this->MenuCoin( MenuI.player, type );	break;
+	default: break;
 	}
 
 
@@ -1053,6 +1057,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 	switch( MenuI.button )
 	{
 	case MENU_BUTTON_START:	Screen::MenuStart( MenuI.player, type );	break;
+	default: break;
 	}
 }
 
@@ -1916,6 +1921,7 @@ void ScreenSelectMusic::AfterMusicChange()
 				case SORT_MODE_MENU:
 					m_Banner.LoadMode();
 					break;
+				default: break;
 				}
 				m_sSampleMusicToPlay = m_sSortMusicPath;
 				break;
@@ -2218,6 +2224,7 @@ void ScreenSelectMusic::AfterMusicChange()
 		if( SHOW_COURSE_CONTENTS )
 			m_CourseContents.TweenInAfterChangedCourse();
 		break;
+	default: break;
 	}
 }
 

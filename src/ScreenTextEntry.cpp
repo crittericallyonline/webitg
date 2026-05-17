@@ -262,6 +262,7 @@ void ScreenTextEntry::HandleScreenMessage( const ScreenMessage SM )
 	case SM_DoneOpeningWipingRight:
 		SCREENMAN->PopTopScreen( m_smSendOnPop );
 		break;
+	default: break;
 	}
 }
 

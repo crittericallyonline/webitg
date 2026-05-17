@@ -108,6 +108,7 @@ void ScreenSelectStyle::Init()
 		m_sprPremium.Load( THEME->GetPathG(m_sName,"joint premium") );
 		this->AddChild( &m_sprPremium );
 		break;
+	default: break;
 	}
 
 

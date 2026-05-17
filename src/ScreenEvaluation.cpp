@@ -853,6 +853,7 @@ void ScreenEvaluation::Init()
 	case GRADE_TIER03:	
 		this->PostScreenMessage( SM_PlayCheer, CHEER_DELAY_SECONDS );	
 		break;
+	default: break;
 	}
 
 	this->SortByDrawOrder();
@@ -1469,6 +1470,7 @@ void ScreenEvaluation::EndScreen()
 				TweenOffScreen();
 			}
 			break;
+		default: break;
 		}
 	}
 	StartTransitioning( SM_GoToNextScreen );

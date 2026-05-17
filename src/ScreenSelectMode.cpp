@@ -245,6 +245,7 @@ void ScreenSelectMode::HandleScreenMessage( const ScreenMessage SM )
 			SetCharacters();
 		}
 		break;
+	default: break;
 	}
 	ScreenSelect::HandleScreenMessage(SM);
 }

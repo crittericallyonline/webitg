@@ -279,6 +279,7 @@ void ScreenHowToPlay::HandleScreenMessage( const ScreenMessage SM )
 	case SM_GoToNextScreen:
 		GAMESTATE->Reset();
 		break;
+	default: break;
 	}
 	ScreenAttract::HandleScreenMessage( SM );
 }

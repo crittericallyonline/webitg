@@ -202,6 +202,7 @@ bool ScreenSyncOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEve
 			case IET_RELEASE:		fDelta *= 0;	break;
 			case IET_SLOW_REPEAT:	fDelta *= 0;	break;
 			case IET_FAST_REPEAT:	fDelta *= 10;	break;
+			default: break;
 			}
 			if( GAMESTATE->m_pCurSong != NULL )
 			{
@@ -228,6 +229,7 @@ bool ScreenSyncOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEve
 			case IET_RELEASE:		fDelta *= 0;	break;
 			case IET_SLOW_REPEAT:	fDelta *= 0;	break;
 			case IET_FAST_REPEAT:	fDelta *= 10;	break;
+			default: break;
 			}
 
 			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT)) ||

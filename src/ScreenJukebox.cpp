@@ -248,6 +248,7 @@ void ScreenJukebox::Input( const DeviceInput& DeviceI, const InputEventType type
 		case MENU_BUTTON_RIGHT:
 			SCREENMAN->PostMessageToTopScreen( SM_NotesEnded, 0 );
 			return;
+		default: break;
 		}
 	}
 

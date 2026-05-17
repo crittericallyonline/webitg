@@ -187,6 +187,7 @@ void ScreenUserPacks::Input( const DeviceInput& DeviceI, const InputEventType ty
 	case MENU_BUTTON_LEFT:
 	case MENU_BUTTON_RIGHT:
 		m_pCurLOM->Input(DeviceI, type, GameI, MenuI, StyleI, m_pCurLOM);
+	default: break;
 	}
 
 	bool bContinueWithStart = true;
@@ -386,6 +387,7 @@ m_PlayerSongLoadThread.Create( InitSASSongThread, this )
 	case SM_GoToPrevScreen:
 		SCREENMAN->SetNewScreen( PREV_SCREEN );
 		break;
+	default: break;
 	}
 }
 

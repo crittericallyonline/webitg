@@ -83,6 +83,7 @@ void ScreenTestLights::Update( float fDeltaTime )
 	case LIGHTSMODE_TEST_MANUAL_CYCLE:
 		s += "Manual Cycle\n";
 		break;
+	default: break;
 	}
 
 	if( m_CurCabinetLight == LIGHT_INVALID )
@@ -125,6 +126,7 @@ void ScreenTestLights::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
 		LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 		break;
+	default: break;
 	}
 }
 
