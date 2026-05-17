@@ -1,7 +1,7 @@
 #ifndef IO_USBDEVICE_H
 #define IO_USBDEVICE_H
 
-#include "../../global.h"
+#include "../global.h"
 #include "../ProductInfo.h" // Used to look for PRODUCT_ID_BARE which means STEPMANIA 5, NOT OITG
 
 /* For "DeviceMatches" */
@@ -10,7 +10,10 @@
 #include "MiniMaid.h"
 #include "P3IO.h"
 
+// gonna link this to emscripten somehow, maybe with that libusb's prebuilt emscripten usb thingy
+#ifndef __EMSCRIPTEN__
 #include <usb.h>
+#endif
 #ifdef PRODUCT_ID_BARE
 #define PSTRING std::string
 #else
