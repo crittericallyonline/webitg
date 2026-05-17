@@ -1,13 +1,13 @@
 #include "global.h"
 #include "InputHandler_DirectInput.h"
 
-#include "StepMania.h"
-#include "RageUtil.h"
-#include "RageLog.h"
-#include "archutils/Win32/AppInstance.h"
-#include "archutils/Win32/GraphicsWindow.h"
-#include "InputFilter.h"
-#include "PrefsManager.h"
+#include "../../StepMania.h"
+#include "../../RageUtil.h"
+#include "../../RageLog.h"
+#include "../../archutils/Win32/AppInstance.h"
+#include "../../archutils/Win32/GraphicsWindow.h"
+#include "../../InputFilter.h"
+#include "../../PrefsManager.h"
 
 #include "InputHandler_DirectInputHelper.h"
 

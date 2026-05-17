@@ -1,12 +1,12 @@
 #include "global.h"
-#include "RageLog.h"
-#include "RageUtil.h"
-#include "InputMapper.h"
-#include "arch/Lights/LightsDriver_External.h"
+#include "../../RageLog.h"
+#include "../../RageUtil.h"
+#include "../../InputMapper.h"
+#include "../Lights/LightsDriver_External.h"
 #include "InputHandler_MK3.h"
 
 // include system-specific low-level calls
-#include "arch/ArchHooks/ArchHooks.h"
+#include "../ArchHooks/ArchHooks.h"
 #include "InputHandler_MK3Helper.h"
 
 REGISTER_INPUT_HANDLER( MK3 );

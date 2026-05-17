@@ -2,12 +2,12 @@
 #ifndef INPUT_HANDLER_P3IO_H
 #define INPUT_HANDLER_P3IO_H
 
-#include "ProductInfo.h" // Used to look for PRODUCT_ID_BARE which means STEPMANIA 5, NOT OITG
+#include "../../ProductInfo.h" // Used to look for PRODUCT_ID_BARE which means STEPMANIA 5, NOT OITG
 #include "InputHandler.h"
-#include "RageThreads.h"
-#include "io/P3IO.h"
-#include "arch/COM/serial.h"
-#include "Preference.h"
+#include "../../RageThreads.h"
+#include "../../io/P3IO.h"
+#include "../COM/serial.h"
+#include "../../Preference.h"
 
 #ifdef WIN32
 #include "windows.h"
@@ -21,7 +21,7 @@
 #define PSTRING std::string
 #endif
 #else
-#include "arch/Lights/LightsDriver_External.h"
+#include "../Lights/LightsDriver_External.h"
 #define PSTRING CString
 #endif
 

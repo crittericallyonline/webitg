@@ -5,13 +5,13 @@
 #include "InputHandler_Linux_tty.h"
 #include "InputHandler_Linux_tty_keys.h"
 
-#include "RageUtil.h"
-#include "RageLog.h"
-#include "RageException.h"
+#include "../../RageUtil.h"
+#include "../../RageLog.h"
+#include "../../RageException.h"
 
-#include "archutils/Unix/SignalHandler.h"
+#include "../../archutils/Unix/SignalHandler.h"
 
-#include "SDL_utils.h"
+#include "../../SDL_utils.h"
 
 #include <errno.h>
 

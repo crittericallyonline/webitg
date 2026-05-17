@@ -2,11 +2,11 @@
 #define INPUT_HANDLER_MINIMAID_H
 
 #include "InputHandler.h"
-#include "RageThreads.h"
-#include "RageTimer.h"
+#include "../../RageThreads.h"
+#include "../../RageTimer.h"
 
-#include "LightsMapper.h"
-#include "io/MiniMaid.h"
+#include "../../LightsMapper.h"
+#include "../../io/MiniMaid.h"
 
 class InputHandler_MiniMaid: public InputHandler
 {
