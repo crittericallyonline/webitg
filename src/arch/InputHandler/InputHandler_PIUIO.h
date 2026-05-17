@@ -2,11 +2,11 @@
 #define INPUT_HANDLER_PIUIO_H
 
 #include "InputHandler.h"
-#include "RageThreads.h"
-#include "RageTimer.h"
+#include "../../RageThreads.h"
+#include "../../RageTimer.h"
 
-#include "LightsMapper.h"
-#include "io/PIUIO.h"
+#include "../../LightsMapper.h"
+#include "../../io/PIUIO.h"
 
 struct lua_State;
 
