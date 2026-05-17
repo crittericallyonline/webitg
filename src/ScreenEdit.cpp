@@ -1069,6 +1069,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			case EDIT_BUTTON_SCROLL_END:
 				fBeatsToMove = m_NoteDataEdit.GetLastBeat() - GAMESTATE->m_fSongBeat;
 				break;
+			default: break;
 			}
 
 			const float fOriginalBeat = GAMESTATE->m_fSongBeat;
@@ -1275,6 +1276,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			{
 			case IET_SLOW_REPEAT:	fDeltaBPM *= 10;	break;
 			case IET_FAST_REPEAT:	fDeltaBPM *= 40;	break;
+			default: break;
 			}
 			
 			float fNewBPM = fBPM + fDeltaBPM;
@@ -1297,6 +1299,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			{
 			case IET_SLOW_REPEAT:	fStopDelta *= 10;	break;
 			case IET_FAST_REPEAT:	fStopDelta *= 40;	break;
+			default: break;
 			}
 
 			unsigned i;
@@ -1337,6 +1340,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			{
 			case IET_SLOW_REPEAT:	fOffsetDelta *= 10;	break;
 			case IET_FAST_REPEAT:	fOffsetDelta *= 40;	break;
+			default: break;
 			}
 
 			m_pSong->m_Timing.m_fBeat0OffsetInSeconds += fOffsetDelta;
@@ -1487,6 +1491,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	case EDIT_BUTTON_UNDO:
 		Undo();
 		break;
+	
+	default: break;
 	}
 }
 
@@ -1586,6 +1592,7 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 		if( PREFSMAN->m_AutoPlay == PC_HUMAN )
 			m_Player.Step( StyleI.col, DeviceI.ts ); 
 		break;
+	default: break;
 	}
 
 }
