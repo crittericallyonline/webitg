@@ -2535,7 +2535,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				
 				AlterType at = (AlterType)iAnswers[c];
 				float fScale = -1;
-				switch( at )
+				switch( (TempoType) at )
 				{
 				case compress_2x:	fScale = 0.5f;		break;
 				case compress_3_2:	fScale = 2.0f/3;	break;
@@ -2546,7 +2546,8 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				default:		ASSERT(0); break;
 				}
 
-				switch( at )
+				// i dont like this one bit
+				switch( (TempoType) at )
 				{
 				case compress_2x:	NoteDataUtil::Scale( m_Clipboard, fScale );	break;
 				case compress_3_2:	NoteDataUtil::Scale( m_Clipboard, fScale );	break;
