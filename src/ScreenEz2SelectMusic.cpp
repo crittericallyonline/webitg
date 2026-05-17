@@ -307,7 +307,7 @@ void ScreenEz2SelectMusic::UpdateOptions(PlayerNumber pn, int nosound)
 {
 	sOptions = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetString();
 
-	LOG->Trace( "DEBUG: " + sOptions );
+	LOG->Trace( "DEBUG: %s", sOptions.c_str() );
 
 	asOptions.clear();
 	split( sOptions, ", ", asOptions, true );
