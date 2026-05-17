@@ -55,8 +55,9 @@ bool RandomSample::LoadSoundDir( CString sDir, int iMaxToLoad )
 	GetDirListing( sDir + "*.mp3", arraySoundFiles );
 	GetDirListing( sDir + "*.ogg", arraySoundFiles );
 	GetDirListing( sDir + "*.wav", arraySoundFiles );
-
+#if !defined(__EMSCRIPTEN__)
 	random_shuffle( arraySoundFiles.begin(), arraySoundFiles.end() );
+#endif
 	arraySoundFiles.resize( min( arraySoundFiles.size(), (unsigned)iMaxToLoad ) );
 
 	for( unsigned i=0; i<arraySoundFiles.size(); i++ )
