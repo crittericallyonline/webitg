@@ -956,12 +956,12 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 					case MENU_BUTTON_RIGHT:
 						m_MusicWheel.ChangeMusicUnlessLocked( +1 );
 						break;
+					default: break;
 					}
 					/*if (! GAMESTATE->IsCourseMode() )
 					{
 						Song *pCurSong = m_MusicWheel.GetSelectedSong();
 					}*/
-					default: break;
 				}
 			}
 			else if( bLeftIsDown )
