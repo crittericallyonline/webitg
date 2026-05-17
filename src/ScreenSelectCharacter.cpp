@@ -308,11 +308,11 @@ void ScreenSelectCharacter::MenuDown( PlayerNumber pn )
 void ScreenSelectCharacter::Move( PlayerNumber pn, int deltaValue )
 {
 	PlayerNumber pnAffected = GetAffectedPlayerNumber(pn);
+	vector<Character*> apCharacters;
 	switch( m_SelectionRow[pn] )
 	{
 	case CHOOSING_CPU_CHARACTER:
 	case CHOOSING_HUMAN_CHARACTER:
-		vector<Character*> apCharacters;
 		GAMESTATE->GetCharacters( apCharacters );
 		m_iSelectedCharacter[pnAffected] += deltaValue;
 		wrap( m_iSelectedCharacter[pnAffected], apCharacters.size() );

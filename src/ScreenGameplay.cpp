@@ -1334,6 +1334,7 @@ void ScreenGameplay::UpdateSongPosition( float fDeltaTime )
 
 void ScreenGameplay::Update( float fDeltaTime )
 {
+	bool bAllFailed = true;
 	if( GAMESTATE->m_pCurSong == NULL  )
 	{
 		/* ScreenDemonstration will move us to the next screen.  We just need to
@@ -1522,7 +1523,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 			}
 		}
 
-		bool bAllFailed = true;
 		FOREACH_EnabledPlayer( pn )
 		{
 			SongOptions::FailType ft = GAMESTATE->GetPlayerFailType(pn);
@@ -1654,6 +1654,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			break;
 		default: ASSERT(0); break;
 		}
+	default: break;
 	}
 
 	//
