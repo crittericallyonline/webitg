@@ -2,9 +2,9 @@
 #define INPUT_HANDLER_IOW_H
 
 #include "InputHandler.h"
-#include "RageThreads.h"
-#include "LightsMapper.h"
-#include "io/ITGIO.h"
+#include "../../RageThreads.h"
+#include "../../LightsMapper.h"
+#include "../../io/ITGIO.h"
 
 class InputHandler_Iow: public InputHandler
 {

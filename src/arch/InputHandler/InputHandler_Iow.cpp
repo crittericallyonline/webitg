@@ -1,17 +1,17 @@
 #include "global.h"
-#include "RageLog.h"
-#include "DiagnosticsUtil.h"
+#include "../../RageLog.h"
+#include "../../DiagnosticsUtil.h"
 
-#include "arch/ArchHooks/ArchHooks.h"
+#include "../ArchHooks/ArchHooks.h"
 
 // required I/O routines
-#include "LightsManager.h"
-#include "arch/Lights/LightsDriver_External.h"
+#include "../../LightsManager.h"
+#include "../Lights/LightsDriver_External.h"
 #include "InputHandler_Iow.h"
 
 // debug stuff
-#include "RageUtil.h"
-#include "ScreenManager.h"
+#include "../../RageUtil.h"
+#include "../../ScreenManager.h"
 
 REGISTER_INPUT_HANDLER( Iow );
 

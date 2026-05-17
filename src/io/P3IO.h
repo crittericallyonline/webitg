@@ -1,12 +1,12 @@
 #ifndef P3IO_H
 #define P3IO_H
 
-#include "ProductInfo.h" // Used to look for PRODUCT_ID_BARE which means STEPMANIA 5, NOT OITG
+#include "../ProductInfo.h" // Used to look for PRODUCT_ID_BARE which means STEPMANIA 5, NOT OITG
 #include <stdint.h>
-#include "io/USBDriver.h"
-#include "arch/ACIO/ACIO.h"
-#include "PrefsManager.h"
-#include "arch/COM/serial.h"
+#include "USBDriver.h"
+#include "../arch/ACIO/ACIO.h"
+#include "../PrefsManager.h"
+#include "../arch/COM/serial.h"
 
 
 #define DDR_PAD_UP 0xFD

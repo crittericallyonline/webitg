@@ -1,12 +1,14 @@
 #include "global.h"
-#include "RageUtil.h"
-#include "RageLog.h"
-#include "io/USBDevice.h"
+#include "../RageUtil.h"
+#include "../RageLog.h"
+#include "USBDevice.h"
 
 #include <cstdlib>
 #include <map>
+#ifndef __EMSCRIPTEN__
 #include <usb.h>
-#include "ProductInfo.h" // Used to look for PRODUCT_ID_BARE which means STEPMANIA 5, NOT OITG
+#endif
+#include "../ProductInfo.h" // Used to look for PRODUCT_ID_BARE which means STEPMANIA 5, NOT OITG
 
 
 #define FMT_BLOCK_SIZE		2048 // # of bytes to increment per try
