@@ -219,7 +219,7 @@ bool ScreenArcadePatch::HasPatch( PlayerNumber pn, const CStringArray &vsPattern
 	if( m_vsPatches.size() == 0 )
 		return false;
 
-	CString sDebugMsg = ssprintf( "%i match%s found: ", m_vsPatches.size(), (m_vsPatches.size() != 1) ? "es" : "" );
+	CString sDebugMsg = ssprintf( "%zu match%s found: ", m_vsPatches.size(), (m_vsPatches.size() != 1) ? "es" : "" );
 	sDebugMsg += join( ", ", m_vsPatches );
 	LOG->Trace( "%s", sDebugMsg.c_str() );
 
