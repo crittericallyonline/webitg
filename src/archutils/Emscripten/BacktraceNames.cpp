@@ -10,10 +10,10 @@
 #include <cstring>
 #include <cerrno>
 
-#include "RageUtil.h"
+#include "../../RageUtil.h"
 
 #if defined(DARWIN)
-#include "archutils/Darwin/Crash.h"
+#include "../Darwin/Crash.h"
 #endif
 
 #if defined(HAVE_LIBIBERTY)
