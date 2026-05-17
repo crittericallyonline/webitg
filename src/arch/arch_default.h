@@ -56,7 +56,7 @@
 	// we dont use GTK or X11 so we wont do any of that lol!
 	// #include "LowLevelWindow/LowLevelWindow_X11.h"
 	// #include "LoadingWindow/LoadingWindow_Emscripten.h"
-	// #include "USB/USBDriver_Impl_Libusb.h" // NO USB
+	// #include "USB/USBDriver_Impl_Libusb.h" // NO USB IMPLEMENTATION YET
 	#define DEFAULT_INPUT_DRIVER_LIST "GLFW"
 	#define DEFAULT_MOVIE_DRIVER_LIST "Null"
 	#define DEFAULT_SOUND_DRIVER_LIST "ALSA-sw,OSS,Null"

@@ -21,6 +21,16 @@ inline unsigned long min(unsigned long a, unsigned int b) { return a < b? a:b; }
 inline unsigned long max(unsigned int a, unsigned long b) { return a > b? a:b; }
 inline unsigned long max(unsigned long a, unsigned int b) { return a > b? a:b; }
 
+inline double trunc( double f )	{ return float(int(f)); };
+inline float truncf( float f )	{ return float(int(f)); };
+inline float roundf( float f )	{ if(f < 0) return truncf(f-0.5f); return truncf(f+0.5f); };
+inline double roundf( double f ){ if(f < 0) return trunc(f-0.5); return trunc(f+0.5);  };
+inline float froundf( const float f, const float fRoundInterval )
+{
+	return int( (f + fRoundInterval/2)/fRoundInterval ) * fRoundInterval;
+}
+
+
 /* Traditional defines.  Only use this if you absolutely need
  * a constant value. */
 #ifndef MAX
@@ -65,6 +75,7 @@ inline void wrap( T &x, T n )
 	xi %= n;
 	x = static_cast<T>(xi);
 }
+#include <bits/alltypes.h>
 
 template<>
 inline void wrap<unsigned>( unsigned &x, unsigned n )
@@ -176,7 +187,6 @@ inline uint16_t Swap16( uint16_t n )
 	return (n >>  8) | (n <<  8);
 }
 #endif
-
 #if defined(ENDIAN_LITTLE)
 inline uint32_t Swap32LE( uint32_t n ) { return n; }
 inline uint32_t Swap24LE( uint32_t n ) { return n; }
