@@ -26,6 +26,7 @@ void ScoreKeeperRave::HandleTapScore( TapNoteScore score )
 	switch( score )
 	{
 	case TNS_HIT_MINE:		fPercentToMove = PREFSMAN->m_fSuperMeterPercentChangeHitMine;	break;
+	default: break;
 	}
 
 	AddSuperMeterDelta( fPercentToMove );
@@ -55,6 +56,7 @@ void ScoreKeeperRave::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tap
 	switch( tapScore )
 	{
 	case TNS_HIT_MINE:		fPercentToMove = PREFSMAN->m_fSuperMeterPercentChangeHitMine;	break;
+	default: break;
 	}
 	AddSuperMeterDelta( fPercentToMove );
 }

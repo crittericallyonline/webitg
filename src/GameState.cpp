@@ -944,6 +944,7 @@ bool GameState::IsPlayerEnabled( PlayerNumber pn ) const
 	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
 		return true;
+	default: break;
 	}
 
 	return IsHumanPlayer( pn );
@@ -1101,6 +1102,7 @@ StageResult GameState::GetStageResult( PlayerNumber pn ) const
 		case PLAYER_2:	return (m_fTugLifePercentP1<0.5f)?RESULT_WIN:RESULT_LOSE;
 		default:	ASSERT(0); return RESULT_LOSE;
 		}
+		default: break;
 	}
 
 	StageResult win = RESULT_WIN;
@@ -1221,6 +1223,7 @@ void GameState::GetAllUsedNoteSkins( vector<CString> &out ) const
 					out.push_back( po.m_sNoteSkin );
 				}
 			}
+		default: break;
 		}
 
 		/* Add note skins that are used in courses. */

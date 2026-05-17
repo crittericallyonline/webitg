@@ -55,6 +55,7 @@ void ScreenArcadeDiagnostics::Update( float fDeltaTime )
 
 void ScreenArcadeDiagnostics::UpdateElements()
 {
+#if !defined(__EMSCRIPTEN__)
 	// update the USB devices list
 	vector<USBDevice> vDevList;
 	GetUSBDeviceList( vDevList );
@@ -87,6 +88,7 @@ void ScreenArcadeDiagnostics::UpdateElements()
 	
 	m_USBInfo.SetText( sInfo );
 	m_Title.SetText( sTitleInfo );
+#endif
 }
 
 void ScreenArcadeDiagnostics::DrawPrimitives()
@@ -110,6 +112,7 @@ void ScreenArcadeDiagnostics::HandleScreenMessage( const ScreenMessage SM )
 	case SM_GoToPrevScreen:
 		SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
 		break;
+	default: break;
 	}
 }
 

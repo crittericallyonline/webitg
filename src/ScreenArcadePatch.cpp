@@ -152,6 +152,7 @@ void ScreenArcadePatch::Update( float fDeltaTime )
 	case PATCH_INSTALLED:
 		m_textHelp->SetText( FINISHED_HELP_TEXT );
 		break;
+	default: break;
 	}
 }
 
@@ -220,7 +221,7 @@ bool ScreenArcadePatch::HasPatch( PlayerNumber pn, const CStringArray &vsPattern
 
 	CString sDebugMsg = ssprintf( "%i match%s found: ", m_vsPatches.size(), (m_vsPatches.size() != 1) ? "es" : "" );
 	sDebugMsg += join( ", ", m_vsPatches );
-	LOG->Trace( sDebugMsg.c_str() );
+	LOG->Trace( "%s", sDebugMsg.c_str() );
 
 	return true;
 }
@@ -280,7 +281,7 @@ bool ScreenArcadePatch::VerifyPatch( RageFileBasic *pFile, const CStringArray &v
 		sMessage = ssprintf( "Patch signature verification failed:\n"
 			"%s\n\n" "The patch file may be corrupt.", sError.c_str() );
 
-	LOG->Trace( sMessage );
+	LOG->Trace( "%s", sMessage.c_str() );
 	STATE_TEXT( sMessage );
 
 	SAFE_DELETE( fSig );
