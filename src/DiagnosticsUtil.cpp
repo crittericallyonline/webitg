@@ -9,11 +9,7 @@
 #include "XmlFile.h"
 #include "ProductInfo.h"
 
-#if defined(__EMSCRIPTEN__)
-#include "io_emscripten/USBDevice.h"
-#else
 #include "io/USBDevice.h"
-#endif
 
 #include "iButton.h"
 
