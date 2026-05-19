@@ -1,5 +1,5 @@
 ASSETS = ./assets@/
-FLAGS = -sUSE_WEBGL2 -sFULL_ES3 -sUSE_GLFW -sUSE_ZLIB
+FLAGS = -sUSE_WEBGL2 -sFULL_ES3 -sUSE_GLFW -sUSE_ZLIB -sMAIN_MODULE
 
 #compiler flags
 CC = emcc
@@ -9,12 +9,15 @@ CXX = em++
 SRC = ./src
 BIN = ./bin
 LIB = ./lib
+INC = ./include
 
 WebITG:
+# 	$(SRC)/**/*.cpp $(SRC)/**/*.c
 	mkdir -p ./out/scripts
-	em++ $(BIN)/*.wasm -sMAIN_MODULE \
-	$(FLAGS) $(SRC)/*.cpp $(SRC)/**/*.cpp $(SRC)/**/*.c \
-	-I$(LIB) -I$(LIB)/lua/include/ -I$(LIB)/mad/ -I$(LIB)/stb/ \
+	em++ $(BIN)/*.wasm \
+	$(FLAGS) \
+	$(SRC)/*.cpp \
+	-I$(INC)/* -I$(LIB)/mad/ -I$(LIB)/stb/ \
 	-DWITHOUT_NETWORKING \
 	--use-port=vorbis --use-port=ogg \
 	-o out/scripts/OITG.js
