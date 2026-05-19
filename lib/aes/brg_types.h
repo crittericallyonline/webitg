@@ -41,20 +41,6 @@
 extern "C" {
 #endif
 
-#ifndef UCHAR_MAX
-#define UCHAR_MAX 255U
-#endif
-
-#ifndef USHRT_MAX
-#define USHRT_MAX = 65535u
-#endif
-
-#ifndef UINT_MAX
-#define UINT_MAX = 4294967295u
-#endif
-
-
-
 #if defined( _MSC_VER ) && ( _MSC_VER >= 1300 )
 #  include <stddef.h>
 #  define ptrint_t intptr_t

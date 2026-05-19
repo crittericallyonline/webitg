@@ -43,7 +43,7 @@
  */
 static
 mad_fixed_t const sf_table[64] = {
-#include "sf_table.dat"
+# include "sf_table.dat"
 };
 
 /* --- Layer I ------------------------------------------------------------- */

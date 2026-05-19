@@ -1,6 +1,10 @@
 ASSETS = ./assets@/
 FLAGS = -sUSE_WEBGL2 -sFULL_ES3 -sUSE_GLFW -sUSE_ZLIB
 
+#compiler flags
+CC = emcc
+CXX = em++
+
 #paths
 SRC = ./src
 BIN = ./bin
@@ -16,22 +20,22 @@ WebITG:
 	-o out/scripts/OITG.js
 
 #./bin/*.wasm
-binaries: lua aes mad
+mkbindir:
+	mkdir -p $(BIN)
+
+binaries: mkbindir lua aes mad
 
 # Lua-5.0
 lua:
-	mkdir -p $(BIN)
-	emcc $(LIB)/$@/src/*.c $(LIB)/$@/src/lib/*.c -o $(BIN)/$@.wasm -I$(LIB)/$@/include -O3 -sSIDE_MODULE
+	$(CC) -shared -I$(LIB)/$@/include -sSIDE_MODULE $(LIB)/$@/src/*.c -O3 -o $(BIN)/$@.wasm -L$(LIB)/$@/src/lib
 
 # libmad
 mad:
-	mkdir -p $(BIN)
-	emcc $(LIB)/$@/*.c -o $(BIN)/$@.wasm -O3 -sSIDE_MODULE -DFPM_64BIT -DNDEBUG -I$(LIB)/mad
+	$(CC) -shared -I$(LIB)/$@ -sSIDE_MODULE $(LIB)/$@/*.c -O3 -L$(LIB)/$@ -o $(BIN)/$@.wasm -DFPM_64BIT -DNDEBUG
 
-# AES encryption?
+# # AES encryption?
 aes:
-	mkdir -p $(BIN)
-	emcc $(LIB)/$@/*.c -o $(BIN)/$@.wasm -O3 -sSIDE_MODULE
+	$(CC) -shared -I$(LIB)/$@ -sSIDE_MODULE $(LIB)/$@/*.c -O3 -L$(LIB)/$@ -o $(BIN)/$@.wasm
 
 clean:
 	rm -rf out/ bin/

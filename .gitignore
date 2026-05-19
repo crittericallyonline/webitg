@@ -9,7 +9,6 @@
 a.out
 aclocal.m4
 autom4te.cache/
-confdefs.h
 config.log
 config.status
 config.sub
@@ -20,7 +19,6 @@ src/Makefile
 src/archutils/Unix/verinc
 src/config.h
 stamp-h1
-version.h
 version.txt
 assets/utilities/itg2-util/src/.deps/
 assets/utilities/itg2-util/src/itg2ac-util
