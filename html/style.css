@@ -1,0 +1,26 @@
+* {
+    min-width: 0;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+#canvas {
+    position: fixed;
+    background-color: black;
+    left: calc((100vw - 640px) / 2);
+    top: calc((100vh - 480px) / 2);
+}
+
+@media screen and (width < height) {
+    #canvas {
+        width: 100vw;
+        height: auto;
+    }
+}
+
+@media screen and (height < width) {
+    #canvas {
+        width: auto;
+        height: 100vw;
+    }
+}
