@@ -4,7 +4,12 @@
     margin: 0;
     box-sizing: border-box;
 }
+body {
+    background-color: black;
+}
+
 #canvas {
+    border: 1px solid white;
     position: fixed;
     background-color: black;
     left: calc((100vw - 640px) / 2);
