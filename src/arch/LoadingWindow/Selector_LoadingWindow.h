@@ -1,7 +1,7 @@
 #ifndef SELECTOR_LOADING_WINDOW_H
 #define SELECTOR_LOADING_WINDOW_H
 
-#include "arch/arch_platform.h"
+#include "../arch_platform.h"
 
 /* LoadingWindow driver selector. */
 #include "LoadingWindow_Null.h"

@@ -8,10 +8,10 @@
 #include <GLFW/glfw3.h>
 #include <GLES2/gl2.h>
 
-EM_BOOL LowLevelWindow_Emscripten::KeyboardEvent(int eventType, const EmscriptenKeyboardEvent *event, void *userData) {
-	LowLevelWindow_Emscripten myWin = *((LowLevelWindow_Emscripten *) userData);
-	return EM_TRUE;
-}
+// EM_BOOL LowLevelWindow_Emscripten::KeyboardEvent(int eventType, const EmscriptenKeyboardEvent *event, void *userData) {
+// 	LowLevelWindow_Emscripten myWin = *((LowLevelWindow_Emscripten *) userData);
+// 	return EM_TRUE;
+// }
 
 EM_BOOL LowLevelWindow_Emscripten::ResizeEvent(int eventType, const EmscriptenUiEvent *event, void *userData) {
 	if(eventType != EMSCRIPTEN_EVENT_RESIZE) return EM_FALSE;
@@ -35,17 +35,17 @@ LowLevelWindow_Emscripten::LowLevelWindow_Emscripten()
 	Context = emscripten_webgl_create_context("#canvas", &Attrs);
 
 	// callbacks
-	emscripten_set_keydown_callback_on_thread(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, this, true, this->KeyboardEvent, EM_CALLBACK_THREAD_CONTEXT_MAIN_RUNTIME_THREAD);
-	emscripten_set_keypress_callback_on_thread(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, this, true, this->KeyboardEvent, EM_CALLBACK_THREAD_CONTEXT_MAIN_RUNTIME_THREAD);
-	emscripten_set_keyup_callback_on_thread(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, this, true, this->KeyboardEvent, EM_CALLBACK_THREAD_CONTEXT_MAIN_RUNTIME_THREAD);
+	// emscripten_set_keydown_callback_on_thread(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, this, true, this->KeyboardEvent, EM_CALLBACK_THREAD_CONTEXT_MAIN_RUNTIME_THREAD);
+	// emscripten_set_keypress_callback_on_thread(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, this, true, this->KeyboardEvent, EM_CALLBACK_THREAD_CONTEXT_MAIN_RUNTIME_THREAD);
+	// emscripten_set_keyup_callback_on_thread(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, this, true, this->KeyboardEvent, EM_CALLBACK_THREAD_CONTEXT_MAIN_RUNTIME_THREAD);
 	emscripten_set_resize_callback_on_thread(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, this, true, this->ResizeEvent, EM_CALLBACK_THREAD_CONTEXT_MAIN_RUNTIME_THREAD);
 }
 
 LowLevelWindow_Emscripten::~LowLevelWindow_Emscripten()
 {
-	emscripten_set_keydown_callback_on_thread(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, nullptr, true, nullptr, EM_CALLBACK_THREAD_CONTEXT_MAIN_RUNTIME_THREAD);
-	emscripten_set_keypress_callback_on_thread(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, nullptr, true, nullptr, EM_CALLBACK_THREAD_CONTEXT_MAIN_RUNTIME_THREAD);
-	emscripten_set_keyup_callback_on_thread(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, nullptr, true, nullptr, EM_CALLBACK_THREAD_CONTEXT_MAIN_RUNTIME_THREAD);
+	// emscripten_set_keydown_callback_on_thread(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, nullptr, true, nullptr, EM_CALLBACK_THREAD_CONTEXT_MAIN_RUNTIME_THREAD);
+	// emscripten_set_keypress_callback_on_thread(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, nullptr, true, nullptr, EM_CALLBACK_THREAD_CONTEXT_MAIN_RUNTIME_THREAD);
+	// emscripten_set_keyup_callback_on_thread(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, nullptr, true, nullptr, EM_CALLBACK_THREAD_CONTEXT_MAIN_RUNTIME_THREAD);
 	emscripten_set_resize_callback_on_thread(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, nullptr, true, nullptr, EM_CALLBACK_THREAD_CONTEXT_MAIN_RUNTIME_THREAD);
 	emscripten_webgl_destroy_context(Context);
 }
