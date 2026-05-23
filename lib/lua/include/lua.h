@@ -89,12 +89,10 @@ typedef double lua_Number;
 typedef LUA_NUMBER lua_Number;
 #endif
 
-
 /* mark for all API functions */
 #ifndef LUA_API
-#define LUA_API		extern
+#define LUA_API __attribute__((used)) extern
 #endif
-
 
 /*
 ** state manipulation
@@ -109,7 +107,7 @@ LUA_API lua_CFunction lua_atpanic (lua_State *L, lua_CFunction panicf);
 /*
 ** basic stack manipulation
 */
-LUA_API int   lua_gettop (lua_State *L);
+LUA_API  int   lua_gettop (lua_State *L);
 LUA_API void  lua_settop (lua_State *L, int idx);
 LUA_API void  lua_pushvalue (lua_State *L, int idx);
 LUA_API void  lua_remove (lua_State *L, int idx);
