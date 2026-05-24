@@ -16,7 +16,7 @@ WebITG:
 	em++ $(BIN)/*.wasm \
 	$(FLAGS) \
 	$(SRC)/*.cpp \
-	-Ilib/lua/include -Ilib/mad/ -Ilib/mad/ -Ilib/stb/ \
+	-Ilib/lua/include -Ilib/mad/ -Ilib/aes/ -Ilib/stb/ \
 	-DWITHOUT_NETWORKING \
 	--use-port=vorbis --use-port=ogg \
 	-o out/scripts/OITG.js
