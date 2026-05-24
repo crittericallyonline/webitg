@@ -1639,7 +1639,7 @@ bool Song::CheckCustomSong( CString &sError )
 	if( Sample == NULL )
 	{
 		sError = ssprintf( "Error loading song: %s", sResult.c_str() );
-		LOG->Warn( sError );
+		LOG->Warn( "%s", sError.c_str() );
 
 		delete Sample;
 		return false;

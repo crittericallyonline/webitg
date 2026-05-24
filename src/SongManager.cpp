@@ -185,7 +185,7 @@ void SongManager::LoadStepManiaSongDir( CString sDir, LoadingWindow *ld )
 		SortCStringArray( arraySongDirs );
 
 		iNumSongsToLoad += arraySongDirs.size();
-		LOG->Trace( "Found %d song folders in \"%s\"", arraySongDirs.size(), sGroupDirPath.c_str() );
+		LOG->Trace( "Found %zu song folders in \"%s\"", arraySongDirs.size(), sGroupDirPath.c_str() );
 	}
 
 	ASSERT( arrayGroupDirs.size() == arrayGroupSongDirs.size() );
@@ -275,7 +275,7 @@ void SongManager::LoadPlayerCourses( PlayerNumber pn )
 	GetDirListing( sDir + "/*.crs", arrayProfileCourses, false, true ); /**/
 	SortCStringArray( arrayProfileCourses );
 
-	CHECKPOINT_M( ssprintf("%d",arrayProfileCourses.size()) );
+	CHECKPOINT_M( ssprintf("%zu",arrayProfileCourses.size()) );
 
 	CString sDisplayName, sGroupName;
 
@@ -392,7 +392,7 @@ void SongManager::LoadPlayerSongs( PlayerNumber pn )
 	arraySongDirs.insert( arraySongDirs.begin(), arraySongSubDirs.begin(), arraySongSubDirs.end() );
 	arraySongDirs.insert( arraySongDirs.end(), arraySongRootDirs.begin(), arraySongRootDirs.end() );
 
-	LOG->Trace("Attempting to load %i songs and %i subdirectory songs from \"%s\"",
+	LOG->Trace("Attempting to load %zu songs and %zu subdirectory songs from \"%s\"",
 		arraySongRootDirs.size(), arraySongSubDirs.size(), sDir.c_str() );
 	int iSongsLoaded = 0;
 

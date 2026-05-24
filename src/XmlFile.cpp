@@ -381,7 +381,7 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 	// open/close tag <TAG ..> ... </TAG>
 	//                        ^- current pointer
 	{
-		// text value°¡ ¾øÀ¸¸E³Öµµ·ÏÇÑ´Ù.
+		// text valueï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Eï¿½Öµï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 		//if( this->m_sValue.empty() || this->m_sValue == ("") )
 		if( XIsEmptyString( m_sValue ) )
 		{
@@ -477,7 +477,7 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 				}
 			}
 			else	// Alone child Tag Loaded
-					// else ÇØ¾ßÇÏ´ÂÁE¸»¾Æ¾ßÇÏ´ÂÁEÀÇ½É°£´Ù.
+					// else ï¿½Ø¾ï¿½ï¿½Ï´ï¿½ï¿½ï¿½Eï¿½ï¿½ï¿½Æ¾ï¿½ï¿½Ï´ï¿½ï¿½ï¿½Eï¿½Ç½É°ï¿½ï¿½ï¿½.
 			{
 				
 				//if( xml && this->m_sValue.empty() && *xml !=chXMLTagOpen )
@@ -1087,7 +1087,7 @@ bool XNode::LoadFromFile( const CString &sFile )
 	if( !bSuccess )
 	{
 		CString sWarning = ssprintf( "XML: LoadFromFile failed for file: %s", sFile.c_str() );
-		LOG->Warn( sWarning );
+		LOG->Warn( "%s", sWarning.c_str() );
 		Dialog::OK( sWarning, "XML_PARSE_ERROR" );
 	}
 	return bSuccess;
@@ -1113,7 +1113,7 @@ bool XNode::LoadFromFile( RageFileBasic &f )
 
 error:
 	CString sWarning = ssprintf( "XML: LoadFromFile failed: %s", pi.error_string.c_str() );
-	LOG->Warn( sWarning );
+	LOG->Warn( "%s", sWarning.c_str() );
 	Dialog::OK( sWarning, "XML_PARSE_ERROR" );
 	return false;
 }

@@ -193,7 +193,7 @@ void ScreenTestSound::Input( const DeviceInput& DeviceI, const InputEventType ty
 */
 		default: break;
 		}
-
+	default: break;
 	}
 
 }

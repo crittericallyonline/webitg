@@ -180,6 +180,7 @@ void WheelBase::DrawItem( int i, WheelItemBase *display, const float fThisBanner
 			SetItemPosition( *display, fThisBannerPositionOffsetFromSelection );
 		}
 		break;
+	default: break;
 	}
 
 	if( m_WheelState == STATE_LOCKED  &&  i != NUM_WHEEL_ITEMS/2 )
