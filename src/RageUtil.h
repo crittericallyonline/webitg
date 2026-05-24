@@ -3,6 +3,8 @@
 #ifndef RAGE_UTIL_H
 #define RAGE_UTIL_H
 
+#include <cmath>
+
 #define SAFE_DELETE(p)       { delete (p);     (p)=NULL; }
 #define SAFE_DELETE_ARRAY(p) { delete[] (p);   (p)=NULL; }
 

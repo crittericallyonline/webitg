@@ -9,7 +9,6 @@ CXX = em++
 SRC = ./src
 BIN = ./bin
 LIB = ./lib
-INC = ./include
 
 WebITG:
 # 	$(SRC)/**/*.cpp $(SRC)/**/*.c
@@ -17,7 +16,7 @@ WebITG:
 	em++ $(BIN)/*.wasm \
 	$(FLAGS) \
 	$(SRC)/*.cpp \
-	-I$(INC)/* -I$(LIB)/mad/ -I$(LIB)/stb/ \
+	-Ilib/lua/include -I$(LIB)/mad/ -I$(LIB)/stb/ \
 	-DWITHOUT_NETWORKING \
 	--use-port=vorbis --use-port=ogg \
 	-o out/scripts/OITG.js
@@ -34,7 +33,7 @@ lua:
 
 # libmad
 mad:
-	$(CXX) -shared -I$(LIB)/$@ -sSIDE_MODULE=2 $(LIB)/$@/*.c -O3 -L$(LIB)/$@ -o $(BIN)/$@.wasm -DFPM_64BIT -DNDEBUG
+	$(CC) -shared -I$(LIB)/$@ -sSIDE_MODULE=2 $(LIB)/$@/*.c -O3 -L$(LIB)/$@ -o $(BIN)/$@.wasm -DFPM_64BIT -DNDEBUG
 
 # # AES encryption?
 aes:
