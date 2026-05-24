@@ -27,15 +27,15 @@ binaries: mkbindir lua aes mad
 
 # Lua-5.0
 lua:
-	$(CC) -shared -I$(LIB)/$@/include -sSIDE_MODULE $(LIB)/$@/src/*.c -O3 -o $(BIN)/$@.wasm -L$(LIB)/$@/src/lib
+	$(CXX) -shared -I$(LIB)/$@/include -sSIDE_MODULE=2 $(LIB)/$@/src/*.c -Oz -o $(BIN)/$@.wasm $(LIB)/$@/src/lib/*.c
 
 # libmad
 mad:
-	$(CC) -shared -I$(LIB)/$@ -sSIDE_MODULE $(LIB)/$@/*.c -O3 -L$(LIB)/$@ -o $(BIN)/$@.wasm -DFPM_64BIT -DNDEBUG
+	$(CXX) -shared -I$(LIB)/$@ -sSIDE_MODULE=2 $(LIB)/$@/*.c -O3 -L$(LIB)/$@ -o $(BIN)/$@.wasm -DFPM_64BIT -DNDEBUG
 
 # # AES encryption?
 aes:
-	$(CC) -shared -I$(LIB)/$@ -sSIDE_MODULE $(LIB)/$@/*.c -O3 -L$(LIB)/$@ -o $(BIN)/$@.wasm
+	$(CXX) -shared -I$(LIB)/$@ -sSIDE_MODULE=2 $(LIB)/$@/*.c -O3 -L$(LIB)/$@ -o $(BIN)/$@.wasm
 
 clean:
 	rm -rf out/ bin/
