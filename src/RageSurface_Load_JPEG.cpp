@@ -9,7 +9,7 @@
 
 extern "C" {
 #define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
+#include "stb_image.h"
 }
 
 static RageSurface *RageSurface_Load_JPEG( RageFile *f, const char *fn )
