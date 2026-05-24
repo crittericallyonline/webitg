@@ -84,9 +84,9 @@
 #endif
 
 #if defined(DO_TABLES)
-#define Extern
+#define Extern __attribute__((used))
 #else
-#define Extern extern
+#define Extern extern __attribute__((used))
 #endif
 
 #if defined(_MSC_VER) && defined(TABLE_ALIGN)
