@@ -1,19 +1,20 @@
-# AES
-CXX = em++
+# MAD
+CC = emcc
 CWD = ${realpath .}
-SRC = $(CWD)/src
-INCLUDES = -I$(SRC)
+SRC = $(CWD)
+INCLUDES = -I$(CWD)
+DEFINES = -DFPM_64BIT -DNDEBUG
 BUILD_DIR = $(CWD)/build
 SOURCES := $(shell find $(SRC) -name '*.c')
 OBJECTS := $(patsubst $(SRC)/%.c, $(BUILD_DIR)/%.o, $(SOURCES))
 
-all: aes clean
+all: mad clean
 
 $(BUILD_DIR)/%.o : $(SRC)/%.c
 	@mkdir -p $(@D);
-	@$(CXX) $(INCLUDES) -c $< -o $@ -Oz
+	@$(CC) $(INCLUDES) -c $< -o $@ -Oz $(DEFINES)
 
-aes: $(OBJECTS)
+mad: $(OBJECTS)
 	@echo "Creating archive $@"
 	@emar rcs $@.a $(OBJECTS)
 	@echo "Archive created: $@.a"
