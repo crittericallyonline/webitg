@@ -466,7 +466,7 @@ try_element_again:
 			"ThemeManager:  There is more than one theme element element that matches "
 			"'%s/%s/%s'.  Please remove all but one of these matches.",
 			sThemeName.c_str(), sCategory.c_str(), ClassAndElementToFileName(sClassName,sElement).c_str() );
-
+NOT_EM(
 		switch( Dialog::AbortRetryIgnore(message) )
 		{
 		case Dialog::abort:
@@ -479,6 +479,7 @@ try_element_again:
 		case Dialog::ignore:
 			break;
 		}
+);
 	}
 
 
@@ -521,19 +522,20 @@ try_element_again:
 					"ThemeManager:  The redirect '%s' points to the file '%s', which does not exist. "
 					"Verify that this redirect is correct.",
 					sPath.c_str(), sNewFileName.c_str());
-
+NOT_EM(
 			if( Dialog::AbortRetryIgnore(message) == Dialog::retry )
 			{
 				FlushDirCache();
 				ReloadMetrics();
 				goto try_element_again;
 			}
+);
 
 			RageException::Throw( "%s", message.c_str() ); 
 		}
 	}
 }
-
+// ElementCategory category, const CString &sClassName, const CString &sElement, bool bOptional=false
 CString ThemeManager::GetPath( ElementCategory category, const CString &sClassName_, const CString &sElement_, bool bOptional ) 
 {
 	/* Ugly: the parameters to this function may be a reference into g_vThemes, or something
@@ -577,6 +579,7 @@ try_element_again:
 
 	/* We can't fall back on _missing in Other: the file types are unknown. */
 	CString sMessage = "The theme element \"" + sCategory + "/" + sFileName +"\" is missing.";
+NOT_EM(
 	Dialog::Result res;
 	if( category != EC_OTHER )
 		res = Dialog::AbortRetryIgnore(sMessage, "MissingThemeElement");
@@ -612,6 +615,10 @@ try_element_again:
 		ASSERT(0);
 		return "";
 	}
+);
+IS_EM(
+	return "";
+);
 }
 
 
@@ -685,7 +692,7 @@ try_metric_again:
 	if( ThemeManager::GetMetricRaw( sClassName, sValueName, ret ) )
 		return ret;
 
-
+NOT_EM({
 	CString sMessage = ssprintf( "The theme metric '%s-%s' is missing.  Correct this and click Retry, or Cancel to break.",sClassName.c_str(),sValueName.c_str() );
 	switch( Dialog::AbortRetryIgnore(sMessage) )
 	{
@@ -700,6 +707,7 @@ try_metric_again:
 	default:
 		ASSERT(0);
 	}
+});
 
 	CString sCurMetricPath = GetMetricsIniPath(m_sCurThemeName);
 	CString sDefaultMetricPath = GetMetricsIniPath(BASE_THEME_NAME);

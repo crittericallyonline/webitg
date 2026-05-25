@@ -1,6 +1,14 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
+#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_STATIC
+#include "stb_image.h"
+
+#if defined(__EMSCRIPTEN__)
+#include "EmscriptenHelper.h"
+#endif
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
