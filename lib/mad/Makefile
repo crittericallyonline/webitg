@@ -15,7 +15,7 @@ $(BUILD_DIR)/%.o : $(SRC)/%.c
 	@$(CC) $(INCLUDES) -c $< -o $@ -Oz $(DEFINES)
 
 mad: $(OBJECTS)
-	@echo "Creating archive $@"
+	@echo "Creating archive $@ : CC = $(CC)"
 	@emar rcs $@.a $(OBJECTS)
 	@echo "Archive created: $@.a"
 

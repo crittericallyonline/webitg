@@ -1,5 +1,5 @@
 # Lua-5.0
-CXX = em++
+CC = emcc
 CWD = ${realpath .}
 SRC = $(CWD)/src
 INCLUDES = -I$(CWD)/include
@@ -11,7 +11,7 @@ all: lua-5.0 clean
 
 $(BUILD_DIR)/%.o : $(SRC)/%.c
 	@mkdir -p $(@D);
-	@$(CXX) $(INCLUDES) -c $< -o $@ -Oz
+	@$(CC) $(INCLUDES) -c $< -o $@ -Oz
 
 lua-5.0: $(OBJECTS)
 	@echo "Creating archive $@"

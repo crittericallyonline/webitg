@@ -1,5 +1,5 @@
 # AES
-CXX = em++
+CC = emcc
 CWD = ${realpath .}
 SRC = $(CWD)/src
 INCLUDES = -I$(SRC)
@@ -11,7 +11,7 @@ all: aes clean
 
 $(BUILD_DIR)/%.o : $(SRC)/%.c
 	@mkdir -p $(@D);
-	@$(CXX) $(INCLUDES) -c $< -o $@ -Oz
+	@$(CC) $(INCLUDES) -c $< -o $@ -Oz
 
 aes: $(OBJECTS)
 	@echo "Creating archive $@"
