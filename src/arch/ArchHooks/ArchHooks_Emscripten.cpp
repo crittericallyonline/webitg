@@ -5,11 +5,11 @@
 #include "../../StepMania.h"
 
 #include "ArchHooks_Emscripten.h"
-#include "../../archutils/Unix/SignalHandler.h"
-#include "../../archutils/Unix/GetSysInfo.h"
-#include "../../archutils/Unix/LinuxThreadHelpers.h"
-#include "../../archutils/Unix/EmergencyShutdown.h"
-#include "../../archutils/Unix/AssertionHandler.h"
+#include "../../archutils/Emscripten/SignalHandler.h"
+#include "../../archutils/Emscripten/GetSysInfo.h"
+#include "../../archutils/Emscripten/EmscriptenThreadHelpers.h"
+#include "../../archutils/Emscripten/EmergencyShutdown.h"
+#include "../../archutils/Emscripten/AssertionHandler.h"
 
 #include <sys/time.h>
 #include <sys/resource.h>
@@ -48,7 +48,7 @@ static bool IsReadOnlyMountPoint( const CString &mountPoint )
 	aFile = setmntent( "/proc/mounts", "r" );
 	if( aFile == NULL )
 	{
-		LOG->Warn( "Can't open /proc/mounts to determine if " + mountPoint + " is a readonly filesystem mountpoint" );
+		LOG->Warn( "Can't open /proc/mounts to determine if %s is a readonly filesystem mountpoint", mountPoint.c_str() );
 		return false;
 	}
 	
