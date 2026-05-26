@@ -1,13 +1,24 @@
 #include "global.h"
 
+#if !defined(__EMSCRIPTEN__)
 /* ours may be more up-to-date */
 #define __glext_h_
-
+#include <GL/glew.h>
 # include <GL/gl.h>
-# include <GL/glu.h>
-
 #undef __glext_h_
 #include <GL/glext.h>
+#else
+#define GL_GLEXT_PROTOTYPES
+#define __glext_h_
+#include <emscripten/html5.h>
+#include <GLFW/emscripten_glfw3.h>
+#undef __glext_h_
+#include <GL/glext.h>
+// #include <GLES2/gl2.h>
+// #include <GLES3/gl3.h>
+// #include <GLES3/gl31.h>
+// #include <GLES3/gl32.h>
+#endif
 
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
@@ -52,7 +63,7 @@ static int g_iMaxTextureUnits = 0;
 
 /* We don't actually use normals (we don't turn on lighting), there's just
  * no GL_T2F_C4F_V3F. */
-const GLenum RageSpriteVertexFormat = GL_T2F_C4F_N3F_V3F;
+const GLenum RageSpriteVertexFormat = GL_R1UI_T2F_C4F_N3F_V3F_SUN;
 
 /* If we support texture matrix scaling, a handle to the vertex program: */
 static GLhandleARB g_bTextureMatrixShader = 0;
@@ -392,7 +403,7 @@ CString RageDisplay_OGL::Init( VideoModeParams p, bool bAllowUnacceleratedRender
 	LOG->Info( "OGL Max texture size: %i", GetMaxTextureSize() );
 	LOG->Info( "OGL Texture units: %i", g_iMaxTextureUnits );
 	LOG->Info( "OGL Extensions: %s", glGetString(GL_EXTENSIONS) );
-	LOG->Info( "GLU Version: %s", gluGetString(GLU_VERSION) );
+	LOG->Info( "GLFW Version: %s", glfwGetVersionString() );
 
 	if( IsSoftwareRenderer() )
 	{
@@ -524,7 +535,6 @@ static void CheckPalettedTextures()
 			error = ssprintf("Expected %i-bit palette, got a %i-bit one instead", bits, int(size));
 			break;
 		}
-
 		GLint RealWidth = 0;
 		GLExt.glGetColorTableParameterivEXT(GL_PROXY_TEXTURE_2D, GL_COLOR_TABLE_WIDTH, &RealWidth);
 		GL_CHECK_ERROR( "glGetColorTableParameterivEXT(GL_COLOR_TABLE_WIDTH)" );
@@ -580,7 +590,7 @@ void SetupExtensions()
 	const float fGLVersion = strtof( (const char *) glGetString(GL_VERSION), NULL );
 	g_glVersion = int(roundf(fGLVersion * 10));
 
-	const float fGLUVersion = strtof( (const char *) gluGetString(GLU_VERSION), NULL );
+	const float fGLUVersion = strtof( (const char *) glfwGetVersionString(), NULL );
 	g_gluVersion = int(roundf(fGLUVersion * 10));
 
 	GLExt.Load( wind );
@@ -1485,7 +1495,7 @@ void RageDisplay_OGL::SetMaterial(
 		glMaterialfv( GL_FRONT, GL_AMBIENT, ambient );
 		glMaterialfv( GL_FRONT, GL_DIFFUSE, diffuse );
 		glMaterialfv( GL_FRONT, GL_SPECULAR, specular );
-		glMaterialf( GL_FRONT, GL_SHININESS, shininess );
+		glMaterialfv( GL_FRONT, GL_SHININESS, &shininess );
 	}
 	else
 	{
@@ -1603,7 +1613,7 @@ void SetPixelMapForSurface( int glImageFormat, int glTexFormat, const RageSurfac
 {
 	if( glImageFormat != GL_COLOR_INDEX || glTexFormat == GL_COLOR_INDEX8_EXT )
 	{
-		glPixelTransferi( GL_MAP_COLOR, false );
+		// glPixelTransferi( GL_MAP_COLOR, false );
 		return;
 	}
 
@@ -1619,11 +1629,11 @@ void SetPixelMapForSurface( int glImageFormat, int glTexFormat, const RageSurfac
 	}
 
 	FlushGLErrors();
-	glPixelMapusv( GL_PIXEL_MAP_I_TO_R, 256, buf[0] );
-	glPixelMapusv( GL_PIXEL_MAP_I_TO_G, 256, buf[1] );
-	glPixelMapusv( GL_PIXEL_MAP_I_TO_B, 256, buf[2] );
-	glPixelMapusv( GL_PIXEL_MAP_I_TO_A, 256, buf[3] );
-	glPixelTransferi( GL_MAP_COLOR, true );
+	// glPixelMapusv( GL_PIXEL_MAP_I_TO_R, 256, buf[0] );
+	// glPixelMapusv( GL_PIXEL_MAP_I_TO_G, 256, buf[1] );
+	// glPixelMapusv( GL_PIXEL_MAP_I_TO_B, 256, buf[2] );
+	// glPixelMapusv( GL_PIXEL_MAP_I_TO_A, 256, buf[3] );
+	// glPixelTransferi( GL_MAP_COLOR, true );
 	GLenum error = glGetError();
 	ASSERT_M( error == GL_NO_ERROR, GLToString(error) );
 }
@@ -1747,11 +1757,17 @@ unsigned RageDisplay_OGL::CreateTexture(
 
 	if( bGenerateMipMaps )
 	{
-		GLenum error = gluBuild2DMipmaps(
-			GL_TEXTURE_2D, glTexFormat, 
-			img->w, img->h,
-			glImageFormat, glImageType, img->pixels );
-		ASSERT_M( error == 0, (char *) gluErrorString(error) );
+		// GLenum error = gluBuild2DMipmaps(
+		// 	GL_TEXTURE_2D, glTexFormat, 
+		// 	img->w, img->h,
+		// 	glImageFormat, glImageType, img->pixels );
+		// ASSERT_M( error == 0, (char *) gluErrorString(error) );
+		// // Mipmap filters  
+		glTexImage2D(GL_TEXTURE_2D, 0, img->pitch, img->w, img->h, 0, img->pitch, GL_UNSIGNED_BYTE, img->pixels);
+		GLenum error = glGetError();
+		// ASSERT_M(error == 0, (char *) glewGetErrorString(error));
+		fprintf(stderr, "GLFW was unable to hook the data to the texture, dunno what else to say - Niko\n(GLenum)Error: %d\n", error);
+		ASSERT_M(error == 0, "");
 	}
 	else
 	{
@@ -1773,7 +1789,7 @@ unsigned RageDisplay_OGL::CreateTexture(
 		if(size != 8)
 			RageException::Throw("Thought paletted textures worked, but they don't.");
 	}
-
+	
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 	glFlush();
 
