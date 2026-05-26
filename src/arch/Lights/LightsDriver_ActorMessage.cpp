@@ -1,6 +1,6 @@
 #include "global.h"
-#include "GameState.h"
-#include "MessageManager.h"
+#include "../../GameState.h"
+#include "../../MessageManager.h"
 #include "LightsDriver_ActorMessage.h"
 
 REGISTER_LIGHTS_DRIVER( ActorMessage );
