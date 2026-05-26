@@ -1,34 +1,24 @@
-#ifndef SELECTOR_LOADING_WINDOW_H
-#define SELECTOR_LOADING_WINDOW_H
+#ifndef PID_THREAD_HELPERS_H
+#define PID_THREAD_HELPERS_H
 
-#include "../arch_platform.h"
+CString ThreadsVersion();
 
-/* LoadingWindow driver selector. */
-#include "LoadingWindow_Null.h"
+/* Get the current thread's ThreadID. */
+uint64_t GetCurrentThreadId();
 
-#if defined(HAVE_COCOA)
-#include "LoadingWindow_Cocoa.h"
+/* Return true if NPTL libraries are in use, false if linuxthreads. */
+bool UsingNPTL();
 
-#elif defined(HAVE_GTK)
-#include "LoadingWindow_Gtk.h"
+int SuspendThread( uint64_t ThreadID );
+int ResumeThread( uint64_t ThreadID );
 
-#elif defined(HAVE_SDL)
-#include "LoadingWindow_SDL.h"
-
-#elif defined(HAVE_WIN32)
-#include "LoadingWindow_Win32.h"
-
-#elif defined(__EMSCRIPTEN__)
-#include "LoadingWindow_Emscripten.h"
-
-#elif defined(HAVE_XBOX)
-#include "LoadingWindow_Xbox.h"
-#endif
-
+struct BacktraceContext;
+int GetThreadContext( uint64_t ThreadID, BacktraceContext *ctx );
+	
 #endif
 
 /*
- * (c) 2005 Ben Anderson
+ * (c) 2004 Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

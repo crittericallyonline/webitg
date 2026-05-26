@@ -5,10 +5,6 @@
 #include "RageFile.h"
 #include "RageSurface.h"
 
-
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-
 /*
  * I prefer static over anonymous namespaces for functions; it's clearer and seems
  * to have no language drawbacks over anonymous namespaces, which are only really

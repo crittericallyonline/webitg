@@ -1,7 +1,7 @@
 #include "global.h"
 #include "RageSoundDriver_Null.h"
-#include "RageLog.h"
-#include "RageUtil.h"
+#include "../../RageLog.h"
+#include "../../RageUtil.h"
 
 const int channels = 2;
 const int samplerate = 44100;

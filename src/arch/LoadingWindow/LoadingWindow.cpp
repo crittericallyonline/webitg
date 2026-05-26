@@ -1,9 +1,9 @@
 #include "global.h"
 #include "LoadingWindow.h"
 #include "LoadingWindow_Null.h" // fallback
-#include "Preference.h"
-#include "RageLog.h"
-#include "arch/arch_default.h"
+#include "../../Preference.h"
+#include "../../RageLog.h"
+#include "../arch_default.h"
 
 static Preference<bool> g_bShowLoadingWindow( "ShowLoadingWindow", true );
 

@@ -1,43 +1,83 @@
-ASSETS = ./assets@/
-FLAGS = -sUSE_WEBGL2 -sFULL_ES3 -sUSE_GLFW -sUSE_ZLIB -sMAIN_MODULE
+# ASSETS = ./assets@/
 
-#compiler flags
-CC = emcc
-CXX = em++
+CWD=${realpath .}
+TMP=$(CWD)/tmp
+LIB=$(CWD)/lib
+SRC=$(CWD)/src
+ARC=$(CWD)/archive
 
-#paths
-SRC = ./src
-BIN = ./bin
-LIB = ./lib
+CC=emcc
+CXX=em++
 
-WebITG:
-# 	$(SRC)/**/*.cpp $(SRC)/**/*.c
-	mkdir -p ./out/scripts
-	em++ $(BIN)/*.wasm \
-	$(FLAGS) \
-	$(SRC)/*.cpp \
-	-Ilib/lua/include -Ilib/mad -Ilib/aes \
-	-DWITHOUT_NETWORKING \
-	--use-port=vorbis --use-port=ogg \
-	-o out/scripts/OITG.js
+BUILD_DIR = tmp
+OPTIMIZATIONS=-Oz
+EMFLAGS = -sUSE_ZLIB --use-port=vorbis --use-port=ogg -pthread
+WEBGL_FLAGS = -sFULL_ES3=0 --use-port=contrib.glfw3 -sGL_ENABLE_GET_PROC_ADDRESS -sSAFE_HEAP -sLEGACY_GL_EMULATION=1 -lGL \
+-sMIN_WEBGL_VERSION=2 \
+-sMAX_WEBGL_VERSION=2 \
+-sGL_UNSAFE_OPTS=1 \
+-sASSERTIONS
 
-#./bin/*.wasm
-mkbindir:
-	mkdir -p $(BIN)
+CFLAGS = -MMD -MP $(OPTIMIZATIONS) $(EMFLAGS)
+INCLUDES = \
+-I$(LIB)/lua/include/ \
+-I$(LIB)/aes/src/ \
+-I$(LIB)/mad/ \
+-I$(LIB)/libusb/include/ \
+-include src/EmscriptenHelper.h \
+-include src/StdString.h \
+-include src/global.h \
+-include src/ProductInfo.h \
+-I /home/niko/.cache/emscripten/ports/contrib.glfw3/include
 
-binaries: mkbindir lua aes mad
+SOURCES := $(shell find $(SRC) -name '*.cpp')
+SOURCES += $(shell find $(SRC) -name '*.c')
 
-# Lua-5.0
-lua:
-	$(CXX) -shared -I$(LIB)/$@/include -sSIDE_MODULE=2 $(LIB)/$@/src/*.c -Oz -o $(BIN)/$@.wasm $(LIB)/$@/src/lib/*.c
+DONT_COMPILE := \
+$(SRC)/ScreenSMOnlineLogin.cpp \
+$(SRC)/ScreenArcadePatch.cpp \
+$(SRC)/RageSoundReader_Resample*.cpp \
+$(SRC)/arch/ACIO/ACIO.cpp \
+$(filter-out $(shell find $(SRC)/archutils/Emscripten -name "*.cpp"), $(shell find $(SRC)/archutils/ -name "*.cpp")) \
+$(shell find $(SRC)/BaseClasses/ -name "*.cpp") \
+$(shell find $(SRC)/smlobby/ -name "*.cpp")
 
-# libmad
-mad:
-	$(CC) -shared -I$(LIB)/$@ -sSIDE_MODULE=2 $(LIB)/$@/*.c -O3 -L$(LIB)/$@ -o $(BIN)/$@.wasm -DFPM_64BIT -DNDEBUG
 
-# # AES encryption?
-aes:
-	$(CXX) -shared -I$(LIB)/$@ -sSIDE_MODULE=2 $(LIB)/$@/*.c -O3 -L$(LIB)/$@ -o $(BIN)/$@.wasm
+SOURCES := $(filter-out $(DONT_COMPILE), $(SOURCES))
+OBJECTS := $(patsubst $(SRC)/%.cpp, $(BUILD_DIR)/%.o, $(SOURCES))
+OBJECTS := $(patsubst $(SRC)/%.c, $(BUILD_DIR)/%.o, $(OBJECTS))
+
+# OBJECTS := $(patsubst $(SRC)/%.c, $(BUILD_DIR)/%.o, $(C_SOURCES))
+# SOURCES += $(C_SOURCES)
+ARCHIVES := $(shell find $(ARC) -name '*.a')
+
+DEFINES = -DWITHOUT_NETWORKING -DNDEBUG
+DEPS := $(OBJECTS:.o=.d)
+
+all: main
+
+main: # $(OBJECTS)
+	@$(CXX) $(ARCHIVES) $^ -o out/main.js $(INCLUDES) $(DEFINES) $(OPTIMIZATIONS) $(EMFLAGS) $(WEBGL_FLAGS)
+	@echo "Completed final build"
+
+gen-libraries: 
+	@$(MAKE) -C lib
+	@mkdir -p $(ARC)
+	@mv $(LIB)/*.a $(ARC)
+
+
+$(BUILD_DIR)/%.o : $(SRC)/%.cpp
+	@mkdir -p $(@D);
+	@$(CXX) $(INCLUDES) $(DEFINES) $(CFLAGS) -c $< -o $@
+	@echo "Finished building: $@ with $(CXX)"
+
+$(BUILD_DIR)/%.o : $(SRC)/%.c
+	@mkdir -p $(@D);
+	@$(CC) $(DEFINES) $(CFLAGS) -c $< -o $@
+	@echo "Finished building: $@ with $(CC)"
 
 clean:
-	rm -rf out/ bin/
+	@rm -rf $(ARC) $(TMP)
+	@$(MAKE) -C lib clean
+
+-include $(DEPS)

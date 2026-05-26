@@ -1,11 +1,11 @@
 #include "global.h"
 #include "RageSoundDriver_Generic_Software.h"
 
-#include "RageLog.h"
-#include "RageSound.h"
-#include "RageUtil.h"
-#include "RageSoundManager.h"
-#include "RageSoundMixBuffer.h"
+#include "../../RageLog.h"
+#include "../../RageSound.h"
+#include "../../RageUtil.h"
+#include "../../RageSoundManager.h"
+#include "../../RageSoundMixBuffer.h"
 
 static const int channels = 2;
 static const int bytes_per_frame = channels*2; /* 16-bit */

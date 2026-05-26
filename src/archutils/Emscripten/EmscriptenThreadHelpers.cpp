@@ -1,7 +1,7 @@
 /* RageThreads helpers for threads in Linux, which are based on PIDs and TIDs. */
 
-#include "../../global.h"
-#include "LinuxThreadHelpers.h"
+#include "global.h"
+#include "EmscriptenThreadHelpers.h"
 #include "../../RageUtil.h"
 #include "../../RageThreads.h"
 #include "Backtrace.h"
@@ -13,8 +13,9 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <pthread.h>
 #include <sys/stat.h>
-//#include <linux/unistd.h>
+#include <unistd.h>
 #include <sys/syscall.h>
 #define _LINUX_PTRACE_H // hack to prevent broken linux/ptrace.h from conflicting with sys/ptrace.h
 #include <sys/user.h>
@@ -30,6 +31,11 @@
 static bool g_bUsingNPTL = false;
 
 #define gettid() syscall(SYS_gettid)
+
+#ifndef _CS_GNU_LIBPTHREAD_VERSION
+#define _CS_GNU_LIBPTHREAD_VERSION 3
+#endif
+
 
 CString ThreadsVersion()
 {
@@ -88,12 +94,12 @@ static int waittid( int ThreadID, int *status, int options )
 static int PtraceAttach( int ThreadID )
 {
 	int ret;
-	// ret = ptrace( PTRACE_ATTACH, ThreadID, NULL, NULL );
-	// if( ret == -1 )
-	// {
-	// 	printf("ptrace failed: %s\n", strerror(errno) );
-	// 	return -1;
-	// }
+	ret = -1;
+	if( ret == -1 )
+	{
+		printf("ptrace failed: %s\n", strerror(errno) );
+		return -1;
+	}
 
 	/* Wait for the SIGSTOP from the ptrace call. */
 	int status;
@@ -108,7 +114,7 @@ static int PtraceAttach( int ThreadID )
 
 static int PtraceDetach( int ThreadID )
 {
-	return 0;//ptrace( PTRACE_DETACH, ThreadID, NULL, NULL );
+	return -1;
 }
 
 
@@ -137,7 +143,7 @@ static uint64_t GetCurrentThreadIdInternal()
 		// if( ret != -1 )
 		// 	return ret;
 
-		ASSERT( !g_bUsingNPTL );
+		// ASSERT( !g_bUsingNPTL );
 		GetTidUnsupported = true;
 	}
 
@@ -146,6 +152,22 @@ static uint64_t GetCurrentThreadIdInternal()
 
 uint64_t GetCurrentThreadId()
 {
+#if defined(HAVE_TLS)
+	/* This is called each time we lock a mutex, and gettid() is a little slow, so
+	 * cache the result if we support TLS. */
+	if( RageThread::GetSupportsTLS() )
+	{
+		static thread_local uint64_t cached_tid = 0;
+		static thread_local bool cached = false;
+		if( !cached )
+		{
+			cached_tid = GetCurrentThreadIdInternal();
+			cached = true;
+		}
+		return cached_tid;
+	}
+#endif
+
 	return GetCurrentThreadIdInternal();
 }
 
@@ -217,3 +239,28 @@ bool GetThreadBacktraceContext( uint64_t ThreadID, BacktraceContext *ctx )
 	return true;
 }
 #endif
+
+/*
+ * (c) 2004 Glenn Maynard
+ * All rights reserved.
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, and/or sell copies of the Software, and to permit persons to
+ * whom the Software is furnished to do so, provided that the above
+ * copyright notice(s) and this permission notice appear in all copies of
+ * the Software and that both the above copyright notice(s) and this
+ * permission notice appear in supporting documentation.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
+ * THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS
+ * INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT
+ * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+ * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */

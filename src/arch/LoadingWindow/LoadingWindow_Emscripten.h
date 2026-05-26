@@ -12,4 +12,9 @@ public:
 	void Paint() { }
 };
 
+#ifdef ARCH_LOW_LEVEL_WINDOW
+#error "More than one LowLevelWindow selected!"
+#endif
+#define ARCH_LOW_LEVEL_WINDOW LoadingWindow_Emscripten
+
 #endif

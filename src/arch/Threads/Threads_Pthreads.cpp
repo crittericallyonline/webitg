@@ -1,18 +1,23 @@
 #include "global.h"
 #include "Threads_Pthreads.h"
-#include "RageTimer.h"
-#include "RageUtil.h"
+#include "../../RageTimer.h"
+#include "../../RageUtil.h"
 #include <sys/time.h>
 #include <errno.h>
-#include "arch/ArchHooks/ArchHooks_Unix.h"
+#include "../ArchHooks/ArchHooks_Emscripten.h"
 
 #if defined(LINUX)
-#include "archutils/Unix/LinuxThreadHelpers.h"
-#include "archutils/Unix/RunningUnderValgrind.h"
+#include "../../archutils/Unix/LinuxThreadHelpers.h"
+#include "../../archutils/Unix/RunningUnderValgrind.h"
 #endif
 
 #if defined(DARWIN)
 #include "archutils/Darwin/DarwinThreadHelpers.h"
+#endif
+
+#if defined(__EMSCRIPTEN__)
+#include "../../archutils/Emscripten/EmscriptenThreadHelpers.h"
+#include "../../archutils/Emscripten/RunningUnderValgrind.h"
 #endif
 
 void ThreadImpl_Pthreads::Halt( bool Kill )

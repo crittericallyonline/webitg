@@ -52,3 +52,5 @@ src/version.bin
 
 #for precompiled binaries
 *.wasm
+tmp/
+out/

@@ -2,9 +2,9 @@
 #define RAGE_SOUND_GENERIC_SOFTWARE
 
 #include "RageSoundDriver.h"
-#include "RageThreads.h"
-#include "RageTimer.h"
-#include "RageUtil_CircularBuffer.h"
+#include "../../RageThreads.h"
+#include "../../RageTimer.h"
+#include "../../RageUtil_CircularBuffer.h"
 
 static const int samples_per_block = 512;
 class RageSoundDriver_Generic_Software: public RageSoundDriver

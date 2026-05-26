@@ -17,6 +17,7 @@
 #include "arch/InputHandler/InputHandler_PIUIO.h"
 #include "arch/InputHandler/InputHandler_MiniMaid.h"
 #include "arch/InputHandler/InputHandler_P3IO.h"
+#include "arch/InputHandler/InputHandler_Emscripten.h"
 
 #define NEXT_SCREEN	THEME->GetMetric( m_sName, "NextScreen" )
 

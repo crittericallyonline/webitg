@@ -7,10 +7,8 @@
 #include <setjmp.h>
 
 
-extern "C" {
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-}
+// extern "C" {
+// }
 
 static RageSurface *RageSurface_Load_JPEG( RageFile *f, const char *fn )
 {

@@ -264,7 +264,7 @@ static void child_process()
 	time_t seconds;
 	seconds = time( NULL );
 
-	sCrashInfoPath = ssprintf( "Data/crashinfo-%ld.txt" , seconds );
+	sCrashInfoPath = ssprintf( "Data/crashinfo-%lld.txt" , seconds );
 
 	FILE *CrashDump = fopen( sCrashInfoPath, "w+" );
 	if(CrashDump == NULL)
@@ -317,7 +317,7 @@ static void child_process()
 
     fprintf(CrashDump, "Checkpoints:\n");
     for (unsigned i=0; i<Checkpoints.size(); ++i)
-        fprintf(CrashDump, Checkpoints[i]);
+        fprintf(CrashDump, "%s", Checkpoints[i].c_str());
     fprintf(CrashDump, "\n");
 
     for( int i = 0; i < CrashData::MAX_BACKTRACE_THREADS; ++i )
@@ -341,21 +341,15 @@ static void child_process()
 
     /* stdout may have been inadvertently closed by the crash in the parent;
      * write to /dev/tty instead. */
-    FILE *tty = fopen( "/dev/tty", "w" );
-    if( tty == NULL )
-        tty = stderr;
+	 // emscripten cant do this so we use stderr
+    // FILE *tty = fopen( "/dev/tty", "w" );
+    // if( tty == NULL )
+    //     tty = stderr;
 
-	fprintf(tty,
-		"\n"
-		+ ProductInfo::GetName()
-		+ " has crashed.  Debug information has been output to\n"
-		"\n"
-		"    " + sCrashInfoPath + "\n"
-		"\n"
-		"Please report a bug at:\n"
-		"\n"
-		"    " + ProductInfo::GetCrashReportURL() + "\n"
-		"\n"
+	fprintf(stderr,
+		"\n%s\nhas crashed.  Debug information has been output to\n    %s\nPlease report a bug at:\n%s\n",
+		ProductInfo::GetName().c_str(), sCrashInfoPath.c_str(),
+		ProductInfo::GetCrashReportURL().c_str()
 	);
 }
 

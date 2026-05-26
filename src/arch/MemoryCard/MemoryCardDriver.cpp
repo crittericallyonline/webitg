@@ -1,9 +1,9 @@
 #include "global.h"
 #include "MemoryCardDriver.h"
-#include "RageFileManager.h"
-#include "RageLog.h"
-#include "Foreach.h"
-#include "ProfileManager.h"
+#include "../../RageFileManager.h"
+#include "../../RageLog.h"
+#include "../../Foreach.h"
+#include "../../ProfileManager.h"
 
 static const CString TEMP_MOUNT_POINT = "/@mctemptimeout/";
 
@@ -121,7 +121,7 @@ bool MemoryCardDriver::DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStor
 	return true;
 }
 
-#include "arch/arch_default.h"
+#include "../arch_default.h"
 MemoryCardDriver *MemoryCardDriver::Create()
 {
 	MemoryCardDriver *ret = NULL;

@@ -5,7 +5,7 @@
 #include "GetSysInfo.h"
 
 #if defined(__EMSCRIPTEN__)
-#include "LinuxThreadHelpers.h"
+#include "EmscriptenThreadHelpers.h"
 #endif
 
 #include <signal.h>
