@@ -71,7 +71,6 @@
 # 	@rm -rf $(ARC) $(TMP)
 # 	@$(MAKE) -C lib clean
 
-# -include $(DEPS)
 
 MAKE = emmake make
 
@@ -83,7 +82,7 @@ ARCHIVE = $(CWD)/archive
 INCLUDES = -I$(SRC)
 
 # SOURCES := $(shell find $(SRC) -maxdepth 1 -name "*.cpp")
-ARCHIVES=$(ARCHIVE)/lua-5.0.a $(ARCHIVE)/mad-0.15.1b.a
+ARCHIVES=$(ARCHIVE)/lua-5.0.a $(ARCHIVE)/mad-0.15.1b.a $(ARCHIVE)/aes.a
 
 # $(BUILD_DIR)/%.o : $(SRC)/%.cpp
 # 	@mkdir -p $(@D);
@@ -94,12 +93,15 @@ ARCHIVES=$(ARCHIVE)/lua-5.0.a $(ARCHIVE)/mad-0.15.1b.a
 # 	@mkdir -p $(@D);
 # 	@$(CC) $(DEFINES) $(CFLAGS) -c $< -o $@
 # 	@echo "Finished building: $@ with $(CC)"
+ 
+INCS=-I$(SRC)/lua-5.0/include $(SRC)/libtomcrypt/src/headers
 
+NETWORKING=-DWITHOUT_NETWORKING
 
 StepMania: $(ARCHIVES)
+	@$(MAKE) --makefile=$(CWD)/stepmania.mk INCLUDE=$(INCS) NETWORKING=$(NETWORKING)
+# 	em++ src/StepMania.cpp
 
-clean:
-	rm -rf $(ARCHIVE) $(BUILD_DIR)
 
 
 $(ARCHIVE)/%.a: $(SRC)/%
@@ -107,3 +109,9 @@ $(ARCHIVE)/%.a: $(SRC)/%
 	@$(MAKE) -C $< EMFLAGS=-pthread ARCHIVE=$(ARCHIVE) NAME=$(basename $(notdir $@))
 
 .PHONY: clean all
+
+clean: $(ARCHIVES)
+	@rm -rf $(ARCHIVE) $(BUILD_DIR)
+	@$(MAKE) -C $(basename $(notdir $@)) 
+
+-include $(DEPS)

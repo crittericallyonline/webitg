@@ -19,6 +19,8 @@
 #include "archutils/Darwin/arch_setup.h"
 #elif defined(UNIX)
 #include "archutils/Unix/arch_setup.h"
+#elif defined(__EMSCRIPTEN__)
+#include "archutils/Emscripten/arch_setup.h"
 #endif
 
 /* Set one of these in arch_setup.h.  (Don't bother trying to fall back on BYTE_ORDER

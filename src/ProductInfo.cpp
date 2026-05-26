@@ -1,6 +1,18 @@
 #include "global.h" // also pulls in config.h
 #include "ProductInfo.h"
 
+
+#include <ProductInfo.inc>
+// #define PRODUCT_NAME "OpenITG"
+// #define PRODUCT_VER "alpha 6 DEV"
+// // #define PRODUCT_VER "3.9 alpha 23"
+// #define PRODUCT_NAME_VER "${PRODUCT_NAME} ${PRODUCT_VER}"
+
+// // String used for the install directory and registry locations
+// // Official releases = "StepMania"; intermediate releases = "StepMania CVS".
+// #define PRODUCT_ID "OpenITG alpha4"
+
+
 #if defined(HAVE_CONFIG_H)
 	/* included in global.h */
 #elif defined(WIN32)

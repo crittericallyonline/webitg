@@ -53,7 +53,7 @@
 //			- Jim Cline
 //			- Jeff Kohn
 //			- Todd Heckel
-//			- Ullrich Pollähne
+//			- Ullrich Pollï¿½hne
 //			- Joe Vitaterna
 //			- Joe Woodbury
 //			- Aaron (no last name)
@@ -447,7 +447,7 @@ public:
 			// <nChars> or the NULL terminator, whichever comes first.  Since we
 			// are about to call a less forgiving overload (in which <nChars>
 			// must be a valid length), we must adjust the length here to a safe
-			// value.  Thanks to Ullrich Pollähne for catching this bug
+			// value.  Thanks to Ullrich Pollï¿½hne for catching this bug
 
 			nChars		= min(nChars, str.length() - nStart);
 
@@ -478,7 +478,7 @@ public:
 			// <nChars> or the NULL terminator, whichever comes first.  Since we
 			// are about to call a less forgiving overload (in which <nChars>
 			// must be a valid length), we must adjust the length here to a safe
-			// value. Thanks to Ullrich Pollähne for catching this bug
+			// value. Thanks to Ullrich Pollï¿½hne for catching this bug
 
 			nChars		= min(nChars, str.length() - nStart);
 
@@ -755,15 +755,21 @@ typedef CStdStr<char>		CStdStringA;	// a better std::string
 #define StdStringLessNoCase		SSLNCA
 #define StdStringEqualsNoCase		SSENCA
 
+#if defined(__EMSCRIPTEN__) && !defined(BINARY_FUN)
+#define BINARY_FUN std::__binary_function
+#else
+#define BINARY_FUN std::binary_function
+#endif
+
 struct StdStringLessNoCase
-	: std::binary_function<CStdStringA, CStdStringA, bool>
+	: BINARY_FUN<CStdStringA, CStdStringA, bool>
 {
 	inline
 	bool operator()(const CStdStringA& sLeft, const CStdStringA& sRight) const
 	{ return ssicmp(sLeft.c_str(), sRight.c_str()) < 0; }
 };
 struct StdStringEqualsNoCase
-	: std::binary_function<CStdStringA, CStdStringA, bool>
+	: BINARY_FUN<CStdStringA, CStdStringA, bool>
 {
 	inline
 	bool operator()(const CStdStringA& sLeft, const CStdStringA& sRight) const

@@ -1,7 +1,7 @@
 CC = emcc
 CXX = em++
 
-INCLUDES=-I .
+INCLUDES=-I.
 BUILD_DIR=./build
 SRC=./
 
@@ -11,7 +11,7 @@ OBJECTS := $(patsubst $(SRC)/%.c, $(BUILD_DIR)/%.o, $(SOURCES))
 $(BUILD_DIR)/%.o : $(SRC)/%.c
 	@mkdir -p $(@D);
 	@$(CC) $(INCLUDES) $(EMFLAGS) -c $< -o $@
-	@echo "Finished building: $@ with $(CC)"
+	@echo "$(CC): $@"
 
 all: $(OBJECTS)
 	@emar rcs $(ARCHIVE)/$(NAME).a $(OBJECTS)
