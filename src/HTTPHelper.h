@@ -2,7 +2,7 @@
 #define HTTPHelper_H
 
 #include "global.h" // StepMania only includes
-// #include "ezsockets.h"
+#include "ezsockets.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageThreads.h"
