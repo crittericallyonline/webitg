@@ -1,0 +1,23 @@
+CC = emcc
+CXX = em++
+
+INCLUDES=-I ./include
+BUILD_DIR=./build
+SRC=./src
+
+SOURCES := $(shell find $(SRC) -name "*.c")
+OBJECTS := $(patsubst $(SRC)/%.c, $(BUILD_DIR)/%.o, $(SOURCES))
+
+$(BUILD_DIR)/%.o : $(SRC)/%.c
+	@mkdir -p $(@D);
+	@$(CC) $(INCLUDES) $(EMFLAGS) -c $< -o $@
+	@echo "Finished building: $@ with $(CC)"
+
+all: $(OBJECTS)
+	@emar rcs $(ARCHIVE)/$(NAME).a $(OBJECTS)
+	@echo "Archive created $(NAME)"
+	@echo "EMFLAGS: $(EMFLAGS)"
+	@echo "OUTPUT: $(ARCHIVE)/$(NAME).a"
+
+clean:
+	rm -rf ./build
