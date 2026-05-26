@@ -1,4 +1,5 @@
 # MAD
+EMFLAGS = -pthread
 CC = emcc
 CWD = ${realpath .}
 SRC = $(CWD)
@@ -12,7 +13,7 @@ all: mad clean
 
 $(BUILD_DIR)/%.o : $(SRC)/%.c
 	@mkdir -p $(@D);
-	@$(CC) $(INCLUDES) -c $< -o $@ -Oz $(DEFINES)
+	@$(CC) $(INCLUDES) -c $< -o $@ -Oz $(DEFINES) $(EMFLAGS)
 
 mad: $(OBJECTS)
 	@echo "Creating archive $@ : CC = $(CC)"

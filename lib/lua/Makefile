@@ -1,4 +1,5 @@
 # Lua-5.0
+EMFLAGS = -pthread
 CC = emcc
 CWD = ${realpath .}
 SRC = $(CWD)/src
@@ -11,7 +12,7 @@ all: lua-5.0 clean
 
 $(BUILD_DIR)/%.o : $(SRC)/%.c
 	@mkdir -p $(@D);
-	@$(CC) $(INCLUDES) -c $< -o $@ -Oz
+	@$(CC) $(INCLUDES) -c $< -o $@ -Oz $(EMFLAGS)
 
 lua-5.0: $(OBJECTS)
 	@echo "Creating archive $@"
