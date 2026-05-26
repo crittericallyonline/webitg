@@ -1,7 +1,7 @@
 #include "global.h"
 #include "InputHandler_MonkeyKeyboard.h"
-#include "../../RageUtil.h"
-#include "../../PrefsManager.h"
+#include "RageUtil.h"
+#include "PrefsManager.h"
 
 REGISTER_INPUT_HANDLER( MonkeyKeyboard );
 

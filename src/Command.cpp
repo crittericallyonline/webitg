@@ -9,7 +9,7 @@ void IncorrectNumberArgsWarning( const Command &command, int iMaxIndexAccessed )
 {
 	const CString sError = ssprintf( "Actor::HandleCommand: Wrong number of arguments in command '%s'.  Expected %d but there are %u.",
 		command.GetOriginalCommandString().c_str(), iMaxIndexAccessed+1, unsigned(command.m_vsArgs.size()) );
-	LOG->Warn( "%s\n", sError.c_str() );
+	LOG->Warn( sError );
 	Dialog::OK( sError );
 }
 

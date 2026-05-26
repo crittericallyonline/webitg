@@ -50,7 +50,7 @@ RageSurfaceFormat::RageSurfaceFormat( const RageSurfaceFormat &cpy ):
 	Rmask(Mask[0]), Gmask(Mask[1]), Bmask(Mask[2]), Amask(Mask[3]),
 	Rshift(Shift[0]), Gshift(Shift[1]), Bshift(Shift[2]), Ashift(Shift[3])
 {
-	memcpy( (void *) this, &cpy, sizeof(RageSurfaceFormat) );
+	memcpy( this, &cpy, sizeof(RageSurfaceFormat) );
 	if( palette )
 		palette = new RageSurfacePalette( *palette );
 }

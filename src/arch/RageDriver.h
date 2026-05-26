@@ -1,7 +1,7 @@
 #ifndef RAGE_DRIVER_H
 #define RAGE_DRIVER_H
 
-#include "../RageUtil.h"
+#include "RageUtil.h"
 #include <map>
 
 class RageDriver

@@ -1,7 +1,7 @@
 #ifndef MOVIE_TEXTURE_H
 #define MOVIE_TEXTURE_H
 
-#include "../../RageTexture.h"
+#include "RageTexture.h"
 
 class RageMovieTexture : public RageTexture
 {

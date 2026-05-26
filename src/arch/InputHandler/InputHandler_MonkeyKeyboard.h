@@ -2,8 +2,8 @@
 #define INPUT_HANDLER_MONKEY_SCRIPT
 
 #include "InputHandler.h"
-#include "../../RageTimer.h"
-#include "../../RageInputDevice.h"
+#include "RageTimer.h"
+#include "RageInputDevice.h"
 
 class InputHandler_MonkeyKeyboard: public InputHandler
 {

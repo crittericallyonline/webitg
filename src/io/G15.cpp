@@ -1,9 +1,9 @@
 #include "global.h"
-#include "G15.h"
-#include "../RageLog.h"
-#include "../RageUtil.h"
+#include "io/G15.h"
+#include "RageLog.h"
+#include "RageUtil.h"
 
-#include "../arch/USB/USBDriver_Impl.h"
+#include "arch/USB/USBDriver_Impl.h"
 
 const unsigned short G15_VENDOR_ID = 0x046D;
 const unsigned short G15_PRODUCT_ID[] = { 0xC227, 0xC251 };

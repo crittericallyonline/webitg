@@ -3,8 +3,8 @@
 #ifndef LOADING_WINDOW_H
 #define LOADING_WINDOW_H
 
-#include "../../global.h"
-#include "../../arch/RageDriver.h"
+#include "global.h"
+#include "arch/RageDriver.h"
 
 struct RageSurface;
 class LoadingWindow: public RageDriver

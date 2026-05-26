@@ -2,8 +2,8 @@
 #define INPUT_HANDLER_LINUX_JOYSTICK_H 1
 
 #include "InputHandler.h"
-#include "../../RageThreads.h"
-#include "../../RageTimer.h"
+#include "RageThreads.h"
+#include "RageTimer.h"
 
 #if HAVE_INOTIFY
 #include <sys/inotify.h>

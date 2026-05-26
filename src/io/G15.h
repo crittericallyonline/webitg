@@ -1,7 +1,7 @@
 #ifndef IOG15_H
 #define IOG15_H
 
-#include "USBDriver.h"
+#include "io/USBDriver.h"
 
 enum G15DisplayState
 {

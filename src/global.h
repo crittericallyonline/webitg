@@ -1,14 +1,6 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
-#define STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_STATIC
-#include "stb_image.h"
-
-#if defined(__EMSCRIPTEN__)
-#include "EmscriptenHelper.h"
-#endif
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -20,8 +12,14 @@
 #define __STDC_LIMIT_MACROS // for INT8_MIN, etc
 #define __STDC_CONSTANT_MACROS // for INT64_C, etc
 
-/* Platform-specific fixes. */ // ( NO NEED )
-#include "archutils/Emscripten/arch_setup.h"
+/* Platform-specific fixes. */
+#if defined(_WIN32)
+#include "archutils/Win32/arch_setup.h"
+#elif defined(PBBUILD)
+#include "archutils/Darwin/arch_setup.h"
+#elif defined(UNIX)
+#include "archutils/Unix/arch_setup.h"
+#endif
 
 /* Set one of these in arch_setup.h.  (Don't bother trying to fall back on BYTE_ORDER
  * if it was already set; too many systems are missing endian.h.) */
@@ -66,8 +64,13 @@
 #endif
 
 /* Branch optimizations: */
+#if defined(__GNUC__)
 #define likely(x) (__builtin_expect(!!(x), 1))
 #define unlikely(x) (__builtin_expect(!!(x), 0))
+#else
+#define likely(x) (x)
+#define unlikely(x) (x)
+#endif
 
 #if defined(NEED_CSTDLIB_WORKAROUND)
 #define llabs ::llabs

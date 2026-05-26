@@ -5,6 +5,47 @@
 #include "RageFile.h"
 #include "RageSurface.h"
 
+
+#if defined(_WINDOWS) || defined(_XBOX)
+#  include "libpng/include/png.h"
+#  if defined(_MSC_VER)
+#  if defined(_XBOX)
+#    pragma comment(lib, "../extern/libpng/lib/xboxlibpng.lib")
+#  elif _MSC_VER == 1400 // Visual Studio 2005 -- MIA do not have
+#	 pragma comment(lib, "../extern/libpng/lib/vs2005/libpng.lib")
+#  elif _MSC_VER == 1500 // Visual Studio 2008 -- MIA do not have
+#	 pragma comment(lib, "../extern/libpng/lib/vs2008/libpng.lib")
+#  elif _MSC_VER == 1600 // Visual Studio 2010
+#	 pragma comment(lib, "../extern/libpng/lib/vs2010/libpng.lib")
+#  elif _MSC_VER == 1700 // Visual Studio 2012 -- MIA do not have
+#	 pragma comment(lib, "../extern/libpng/lib/vs2012/libpng.lib") 
+#  elif _MSC_VER == 1800 // Visual Studio 2013
+#	 pragma comment(lib, "../extern/libpng/lib/vs2013/libpng.lib") 
+#  elif _MSC_VER == 1900 // Visual Studio 2015
+#	 pragma comment(lib, "../extern/libpng/lib/vs2015/libpng.lib") 
+#  else
+#    pragma comment(lib, "../extern/libpng/lib/libpng.lib") // Visual Studio 2003?
+#  endif
+#  pragma warning(disable: 4611) /* interaction between '_setjmp' and C++ object destruction is non-portable */
+#  endif // _MSC_VER
+#else
+#  include <png.h>
+#  if ( PNG_LIBPNG_VER_MINOR > 3 )
+#    define png_set_gray_1_2_4_to_8(p) png_set_expand(p)
+#  endif
+#endif
+
+#if defined(_XBOX)
+#  include <malloc.h>	// for alloca
+#  include "archutils/Xbox/VirtualMemory.h"
+#elif !defined(WIN32)
+#  include <alloca.h>
+#endif
+
+#ifndef png_jmpbuf
+#define png_jmpbuf(png) ((png)->jmpbuf)
+#endif
+
 /*
  * I prefer static over anonymous namespaces for functions; it's clearer and seems
  * to have no language drawbacks over anonymous namespaces, which are only really
@@ -17,21 +58,120 @@
 
 namespace
 {
-static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, bool bHeaderOnly )
+void RageFile_png_read( png_struct *png, png_byte *p, png_size_t size )
 {
-	RageSurface *img = NULL;
+	CHECKPOINT;
+	RageFile *f = (RageFile *) png_get_io_ptr( png );
 
+	int got = f->Read( p, size );
+	if( got == -1 )
+	{
+		/* png_error will call PNG_Error, which will longjmp.  If we just pass
+		 * GetError().c_str() to it, a temporary may be created; since control
+		 * never returns here, it may never be destructed and we could leak. */
+		static char error[256];
+		strncpy( error, f->GetError(), sizeof(error) );
+		error[sizeof(error)-1] = 0;
+		png_error( png, error );
+	}
+	else if( got != (int) size )
+		png_error( png, "Unexpected EOF" );
+}
 
-	int width, height;
+struct error_info
+{
+	char *err;
+	const char *fn;
+};
+
+void PNG_Error( png_struct *png, const char *error )
+{
+	CHECKPOINT;
+	error_info *info = (error_info *) png_get_error_ptr( png );
+	strncpy( info->err, error, 1024 );
+	info->err[1023] = 0;
+	LOG->Trace( "loading \"%s\": err: %s", info->fn, info->err );
+	longjmp( png_jmpbuf(png), 1 );
+}
+
+void PNG_Warning( png_struct *png, const char *warning )
+{
+	CHECKPOINT;
+	error_info *info = (error_info *) png_get_error_ptr( png );
+	LOG->Trace( "loading \"%s\": warning: %s", info->fn, warning );
+}
+
+/* Since libpng forces us to use longjmp (gross!), this function shouldn't create any C++
+ * objects, and needs to watch out for memleaks. */
+static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char errorbuf[1024], bool bHeaderOnly )
+{
+	error_info error;
+	error.err = errorbuf;
+	error.fn = fn;
+
+	png_struct *png = png_create_read_struct( PNG_LIBPNG_VER_STRING, &error, PNG_Error, PNG_Warning );
+
+#if defined(XBOX)
+	while(png == NULL)
+	{
+		if(!vmem_Manager.DecommitLRU())
+			break;
+
+		png = png_create_read_struct( PNG_LIBPNG_VER_STRING, &error, PNG_Error, PNG_Warning );
+	}
+#endif
+
+	if( png == NULL )
+	{
+		sprintf( errorbuf, "creating png_create_read_struct failed");
+		return NULL;
+	}
+
+	png_info *info_ptr = png_create_info_struct(png);
+	if( info_ptr == NULL )
+	{
+		png_destroy_read_struct( &png, NULL, NULL );
+		sprintf( errorbuf, "creating png_create_info_struct failed");
+		return NULL;
+	}
+
+	RageSurface *volatile img = NULL;
+	CHECKPOINT;
+	if( setjmp(png_jmpbuf(png)) )
+	{
+		png_destroy_read_struct( &png, &info_ptr, NULL );
+		delete img;
+		return NULL;
+	}
+	CHECKPOINT;
+
+	png_set_read_fn( png, f, RageFile_png_read );
+
+	png_read_info( png, info_ptr );
+
+	png_uint_32 width, height;
 	int bit_depth, color_type;
-	img->pixels = stbi_load(fn, &width, &height, &bit_depth, STBI_rgb_alpha);
+	png_get_IHDR( png, info_ptr, &width, &height, &bit_depth, &color_type, NULL, NULL, NULL );
 
+	/* If bHeaderOnly is true, don't allocate the pixel storage space or decompress
+	 * the image.  Just return an empty surface with only the width and height set. */
 	if( bHeaderOnly )
 	{
+		CHECKPOINT;
 		img = CreateSurfaceFrom( width, height, 32, 0, 0, 0, 0, NULL, width*4 );
-		free(img->pixels);
+		png_destroy_read_struct( &png, &info_ptr, NULL );
+
 		return img;
 	}
+
+
+	CHECKPOINT;
+	png_set_strip_16(png); /* 16bit->8bit */
+	png_set_packing( png ); /* 1,2,4 bit->8 bit */
+
+	/* Expand grayscale images to the full 8 bits from 1, 2, or 4 bits/pixel */
+	if( color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8 )
+		png_set_gray_1_2_4_to_8( png );
 
 	/* These are set for type == PALETTE. */
 	RageSurfaceColor colors[256];
@@ -43,7 +183,8 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, bool bHea
 	enum { PALETTE, RGBX, RGBA } type;
 	switch( color_type )
 	{
-	case STBI_grey:
+	case PNG_COLOR_TYPE_GRAY:
+		/* Fake PNG_COLOR_TYPE_GRAY. */
 		for( int i = 0; i < 256; ++i )
 		{
 			colors[i].r = colors[i].g = colors[i].b = (int8_t) i;
@@ -53,22 +194,69 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, bool bHea
 		type = PALETTE;
 		break;
 
-	case STBI_grey_alpha: 
+	case PNG_COLOR_TYPE_GRAY_ALPHA: 
 		type = RGBA;
-		// png_set_gray_to_rgb( png );
+		png_set_gray_to_rgb( png );
 		break;
-	// case PNG_COLOR_TYPE_PALETTE:
-	// 	type = PALETTE;
-	// 	break;
-	case STBI_rgb:
+	case PNG_COLOR_TYPE_PALETTE:
+		type = PALETTE;
+		break;
+	case PNG_COLOR_TYPE_RGB:
 		type = RGBX;
 		break;
-	case STBI_rgb_alpha:
+	case PNG_COLOR_TYPE_RGB_ALPHA:
 		type = RGBA;
 		break;
 	default:
 		FAIL_M(ssprintf( "%i", color_type) );
 	}
+
+	CHECKPOINT;
+	if( color_type == PNG_COLOR_TYPE_GRAY )
+	{
+		png_color_16 *trans;
+		if( png_get_tRNS( png, info_ptr, NULL, NULL, &trans ) == PNG_INFO_tRNS )
+			iColorKey = trans->gray;
+	}
+	else if( color_type == PNG_COLOR_TYPE_PALETTE )
+	{
+		int num_palette;
+		png_color *palette;
+		int ret = png_get_PLTE( png, info_ptr, &palette, &num_palette );
+		ASSERT( ret == PNG_INFO_PLTE );
+
+		png_byte *trans = NULL;
+		int num_trans = 0;
+		png_get_tRNS( png, info_ptr, &trans, &num_trans, NULL );
+
+		for( int i = 0; i < num_palette; ++i )
+		{
+			colors[i].r = palette[i].red;
+			colors[i].g = palette[i].green;
+			colors[i].b = palette[i].blue;
+			colors[i].a = 0xFF;
+			if( i < num_trans )
+				colors[i].a = trans[i];
+		}
+	}
+	else
+	{
+		/* If we have RGB image and tRNS, it's a color key.  Just convert it to RGBA. */
+		if( png_get_valid(png, info_ptr, PNG_INFO_tRNS) )
+		{
+			/* We don't care about RGB color keys; just convert them to alpha. */
+			png_set_tRNS_to_alpha( png );
+			type = RGBA;
+		}
+
+		/* RGB->RGBX */
+		png_set_filler( png, 0xff, PNG_FILLER_AFTER );
+	}
+
+	png_set_interlace_handling( png );
+
+	CHECKPOINT;
+	png_read_update_info( png, info_ptr );
 
 	switch( type )
 	{
@@ -91,6 +279,24 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, bool bHea
 	default:
 		FAIL_M(ssprintf( "%i", type) );
 	}
+	ASSERT( img );
+
+	/* alloca to prevent memleaks if libpng longjmps us */
+	png_byte **row_pointers = (png_byte **) alloca( sizeof(png_byte*) * height );
+	CHECKPOINT_M( ssprintf("%p",row_pointers) );
+
+	for( unsigned y = 0; y < height; ++y )
+	{
+		png_byte *p = (png_byte *) img->pixels;
+		row_pointers[y] = p + img->pitch*y;
+	}
+
+	CHECKPOINT;
+	png_read_image( png, row_pointers );
+
+	CHECKPOINT;
+	png_read_end( png, info_ptr );
+	png_destroy_read_struct( &png, &info_ptr, NULL );
 
 	return img;
 }
@@ -106,10 +312,11 @@ RageSurfaceUtils::OpenResult RageSurface_Load_PNG( const CString &sPath, RageSur
 		return RageSurfaceUtils::OPEN_FATAL_ERROR;
 	}
 
-	ret = RageSurface_Load_PNG( &f, sPath, bHeaderOnly );
+	char errorbuf[1024];
+	ret = RageSurface_Load_PNG( &f, sPath, errorbuf, bHeaderOnly );
 	if( ret == NULL )
 	{
-		error = "\n\nEither its the wrong format or RageFile was not open/didint exist. - Niko\n\n";
+		error = errorbuf;
 		return RageSurfaceUtils::OPEN_UNKNOWN_FILE_FORMAT; // XXX
 	}
 

@@ -5,10 +5,10 @@ This is an ACIO helper class, just some static functions a few pieces of these d
 #ifndef ACIO_H
 #define ACIO_H
 
-#include "../../RageLog.h"
+#include "RageLog.h"
 #include <string.h>
 #include <stdint.h>
-#include "../COM/serial.h"
+#include "arch/COM/serial.h"
 
 
 class ACIO

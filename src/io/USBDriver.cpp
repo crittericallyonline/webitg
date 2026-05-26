@@ -1,8 +1,8 @@
 #include "global.h"
-#include "../RageLog.h"
+#include "RageLog.h"
 
-#include "USBDriver.h"
-#include "../arch/USB/USBDriver_Impl.h"
+#include "io/USBDriver.h"
+#include "arch/USB/USBDriver_Impl.h"
 
 USBDriver::USBDriver()
 {

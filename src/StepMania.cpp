@@ -18,6 +18,10 @@
 
 #include "ProductInfo.h"
 
+#if defined(HAVE_SDL)
+#include "SDL_utils.h"
+#endif
+
 #include "Screen.h"
 #include "CodeDetector.h"
 #include "CommonMetrics.h"

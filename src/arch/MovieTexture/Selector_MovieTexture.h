@@ -1,7 +1,7 @@
 #ifndef SELECTOR_MOVIE_TEXTURE_H
 #define SELECTOR_MOVIE_TEXTURE_H
 
-#include "../arch_platform.h"
+#include "arch/arch_platform.h"
 
 /* MovieTexture driver selector. */
 #if defined(HAVE_DIRECTX) && !defined(XBOX) && 0

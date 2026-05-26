@@ -1,9 +1,9 @@
 #include "global.h"
 #include "LightsDriver_SystemMessage.h"
-#include "../../ScreenManager.h"
-#include "../../GameState.h"
-#include "../../Game.h"
-#include "../../PrefsManager.h"
+#include "ScreenManager.h"
+#include "GameState.h"
+#include "Game.h"
+#include "PrefsManager.h"
 
 REGISTER_LIGHTS_DRIVER( SystemMessage );
 

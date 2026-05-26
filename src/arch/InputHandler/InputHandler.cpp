@@ -1,10 +1,10 @@
-#include "../../global.h"
-#include "../../InputFilter.h"
-#include "../../RageUtil.h"
+#include "global.h"
+#include "InputFilter.h"
+#include "RageUtil.h"
 #include "InputHandler.h"
-#include "../../RageLog.h"
-#include "../../Foreach.h"
-#include "../../arch/arch_default.h"
+#include "RageLog.h"
+#include "Foreach.h"
+#include "arch/arch_default.h"
 #include "InputHandler_MonkeyKeyboard.h"
 
 Preference<bool> g_bDebugInputDrivers( "DebugInputDrivers", false );

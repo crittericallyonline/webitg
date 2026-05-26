@@ -3,7 +3,7 @@
 #ifndef LightsDriver_External_H
 #define LightsDriver_External_H
 
-#include "../../RageLog.h"
+#include "RageLog.h"
 #include "LightsDriver.h"
 
 class LightsDriver_External: public LightsDriver

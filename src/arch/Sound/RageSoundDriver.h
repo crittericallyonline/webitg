@@ -1,9 +1,9 @@
 #ifndef RAGE_SOUND_DRIVER
 #define RAGE_SOUND_DRIVER
 
-#include "../../global.h"
-#include "../../RageUtil.h"
-#include "../RageDriver.h"
+#include "global.h"
+#include "RageUtil.h"
+#include "arch/RageDriver.h"
 
 class RageSoundBase;
 class RageSoundDriver: public RageDriver

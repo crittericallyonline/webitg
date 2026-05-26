@@ -2,7 +2,7 @@
 #define ARCH_HOOKS_H
 
 /* All ArchHooks require this header for filesystem mounts. */
-#include "../../RageFileManager.h"
+#include "RageFileManager.h"
 
 class ArchHooks
 {

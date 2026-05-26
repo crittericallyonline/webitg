@@ -8,7 +8,6 @@
 
 #include "XmlFile.h"
 #include "ProductInfo.h"
-
 #include "io/USBDevice.h"
 
 #include "iButton.h"
@@ -194,7 +193,6 @@ CString DiagnosticsUtil::GetGuidFromSerial( const CString &sSerial )
 
 bool DiagnosticsUtil::HubIsConnected()
 {
-#if defined(__EMSCRIPTEN__)
 	vector<USBDevice> vDevices;
 	GetUSBDeviceList( vDevices );
 
@@ -203,16 +201,6 @@ bool DiagnosticsUtil::HubIsConnected()
 			return true;
 
 	return false;
-#else
-	vector<USBDevice> vDevices;
-	GetUSBDeviceList( vDevices );
-
-	for( unsigned i = 0; i < vDevices.size(); i++ )
-		if( vDevices[i].IsHub() )
-			return true;
-
-	return false;
-#endif
 }
 
 CString g_sInputType = "";

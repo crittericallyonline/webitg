@@ -1,7 +1,7 @@
 #ifndef SELECTOR_LOADING_WINDOW_H
 #define SELECTOR_LOADING_WINDOW_H
 
-#include "../arch_platform.h"
+#include "arch/arch_platform.h"
 
 /* LoadingWindow driver selector. */
 #include "LoadingWindow_Null.h"
@@ -17,9 +17,6 @@
 
 #elif defined(HAVE_WIN32)
 #include "LoadingWindow_Win32.h"
-
-#elif defined(__EMSCRIPTEN__)
-#include "LoadingWindow_Emscripten.h"
 
 #elif defined(HAVE_XBOX)
 #include "LoadingWindow_Xbox.h"

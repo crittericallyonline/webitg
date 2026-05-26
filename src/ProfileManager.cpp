@@ -151,14 +151,12 @@ bool ProfileManager::LoadLocalProfileFromMachine( PlayerNumber pn )
 
 void ProfileManager::GetMemoryCardProfileDirectoriesToTry( vector<CString> &asDirsToTry ) const
 {
-
-	// fuck you and your profiles!
-
+	// im sorry abt what i said :(
 	/* Try to load the preferred profile. */
-	// asDirsToTry.push_back( PREFSMAN->m_sMemoryCardProfileSubdir );
+	asDirsToTry.push_back( PREFSMAN->m_sMemoryCardProfileSubdir );
 
 	/* If that failed, try loading from all fallback directories. */
-	// split( g_sMemoryCardProfileImportSubdirs, ";", asDirsToTry, true );
+	split( g_sMemoryCardProfileImportSubdirs, ";", asDirsToTry, true );
 }
 
 bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )

@@ -1,11 +1,11 @@
 #include "global.h"
-#include "../../RageDisplay.h"
-#include "../../RageTextureManager.h"
-#include "../../RageUtil.h"
-#include "../../RageLog.h"
-#include "../../RageException.h"
+#include "RageDisplay.h"
+#include "RageTextureManager.h"
+#include "RageUtil.h"
+#include "RageLog.h"
+#include "RageException.h"
 #include "MovieTexture_Null.h"
-#include "../../RageSurface.h"
+#include "RageSurface.h"
 
 MovieTexture_Null::MovieTexture_Null(RageTextureID ID) : RageMovieTexture(ID)
 {

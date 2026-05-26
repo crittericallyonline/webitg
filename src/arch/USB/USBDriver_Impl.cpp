@@ -1,6 +1,6 @@
 #include "global.h"
 #include "USBDriver_Impl.h"
-#include "../arch_default.h"
+#include "arch/arch_default.h"
 
 USBDriver_Impl::USBDriver_Impl()
 {

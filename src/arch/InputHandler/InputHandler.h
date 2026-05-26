@@ -20,10 +20,10 @@
  * input for the same device; we have no method to allocate device numbers.
  * We don't need this now; I'll write it if it becomes needed.)
  */
-#include "../../RageInputDevice.h"	// for InputDevice
-#include "../../Preference.h"		// for the controller debug
-#include "../../DebugTimer.h"		// for timing data debug
-#include "../RageDriver.h"
+#include "RageInputDevice.h"	// for InputDevice
+#include "Preference.h"		// for the controller debug
+#include "DebugTimer.h"		// for timing data debug
+#include "arch/RageDriver.h"
 
 extern Preference<bool>		g_bDebugInputDrivers;
 

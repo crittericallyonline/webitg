@@ -23,18 +23,18 @@ libusb says the file descriptors are thread safe but you may not get the notific
 My questions on the ML went unanswered so I leave this as an experiment to test on my lab rats... But it seems to be fine
 */
 #include "global.h"
-#include "../../RageLog.h"
-#include "../../GameState.h"
-#include "../../PrefsManager.h"
-#include "../ArchHooks/ArchHooks.h"
-#include "../COM/serial.h"
+#include "RageLog.h"
+#include "GameState.h"
+#include "PrefsManager.h"
+#include "arch/ArchHooks/ArchHooks.h"
+#include "arch/COM/serial.h"
 
 #if defined(_MSC_VER)
 #define strcasecmp _stricmp
 #endif
 
 // required I/O routines
-#include "../../LightsManager.h"
+#include "LightsManager.h"
 #include "InputHandler_P3IO.h"
 
 

@@ -1,8 +1,8 @@
 #include "global.h"
-#include "../../RageLog.h"
-#include "../../RageUtil.h"
-#include "../../ScreenManager.h"
-#include "../../InputMapper.h"
+#include "RageLog.h"
+#include "RageUtil.h"
+#include "ScreenManager.h"
+#include "InputMapper.h"
 #include "InputHandler_Linux_Joystick.h"
 
 #include <stdio.h>

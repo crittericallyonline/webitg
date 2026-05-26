@@ -2,7 +2,7 @@
 #define INPUTHANDLER_DIRECTINPUT_H
 
 #include "InputHandler.h"
-#include "../../RageThreads.h"
+#include "RageThreads.h"
 
 struct DIDevice;
 class InputHandler_DInput: public InputHandler

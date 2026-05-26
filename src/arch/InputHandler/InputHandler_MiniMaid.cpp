@@ -3,11 +3,11 @@
 
 #include "global.h"
 
-#include "../../RageLog.h"
-#include "../../InputFilter.h"
-#include "../../DiagnosticsUtil.h"
-#include "../ArchHooks/ArchHooks.h"
-#include "../Lights/LightsDriver_External.h"
+#include "RageLog.h"
+#include "InputFilter.h"
+#include "DiagnosticsUtil.h"
+#include "arch/ArchHooks/ArchHooks.h"
+#include "arch/Lights/LightsDriver_External.h"
 
 #include "InputHandler_MiniMaid.h"
 

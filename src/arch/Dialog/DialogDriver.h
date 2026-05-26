@@ -2,8 +2,8 @@
 #define DIALOG_BOX_DRIVER_H
 
 #include "Dialog.h"
-#include "../../Preference.h"
-#include "../../RageUtil.h"
+#include "Preference.h"
+#include "RageUtil.h"
 #include <map>
 
 extern Preference<bool> g_bShowThemeErrors;
@@ -27,7 +27,7 @@ class DialogDriver_Null : public DialogDriver { };
 typedef DialogDriver *(*CreateDialogDriverFn)();
 struct RegisterDialogDriver
 {
-	static std::map<istring, CreateDialogDriverFn> *g_pRegistrees;
+	static map<istring, CreateDialogDriverFn> *g_pRegistrees;
 	RegisterDialogDriver( const istring &sName, CreateDialogDriverFn pfn );
 };
 #define REGISTER_DIALOG_DRIVER( name ) \

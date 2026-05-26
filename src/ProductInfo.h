@@ -3,9 +3,6 @@
 #ifndef PRODUCT_INFO_H
 #define PRODUCT_INFO_H
 
-#define BUILD_DATE "2/15/26"
-#define BUILD_REVISION_TAG "1.0.0"
-
 namespace ProductInfo
 {
 	/* Binary name + release (e.g. "OpenITG", "beta3") */

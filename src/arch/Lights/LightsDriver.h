@@ -3,8 +3,8 @@
 #ifndef LightsDriver_H
 #define LightsDriver_H
 
-#include "../../LightsManager.h"
-#include "../RageDriver.h"
+#include "LightsManager.h"
+#include "arch/RageDriver.h"
 
 struct LightsState;
 

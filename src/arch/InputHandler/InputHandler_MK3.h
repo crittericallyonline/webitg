@@ -2,8 +2,8 @@
 #define INPUT_HANDLER_MK3_H
 
 #include "InputHandler.h"
-#include "../../RageThreads.h"
-#include "../../LightsMapper.h"
+#include "RageThreads.h"
+#include "LightsMapper.h"
 
 class InputHandler_MK3: public InputHandler
 {

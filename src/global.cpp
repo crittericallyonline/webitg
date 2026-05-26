@@ -26,12 +26,13 @@ void NORETURN sm_crash( const char *reason )
 
 #if defined(CRASH_HANDLER)
 	ForceCrashHandler( reason );
-#elif !defined(__EMSCRIPTEN__)
-	*(char*)0=0; // makes the compiler scream at me.
-#endif
+#else
+	*(char*)0=0;
+
 	/* This isn't actually reached.  We just do this to convince the compiler that the
 	 * function really doesn't return. */
 	while(1);
+#endif
 
 #if defined(_WINDOWS)
 	/* Do something after the above, so the call/return isn't optimized to a jmp; that

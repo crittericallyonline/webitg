@@ -11,7 +11,9 @@ LUA_REGISTER_CLASS( DifficultyMeter )
 REGISTER_ACTOR_CLASS( DifficultyMeter );
 
 
-DifficultyMeter::DifficultyMeter() { }
+DifficultyMeter::DifficultyMeter()
+{
+}
 
 static CString GetDifficultyCommandName( Difficulty d ) { return "Set"+DifficultyToString(d); }
 static CString GetCourseDifficultyCommandName( CourseDifficulty d ) { return "Set"+CourseDifficultyToString(d)+"Course"; }

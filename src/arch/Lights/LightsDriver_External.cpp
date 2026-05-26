@@ -1,9 +1,9 @@
 // an indirect lights driver that can be accessed elsewhere
 
-#include "../../global.h"
+#include "global.h"
 
-#include "../../RageLog.h"
-#include "../../RageUtil.h"
+#include "RageLog.h"
+#include "RageUtil.h"
 #include "LightsDriver_External.h"
 
 REGISTER_LIGHTS_DRIVER( External );

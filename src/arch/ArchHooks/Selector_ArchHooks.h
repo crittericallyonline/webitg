@@ -1,7 +1,7 @@
 #ifndef SELECTOR_ARCH_HOOKS_H
 #define SELECTOR_ARCH_HOOKS_H
 
-#include "../arch_platform.h"
+#include "arch/arch_platform.h"
 
 /* ArchHooks driver selector. */
 #if defined(HAVE_DARWIN)

@@ -2,7 +2,7 @@
 #define RAGE_FILE_DRIVER_CRYPT_ITG2_H
 
 #include "RageFileDriverCrypt.h"
-#include <aes.h>
+#include "aes/aes.h"
 #include <map>
 
 #define REGISTER_ITG2_FILE_DRIVER(name,type,secret) \

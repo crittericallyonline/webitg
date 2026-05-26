@@ -10,7 +10,7 @@
  */
 
 #include "MovieTexture.h"
-#include "../../RageTexture.h"
+#include "RageTexture.h"
 
 class MovieTexture_Null : public RageMovieTexture {
 private:

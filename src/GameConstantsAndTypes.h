@@ -343,7 +343,7 @@ struct DisplayBpms
 	float GetMax() const;
 	bool BpmIsConstant() const;
 	bool IsSecret() const;
-	std::vector<float> vfBpms;
+	vector<float> vfBpms;
 };
 
 enum StyleType

@@ -27,8 +27,6 @@
 #include "archutils/Win32/crash.h"
 #elif defined(LINUX) || defined(DARWIN)
 #include "archutils/Unix/CrashHandler.h"
-#elif defined(__EMSCRIPTEN__)
-#include "archutils/Emscripten/CrashHandler.h"
 #endif
 #endif
 

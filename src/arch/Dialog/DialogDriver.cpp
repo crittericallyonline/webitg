@@ -1,7 +1,7 @@
 #include "global.h"
 #include "DialogDriver.h"
-#include "../../Foreach.h"
-#include "../../RageLog.h"
+#include "Foreach.h"
+#include "RageLog.h"
 
 Preference<bool> g_bShowThemeErrors( "ShowThemeErrors", false );
 

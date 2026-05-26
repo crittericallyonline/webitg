@@ -1,18 +1,18 @@
-#include "../../global.h"
+#include "global.h"
 #include "LightsDriver.h"
-#include "../../RageLog.h"
-#include "../../Foreach.h"
-#include "../arch_default.h"
+#include "RageLog.h"
+#include "Foreach.h"
+#include "arch/arch_default.h"
 
 /* We explicitly load these drivers. */
-#include "LightsDriver_ActorMessage.h"
-#include "LightsDriver_SystemMessage.h"
-#include "LightsDriver_External.h"
+#include "arch/Lights/LightsDriver_ActorMessage.h"
+#include "arch/Lights/LightsDriver_SystemMessage.h"
+#include "arch/Lights/LightsDriver_External.h"
 
 DriverList LightsDriver::m_pDriverList;
 
-#include "../../RageFileManager.h"
-#include "../../RageUtil.h"
+#include "RageFileManager.h"
+#include "RageUtil.h"
 
 void LightsDriver::Create( const CString &sDrivers, vector<LightsDriver *> &Add )
 {

@@ -50,17 +50,7 @@
 
 	#define DEFAULT_MOVIE_DRIVER_LIST "FFMpeg,Null"
 	#define DEFAULT_SOUND_DRIVER_LIST "ALSA-sw,OSS,Null"
-#elif defined(__EMSCRIPTEN__)
-	#include "LoadingWindow/LoadingWindow_Emscripten.h" // wow i forgot to untag this lol
-	// #include "ArchHooks/ArchHooks_Emscripten.h"
-	#include "ArchHooks/ArchHooks_Emscripten.h"
-	// we dont use GTK or X11 so we wont do any of that lol!
-	// #include "LowLevelWindow/LowLevelWindow_X11.h"
-	// #include "USB/USBDriver_Impl_Libusb.h" // NO USB IMPLEMENTATION YET
-	#define DEFAULT_INPUT_DRIVER_LIST "GLFW"
-	#define DEFAULT_MOVIE_DRIVER_LIST "Null"
-	#define DEFAULT_SOUND_DRIVER_LIST "ALSA-sw,OSS,Null"
-	
+
 #else
 	#error Which arch?
 #endif

@@ -1,9 +1,9 @@
 #include "global.h"
 #include "Dialog.h"
 #include "DialogDriver.h"
-#include "../../PrefsManager.h"
-#include "../../RageUtil.h"
-#include "../../RageLog.h"
+#include "PrefsManager.h"
+#include "RageUtil.h"
+#include "RageLog.h"
 
 /* the old identifier should maintain backwards compatibility. */
 static Preference<CString> g_sIgnoredDialogs( "IgnoredMessageWindows", "" );

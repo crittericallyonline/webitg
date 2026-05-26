@@ -1,10 +1,10 @@
-#include "../../global.h"
+#include "global.h"
 #include "LowLevelWindow.h"
-#include "../arch_default.h"
+#include "arch/arch_default.h"
 
 LowLevelWindow *LowLevelWindow::Create()
 {
-	return (LowLevelWindow *)(new ARCH_LOW_LEVEL_WINDOW);
+	return new ARCH_LOW_LEVEL_WINDOW;
 }
 
 /*
