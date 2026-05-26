@@ -44,30 +44,24 @@ EzSockets::EzSockets()
 	
 	sock = INVALID_SOCKET;
 	blocking = true;
-#if !defined(__EMSCRIPTEN__)
 	scks = new fd_set;
 	times = new timeval;
 	times->tv_sec = 0;
 	times->tv_usec = 0;
-#endif
 	state = skDISCONNECTED;
 }
 
 EzSockets::~EzSockets()
 {
 	close();
-#if !defined(__EMSCRIPTEN__)
 	delete scks;
 	delete times;
-#endif
 }
 
 void EzSockets::setTimeout(int sec, int usec)
 {
-#if !defined(__EMSCRIPTEN__)
 	times->tv_sec = sec;
 	times->tv_usec = usec;
-#endif
 }
 
 //Check to see if the socket has been created
@@ -252,12 +246,10 @@ bool EzSockets::connect(const std::string& host, unsigned short port)
 
 bool EzSockets::CanRead()
 {
-#if !defined(__EMSCRIPTEN__)
 	FD_ZERO(scks);
 	FD_SET((unsigned)sock, scks);
 	
 	return select(sock+1,scks,NULL,NULL,times) > 0;
-#endif
 }
 
 bool EzSockets::IsErrorNoSelect()
@@ -272,25 +264,23 @@ bool EzSockets::IsError()
 {
 	if (state == skERROR)
 		return true;
-#if !defined(__EMSCRIPTEN__)
+	
 	FD_ZERO(scks);
 	FD_SET((unsigned)sock, scks);
+	
 	if (select(sock+1, NULL, NULL, scks, times) >=0 )
 		return false;
-#endif
+	
 	state = skERROR;
 	return true;
 }
 
 bool EzSockets::CanWrite()
 {
-#if !defined(__EMSCRIPTEN__)
 	FD_ZERO(scks);
 	FD_SET((unsigned)sock, scks);
+	
 	return select(sock+1, NULL, scks, NULL, times) > 0;
-#else
-	return 0;
-#endif
 }
 
 void EzSockets::update()

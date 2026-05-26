@@ -149,11 +149,11 @@ private:
 	int sock;
 	struct sockaddr_in addr;
 
-#if !defined(__EMSCRIPTEN__)
+
 	//Used for Select() command
 	fd_set  *scks;
 	timeval *times;
-#endif
+
 	//Buffers
 };
 
