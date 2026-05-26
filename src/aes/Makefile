@@ -1,7 +1,7 @@
 CC = emcc
 CXX = em++
 
-INCLUDES=-I ./include
+INCLUDES=-I ./
 BUILD_DIR=./build
 SRC=./src
 
