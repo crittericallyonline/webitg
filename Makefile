@@ -112,9 +112,46 @@
 
 # clean: $(ARCHIVES)
 # 	@rm -rf $(ARCHIVE) $(BUILD_DIR)
-# 	@$(MAKE) -C $(basename $(notdir $@)) 
+# 	@$(MAKE) -C $(basename $(notdir $@))
 
-ROOT = $(realpath .)
+
+# ROOT = $(realpath .)
+# MAKEFILES := $(shell find . -name "*.mk")
+
+# main: $(MAKEFILES)
+# 	@echo 
+# 	@echo $(MAKEFILES)
+# 	make --makefile=makefiles/lua.mk $(IN)
+ROOT=$(realpath .)
+IN = CC=emcc CXX=em++ ROOT=$(ROOT)/src/lua-5.0 CFLAGS=-pthread ARCHIVE=$(ROOT)/archive
+MK := $(shell find $(realpath .) -name "*.mk")
+MKNAMES := $(basename $(notdir $(MK)))
+ARCHIVES = $(patsubst %, archive/%.a, $(MKNAMES))
+
+all: libraries main
 
 main:
-	make --makefile=makefiles/lua.mk CC=emcc CXX=em++ ROOT=$(ROOT)/src/lua-5.0 CFLAGS=-pthread
+	@echo $(IN)
+
+archive/%.a: $(MK)
+# 	@echo 
+# 	@echo "Making..."
+# 	@echo "cd $(dir $<)"
+# 	@echo $(notdir $<)
+# 	@echo $(IN)
+# 	@echo 
+	@mkdir -p archive
+	@make -C $(dir $<) -f $(notdir $<) $(IN)
+
+libraries: $(ARCHIVES)
+	@mkdir -p archive
+	@echo "Made archived libraries"
+
+%-clean : $(patsubst %-clean, %, %)
+	@echo $(IN)
+	@make -C $(dir $<) -f $(notdir $<) clean
+
+clean-all: $(patsubst %, %-clean, $(MK))
+	@rm -rf archive/
+	@echo "Deleted d archive/"
+	
