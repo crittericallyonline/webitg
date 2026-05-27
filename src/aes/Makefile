@@ -1,8 +1,9 @@
 CC = emcc
 CXX = em++
 
-INCLUDES=-I.
-BUILD_DIR=build
+INCLUDES=-I ./
+BUILD_DIR=./build
+SRC=./src
 
 SOURCES := $(shell find -name "*.c")
 OBJECTS := $(patsubst %.c, $(BUILD_DIR)/%.o, $(SOURCES))
