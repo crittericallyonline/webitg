@@ -72,46 +72,49 @@
 # 	@$(MAKE) -C lib clean
 
 
-MAKE = emmake make
+# MAKE = emmake make
 
-#first we have lua-5.0
-CWD = $(realpath .)
-SRC = $(CWD)/src
-ARCHIVE = $(CWD)/archive
+# #first we have lua-5.0
+# CWD = $(realpath .)
+# SRC = $(CWD)/src
+# ARCHIVE = $(CWD)/archive
 
-INCLUDES = -I$(SRC)
+# INCLUDES = -I$(SRC)
 
-# SOURCES := $(shell find $(SRC) -maxdepth 1 -name "*.cpp")
-ARCHIVES=$(ARCHIVE)/lua-5.0.a $(ARCHIVE)/mad-0.15.1b.a $(ARCHIVE)/aes.a
+# # SOURCES := $(shell find $(SRC) -maxdepth 1 -name "*.cpp")
+# ARCHIVES=$(ARCHIVE)/lua-5.0.a $(ARCHIVE)/mad-0.15.1b.a $(ARCHIVE)/aes.a $(ARCHIVE)/libtomcrypt.a
 
-# $(BUILD_DIR)/%.o : $(SRC)/%.cpp
-# 	@mkdir -p $(@D);
-# 	@$(CXX) $(INCLUDES) $(DEFINES) $(CFLAGS) -c $< -o $@
-# 	@echo "Finished building: $@ with $(CXX)"
+# # $(BUILD_DIR)/%.o : $(SRC)/%.cpp
+# # 	@mkdir -p $(@D);
+# # 	@$(CXX) $(INCLUDES) $(DEFINES) $(CFLAGS) -c $< -o $@
+# # 	@echo "Finished building: $@ with $(CXX)"
 
-# $(BUILD_DIR)/%.o : $(SRC)/%.c
-# 	@mkdir -p $(@D);
-# 	@$(CC) $(DEFINES) $(CFLAGS) -c $< -o $@
-# 	@echo "Finished building: $@ with $(CC)"
+# # $(BUILD_DIR)/%.o : $(SRC)/%.c
+# # 	@mkdir -p $(@D);
+# # 	@$(CC) $(DEFINES) $(CFLAGS) -c $< -o $@
+# # 	@echo "Finished building: $@ with $(CC)"
  
-INCS=-I$(SRC)/lua-5.0/include $(SRC)/libtomcrypt/src/headers
+# INCS=-I$(SRC)/lua-5.0/include $(SRC)/libtomcrypt/
 
-NETWORKING=-DWITHOUT_NETWORKING
+# NETWORKING=-DWITHOUT_NETWORKING
 
-StepMania: $(ARCHIVES)
-	@$(MAKE) --makefile=$(CWD)/stepmania.mk INCLUDE=$(INCS) NETWORKING=$(NETWORKING)
-# 	em++ src/StepMania.cpp
+# StepMania: $(ARCHIVES)
+# 	@$(MAKE) --makefile=$(CWD)/stepmania.mk INCLUDE=$(INCS) NETWORKING=$(NETWORKING)
+# # 	em++ src/StepMania.cpp
 
 
 
-$(ARCHIVE)/%.a: $(SRC)/%
-	@mkdir -p $(@D)
-	@$(MAKE) -C $< EMFLAGS=-pthread ARCHIVE=$(ARCHIVE) NAME=$(basename $(notdir $@))
+# $(ARCHIVE)/%.a: $(SRC)/%
+# 	@mkdir -p $(@D)
+# 	@$(MAKE) -C $< EMFLAGS=-pthread ARCHIVE=$(ARCHIVE) NAME=$(basename $(notdir $@))
 
-.PHONY: clean all
+# .PHONY: clean all
 
-clean: $(ARCHIVES)
-	@rm -rf $(ARCHIVE) $(BUILD_DIR)
-	@$(MAKE) -C $(basename $(notdir $@)) 
+# clean: $(ARCHIVES)
+# 	@rm -rf $(ARCHIVE) $(BUILD_DIR)
+# 	@$(MAKE) -C $(basename $(notdir $@)) 
 
--include $(DEPS)
+ROOT = $(realpath .)
+
+main:
+	make --makefile=makefiles/lua.mk CC=emcc CXX=em++ ROOT=$(ROOT)/src/lua-5.0 CFLAGS=-pthread
