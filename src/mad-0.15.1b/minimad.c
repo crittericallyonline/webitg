@@ -174,7 +174,7 @@ enum mad_flow error(void *data,
 {
   struct buffer *buffer = data;
 
-  fprintf(stderr, "decoding error 0x%04x (%s) at byte offset %u\n",
+  fprintf(stderr, "decoding error 0x%04x (%s) at byte offset %td\n",
 	  stream->error, mad_stream_errorstr(stream),
 	  stream->this_frame - buffer->start);
 
