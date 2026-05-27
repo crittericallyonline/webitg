@@ -1,14 +1,13 @@
 CC = emcc
 CXX = em++
 
-INCLUDES=-I ./include
-BUILD_DIR=./build
-SRC=./src
+INCLUDES=-I.
+BUILD_DIR=build
 
-SOURCES := $(shell find $(SRC) -name "*.c")
-OBJECTS := $(patsubst $(SRC)/%.c, $(BUILD_DIR)/%.o, $(SOURCES))
+SOURCES := $(shell find -name "*.c")
+OBJECTS := $(patsubst %.c, $(BUILD_DIR)/%.o, $(SOURCES))
 
-$(BUILD_DIR)/%.o : $(SRC)/%.c
+$(BUILD_DIR)/%.o : %.c
 	@mkdir -p $(@D);
 	@$(CC) $(INCLUDES) $(EMFLAGS) -c $< -o $@
 	@echo "$(CC): $@"

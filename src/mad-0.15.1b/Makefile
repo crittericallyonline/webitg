@@ -2,15 +2,15 @@ CC = emcc
 CXX = em++
 
 INCLUDES=-I.
-BUILD_DIR=./build
-SRC=./
+BUILD_DIR=build
+FPM=-DFPM_64BIT
 
-SOURCES := $(shell find $(SRC) -name "*.c")
-OBJECTS := $(patsubst $(SRC)/%.c, $(BUILD_DIR)/%.o, $(SOURCES))
+SOURCES := $(shell find -name "*.c")
+OBJECTS := $(patsubst %.c, $(BUILD_DIR)/%.o, $(SOURCES))
 
-$(BUILD_DIR)/%.o : $(SRC)/%.c
+$(BUILD_DIR)/%.o : %.c
 	@mkdir -p $(@D);
-	@$(CC) $(INCLUDES) $(EMFLAGS) -c $< -o $@
+	@$(CC) $(INCLUDES) $(EMFLAGS) $(FPM) -DNDEBUG -c $< -o $@
 	@echo "$(CC): $@"
 
 all: $(OBJECTS)
