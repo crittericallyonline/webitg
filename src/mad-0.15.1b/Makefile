@@ -10,7 +10,7 @@ OBJECTS := $(patsubst %.c, $(BUILD_DIR)/%.o, $(SOURCES))
 
 $(BUILD_DIR)/%.o : %.c
 	@mkdir -p $(@D);
-	@$(CC) $(INCLUDES) $(EMFLAGS) $(FPM) -DNDEBUG -c $< -o $@
+	@$(CC) $(INCLUDES) $(EMFLAGS) $(FPM) -DNDEBUG -c $< -o $@ -Oz
 	@echo "$(CC): $@"
 
 all: $(OBJECTS)
