@@ -148,14 +148,24 @@
 # 	@rm -rf archive/
 # 	@echo "Deleted d archive/"
 
+
+EMSCRIPTEN=1
+-include src/EMSCRIPTEN.am
+
 ROOT = $(realpath .)
 ARCHIVE = $(ROOT)/archive
 
+SOURCES := $(filter-out %.h, $(openitg_SOURCES))
+
 MK := $(shell find . -name "*.mk")
+# -MMD -MP
 
-main: $(patsubst %.mk, %.a, $(MK))
+all: archives OpenITG
+archives: $(patsubst %.mk, %.a, $(MK))
+OpenITG: $(patsubst %.cpp, %.o, $(SOURCES))
 
-ifndef CLEANING
+
+ifdef !CLEANING
 %.a: %.mk
 	@mkdir -p $(ARCHIVE)
 	@make -C $(dir $<) -f $(notdir $<) DEST=$(ARCHIVE)/$(notdir $@) GENMAPS=$(GENMAPS) CC=emcc CXX=em++ ROOT=$(ROOT)
@@ -164,6 +174,11 @@ else
 	make -C $(dir $<) -f $(notdir $<) clean
 	@echo "Cleaned $<"
 endif
+
+%.o: src/%.cpp
+	@em++ -c $<
+	@echo "Created Obhect file: $@"
+
 
 ifndef CLEANING
 clean:
