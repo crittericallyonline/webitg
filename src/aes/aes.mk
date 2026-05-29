@@ -9,6 +9,7 @@ DEFS := $(patsubst %.c, %.d, $(SOURCES))
 OBJECTS := $(patsubst %.c, %.o, $(SOURCES))
 
 $(DEST): $(OBJECTS)
+	@echo "$(CC) -> $<"
 	@emar rcs $@ $(OBJECTS)
 	@echo "Built $@"
 

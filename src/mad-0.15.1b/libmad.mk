@@ -1,7 +1,7 @@
 ifdef GENMAPS
 CFLAGS+=-MMD -MP -Wall
 endif
-NAME=libresample.a
+NAME=libmad.a
 DEST+=$(NAME)
 SOURCES := $(shell find . -name "*.c")
 HEADERS := $(shell find . -name "*.h")
@@ -19,6 +19,7 @@ $(DEST): $(OBJECTS)
 	@echo "Built $@"
 
 %.o: %.c
+	@echo "$(CC) -> $<"
 	@$(CC) -c $< -o $@ $(CFLAGS) $(DEFINES)
 
 clean:

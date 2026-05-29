@@ -4,7 +4,6 @@ endif
 NAME=lualib.a
 DEST+=$(NAME)
 SRC=src
-BUILD_DIR=build
 SOURCES := $(shell find $(SRC) -name "*.c")
 HEADERS := $(shell find $(SRC) -name "*.h")
 DEFS := $(patsubst %.c, %.d, $(SOURCES))
@@ -16,6 +15,7 @@ $(DEST): $(OBJECTS)
 	@echo "Built $@"
 
 %.o: %.c
+	@echo "$(CC) -> $<"
 	@$(CC) -c $< -o $@ $(CFLAGS) $(INCLUDE)
 
 clean:
