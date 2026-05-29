@@ -158,7 +158,7 @@ main: $(patsubst %.mk, %.a, $(MK))
 ifndef CLEANING
 %.a: %.mk
 	@mkdir -p $(ARCHIVE)
-	@make -C $(dir $<) -f $(notdir $<) DEST=$(ARCHIVE)/$(notdir $@) $(GENMAPS) CC=emcc CXX=em++
+	@make -C $(dir $<) -f $(notdir $<) DEST=$(ARCHIVE)/$(notdir $@) GENMAPS=$(GENMAPS) CC=emcc CXX=em++
 else
 %.a: %.mk
 	make -C $(dir $<) -f $(notdir $<) clean
