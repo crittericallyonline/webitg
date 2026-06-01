@@ -60,14 +60,19 @@ pull request".
 ## How to build for wasm
 
 Dependencies:
-- [make (Arch Linux)](https://archlinux.org/packages/core/x86_64/make/)
-- [Emscripten (Arch Linux)](https://archlinux.org/packages/core/x86_64/emscripten/)
+- [CMake](https://cmake.org)
+- [Emscripten](https://emscripten.org)
 
+### Building
 1. Edit the [CMakeLists.txt](CMakeLists.txt) file to customize the options given in any specific way you like/prefer.
-2. Build `extern/FFmpeg`
-    - run `cd extern/FFmpeg` then `emconfigure ./configure --disable-asm --ar=emar --arch=x86 --cc=emcc --cxx=em++ --ranlib=emranlib` to configure the build tools when compiling, specified cc, cxx, ar, ranlib with emscripten variants.
-    - next run `emmake make -j -s` (to specify the amount of cores, put a number after j to prevent lag, or remove -j entirely.)
-    - change directory to the source folder `src` and create a [config.h](src/config.h) file and put this snippet or make your own
+2. Build [FFmpeg](https://github.com/ffmpeg/ffmpeg):
+```sh
+cd extern/FFmpeg && \
+emconfigure ./configure --disable-asm --ar=emar --arch=x86 --cc=emcc --cxx=em++ --ranlib=emranlib && \
+emmake make -j -s # its laggy but faster, to make your pc usable remove -j or specify -j(NUMBER OF CORES)
+```
+3. make a entry for [config.h](src/config.h) in the src directory
+- src/config.h
 ```h
 #ifndef STEPMANIA_CONFIG_H
 #define STEPMANIA_CONFIG_H
@@ -87,8 +92,10 @@ Dependencies:
 #define BUILD_REV_TAG "0.1.0"
 #endif // STEPMANIA_CONFIG_H
 ```
-<!-- 2. Run make with `$ emmake make` -->
-
+4. Find your `Emscripten.cmake` Toolchain file, if you followed the [Emscripten setup](https://emscripten.org/docs/getting_started/downloads.html) it should be located in your $HOME directory, example: `~/emsdk/cmake/Modules/Platform/Emscripten.cmake`, if you installed it by system package, it will be located in `/usr/lib/emscripten/cmake/Modules/Platform/Emscripten.cmake`, we will use this as a cmake toolchain argument
+5. Create the directory in which you will put the final build of the wasm in. `mkdir -p <BUILD_DIR>` then `cd <BUILD_DIR>`
+    - . for how many directorys youve made, you will put `../` for each directory entered when building to reach `CMakeLists.txt`.
+6. `emcmake cmake ../
 ## How to build for arcade
 
 1. Choose a location for your chroot:  MY_CHROOT=/home/cmyers/chroot
