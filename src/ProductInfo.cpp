@@ -2,16 +2,9 @@
 #include "ProductInfo.h"
 
 
+#ifndef __EMSCRIPTEN__
 #include <ProductInfo.inc>
-// #define PRODUCT_NAME "OpenITG"
-// #define PRODUCT_VER "alpha 6 DEV"
-// // #define PRODUCT_VER "3.9 alpha 23"
-// #define PRODUCT_NAME_VER "${PRODUCT_NAME} ${PRODUCT_VER}"
-
-// // String used for the install directory and registry locations
-// // Official releases = "StepMania"; intermediate releases = "StepMania CVS".
-// #define PRODUCT_ID "OpenITG alpha4"
-
+#endif
 
 #if defined(HAVE_CONFIG_H)
 	/* included in global.h */
@@ -56,7 +49,7 @@ VERSION_STRING( Version, BUILD_VERSION );
 VERSION_STRING( BuildDate, BUILD_DATE );
 VERSION_STRING( BuildRevision, BUILD_REVISION_TAG );
 
-VERSION_STRING( CrashReportURL, "https://github.com/openitg/openitg/issues" );
+VERSION_STRING( CrashReportURL, "https://github.com/crittericallyonline/webitg/issues" );
 
 VERSION_STRING( FullVersion, g_sName + " " + GetPlatform() + " " + g_sVersion );
 

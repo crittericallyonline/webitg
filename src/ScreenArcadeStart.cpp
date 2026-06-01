@@ -154,6 +154,7 @@ bool ScreenArcadeStart::LoadHandler()
 
 		for( unsigned i = 0; i < vDevices.size(); i++ )
 		{
+#ifndef __EMSCRIPTEN__
 			if( vDevices[i].IsITGIO() )
 				iBoard = BOARD_ITGIO;
 			else if( vDevices[i].IsPIUIO() )
@@ -162,6 +163,7 @@ bool ScreenArcadeStart::LoadHandler()
 				iBoard = BOARD_MINIMAID;
 			else if( vDevices[i].IsP3IO() )
 				iBoard = BOARD_P3IO;
+#endif
 
 			// early abort if we found something
 			if( iBoard != BOARD_NONE )

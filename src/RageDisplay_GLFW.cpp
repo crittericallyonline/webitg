@@ -45,7 +45,6 @@
 #include "archutils/Darwin/Vsync.h"
 #endif
 
-GLExt_t GLExt
 
 #include "RageDisplay.h"
 #include "RageDisplay_OGL_Extensions.h"

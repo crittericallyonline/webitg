@@ -728,6 +728,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			}
 			break;
 		}
+		default: break;
 	}
 
 	// init music status icons
@@ -858,6 +859,7 @@ void MusicWheel::DrawItem( int i )
 			SetItemPosition( *display, fThisBannerPositionOffsetFromSelection );
 		}
 		break;
+	default: break;
 	}
 
 	WheelBase::DrawItem(i, display, fThisBannerPositionOffsetFromSelection);
@@ -923,6 +925,7 @@ void MusicWheel::UpdateSwitch()
 			case SORT_MEDIUM_METER:		dc = DIFFICULTY_MEDIUM;		break;
 			case SORT_HARD_METER:		dc = DIFFICULTY_HARD;		break;
 			case SORT_CHALLENGE_METER:	dc = DIFFICULTY_CHALLENGE;	break;
+			default: break;
 			}
 			if( dc != DIFFICULTY_INVALID )
 			{
