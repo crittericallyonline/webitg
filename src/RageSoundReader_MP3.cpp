@@ -7,6 +7,7 @@
 #include <cstdio>
 #include <cerrno>
 
+#ifndef __EMSCRIPTEN__
 #ifdef _MSC_VER
 #include "mad-0.15.1b/mad.h"
 #ifdef _XBOX
@@ -20,6 +21,9 @@
 #endif
 #else
 #include <mad.h>
+#endif
+#else
+#include <mad-0.15.1b/mad.h>
 #endif
 
 /* ID3 code from libid3: */

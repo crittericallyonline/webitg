@@ -67,6 +67,26 @@ Dependencies:
 2. Build `extern/FFmpeg`
     - run `cd extern/FFmpeg` then `emconfigure ./configure --disable-asm --ar=emar --arch=x86 --cc=emcc --cxx=em++ --ranlib=emranlib` to configure the build tools when compiling, specified cc, cxx, ar, ranlib with emscripten variants.
     - next run `emmake make -j -s` (to specify the amount of cores, put a number after j to prevent lag, or remove -j entirely.)
+    - change directory to the source folder `src` and create a [config.h](src/config.h) file and put this snippet or make your own
+```h
+#ifndef STEPMANIA_CONFIG_H
+#define STEPMANIA_CONFIG_H
+#define PRODUCT_NAME "OpenITG"
+#define PRODUCT_VER "alpha 6 DEV"
+// #define PRODUCT_VER "3.9 alpha 23"
+#define PRODUCT_NAME_VER "${PRODUCT_NAME} ${PRODUCT_VER}"
+
+// String used for the install directory and registry locations
+// Official releases = "StepMania"; intermediate releases = "StepMania CVS".
+#define PRODUCT_ID "OpenITG alpha4"
+
+#define BUILD_DATE "202060531"
+#define BUILD_REVISION_TAG "0.1.0"
+#define BUILD_VERSION "unknown version"
+#define BUILD_REV_DATE "202060531"
+#define BUILD_REV_TAG "0.1.0"
+#endif // STEPMANIA_CONFIG_H
+```
 <!-- 2. Run make with `$ emmake make` -->
 
 ## How to build for arcade
