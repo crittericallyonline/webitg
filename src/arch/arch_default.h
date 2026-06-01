@@ -50,7 +50,7 @@
 
 #elif defined(__EMSCRIPTEN__)
 	#include "ArchHooks/ArchHooks_Unix.h"
-	#include "LowLevelWindow/LowLevelWindow_SDL.h"
+	#include "LowLevelWindow/LowLevelWindow_Null.h"
 	#include "USB/USBDriver_Impl_Libusb.h"
 
 	// #if defined(LINUX)
