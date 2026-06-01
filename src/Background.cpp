@@ -515,8 +515,9 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 			BackgroundUtil::GetGlobalRandomMovies( pSong, "", vsThrowAway, vsNames );
 			break;
 		}
-
+#ifndef __EMSCRIPTEN__
 		random_shuffle( vsNames.begin(), vsNames.end() );
+#endif
 		int iSize = min( (int)PREFSMAN->m_iNumBackgrounds, (int)vsNames.size() );
 		vsNames.resize( iSize );
 
@@ -761,7 +762,7 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 		if( iter == m_BGAnimations.end() )
 		{
 			XNode *pNode = change.m_def.CreateNode();
-			LOG->Warn( "Tried to switch to a background that was never loaded\n" + pNode->GetXML() );
+			LOG->Warn( "%s\n%s", "Tried to switch to a background that was never loaded", pNode->GetXML().c_str() );
 			SAFE_DELETE( pNode );
 			return;
 		}

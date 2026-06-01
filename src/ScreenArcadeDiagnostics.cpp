@@ -110,6 +110,7 @@ void ScreenArcadeDiagnostics::HandleScreenMessage( const ScreenMessage SM )
 	case SM_GoToPrevScreen:
 		SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
 		break;
+	default: break;
 	}
 }
 

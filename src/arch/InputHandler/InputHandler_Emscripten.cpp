@@ -1,20 +1,21 @@
-#include "../../global.h"
-#include "../../RageLog.h"
-#include "../../DiagnosticsUtil.h"
+#include "global.h"
+#include "RageLog.h"
+#include "RageDisplay.h"
 
-#include "../ArchHooks/ArchHooks.h"
+#include "arch/ArchHooks/ArchHooks.h"
 
 
 // required I/O routines
 #include "InputHandler_Emscripten.h"
 
 // debug stuff
-#include "../../RageUtil.h"
-#include "../../ScreenManager.h"
+#include "RageUtil.h"
+#include "ScreenManager.h"
+#include "DiagnosticsUtil.h"
 
 #include <GLFW/emscripten_glfw3.h>
 
-REGISTER_INPUT_HANDLER( Emscripten );
+// REGISTER_INPUT_HANDLER( Emscripten );
 
 InputHandler_Emscripten::InputHandler_Emscripten()
 {

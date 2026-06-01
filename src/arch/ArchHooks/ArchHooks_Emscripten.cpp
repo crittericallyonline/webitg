@@ -1,15 +1,15 @@
-#include "../../global.h"
-#include "../../RageLog.h"
-#include "../../RageUtil.h"
-#include "../../RageThreads.h"
-#include "../../StepMania.h"
+#include "global.h"
+#include "RageLog.h"
+#include "RageUtil.h"
+#include "RageThreads.h"
+#include "StepMania.h"
 
 #include "ArchHooks_Emscripten.h"
-#include "../../archutils/Emscripten/SignalHandler.h"
-#include "../../archutils/Emscripten/GetSysInfo.h"
-#include "../../archutils/Emscripten/EmscriptenThreadHelpers.h"
-#include "../../archutils/Emscripten/EmergencyShutdown.h"
-#include "../../archutils/Emscripten/AssertionHandler.h"
+#include "archutils/Emscripten/SignalHandler.h"
+#include "archutils/Emscripten/GetSysInfo.h"
+#include "archutils/Emscripten/EmscriptenThreadHelpers.h"
+#include "archutils/Emscripten/EmergencyShutdown.h"
+#include "archutils/Emscripten/AssertionHandler.h"
 
 #include <sys/time.h>
 #include <sys/resource.h>

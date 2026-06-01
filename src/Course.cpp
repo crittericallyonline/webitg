@@ -628,7 +628,9 @@ void Course::AutogenOniFromArtist( CString sArtistName, CString sArtistNameTrans
 	 * so we always get the same set of songs unless the song set changes. */
 	{
 		RandomGen rng( GetHashForString( sArtistName ) + aSongs.size() );
+#ifndef __EMSCRIPTEN__
 		random_shuffle( aSongs.begin(), aSongs.end(), rng );
+#endif
 	}
 
 	/* Only use up to four songs. */
@@ -847,6 +849,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	case DIFFICULTY_BEGINNER:
 	case DIFFICULTY_CHALLENGE:
 		return false;
+	default: break;
 	}
 
 	//
@@ -862,7 +865,9 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		 * will change every time it's viewed, and the displayed order will have no
 		 * bearing on what you'll actually play. */
 		tmp_entries = m_entries;
+#ifndef __EMSCRIPTEN__
 		random_shuffle( tmp_entries.begin(), tmp_entries.end(), rnd );
+#endif
 	}
 
 	const vector<CourseEntry> &entries = m_bRandomize? tmp_entries:m_entries;
@@ -916,7 +921,9 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 				if( !bShuffledSet )
 				{
 					AllSongsShuffled = SONGMAN->GetAllSongs();
+#ifndef __EMSCRIPTEN__
 					random_shuffle( AllSongsShuffled.begin(), AllSongsShuffled.end(), rnd );
+#endif
 					bShuffledSet = true;
 				}
 
@@ -1236,6 +1243,7 @@ bool Course::CourseHasBestOrWorst() const
 		case COURSE_ENTRY_BEST:
 		case COURSE_ENTRY_WORST:
 			return true;
+		default: break;
 		}
 	}
 

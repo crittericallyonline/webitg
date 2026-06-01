@@ -15,6 +15,11 @@
 #include "archutils/Darwin/DarwinThreadHelpers.h"
 #endif
 
+#if defined(__EMSCRIPTEN__)
+#include "archutils/Emscripten/EmscriptenThreadHelpers.h"
+#include "archutils/Emscripten/RunningUnderValgrind.h"
+#endif
+
 void ThreadImpl_Pthreads::Halt( bool Kill )
 {
 	/* Linux:

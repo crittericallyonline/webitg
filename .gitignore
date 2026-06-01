@@ -54,3 +54,5 @@ src/version.bin
 *.wasm
 tmp/
 out/
+
+CMakePresets.json

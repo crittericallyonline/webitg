@@ -33,6 +33,7 @@ namespace avcodec
 			#include <libswscale/swscale.h>
 			#include <libavutil/avutil.h>
 			#include <libavutil/pixdesc.h>
+			#include <libavcodec/avcodec.h>
 		#endif
 	}
 	#endif

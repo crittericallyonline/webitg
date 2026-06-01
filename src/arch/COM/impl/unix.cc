@@ -905,6 +905,7 @@ Serial::SerialImpl::purgeComm (uint16_t dwFlags)
      if (dwFlags & 0x02) flushInput ();
      if (dwFlags & 0x04) flushOutput ();
      if (dwFlags & 0x08) flushInput ();
+  return true;
 }
 
 void

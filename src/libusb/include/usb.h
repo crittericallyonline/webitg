@@ -2,8 +2,9 @@
 #define __USB_H__
 
 #include <stdlib.h>
+#ifndef __EMSCRIPTEN__
 #include <windows.h>
-
+#endif
 /* 
  * 'interface' is defined somewhere in the Windows header files. This macro 
  * is deleted here to avoid conflicts and compile errors.
@@ -65,10 +66,10 @@
 #define USB_DT_ENDPOINT_AUDIO_SIZE	9	/* Audio extension */
 #define USB_DT_HUB_NONVAR_SIZE		7
 
-
+#ifndef __EMSCRIPTEN__
 /* ensure byte-packed structures */
 #include <pshpack1.h> 
-
+#endif
 
 /* All standard descriptors have these 2 fields in common */
 struct usb_descriptor_header {
@@ -290,8 +291,9 @@ typedef struct usb_dev_handle usb_dev_handle;
 #endif
 
 
-
+#ifndef __EMSCRIPTEN__
 #include <poppack.h>
+#endif
 
 
 #ifdef __cplusplus
@@ -346,7 +348,7 @@ extern "C" {
 
 
   /* Windows specific functions */
-
+#ifndef __EMSCRIPTEN__
   #define LIBUSB_HAS_INSTALL_SERVICE_NP 1
   int usb_install_service_np(void);
   void CALLBACK usb_install_service_np_rundll(HWND wnd, HINSTANCE instance,
@@ -384,7 +386,7 @@ extern "C" {
   int usb_reap_async_nocancel(void *context, int timeout);
   int usb_cancel_async(void *context);
   int usb_free_async(void **context);
-
+#endif
 
 #ifdef __cplusplus
 }

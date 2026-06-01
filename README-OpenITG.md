@@ -1,24 +1,21 @@
 
-**NOTE**: Niko - Hai, I will not be reviving the original repository for the reason that I wish to not bother thoes who have put their time and effort into a great project that is now **archived**.
-
-*~~This project is dead and has been archived. Thanks to those who have helped made it what it is for the last 12 years.~~*
+**NOTE**: This project is dead and has been archived. Thanks to those who have helped made it what it is for the last 12 years.
 
 Further ideas and contributions should be made toward the following projects instead:
 
- * NotITG (more featureful and up-to-date fork of this project): https://noti.tg/
- * OpenITG (parent project): https://github.com/openitg/openitg
- * StepMania (grand parent project): https://github.com/stepmania/stepmania. 
+ * NotITG (more featureful and up-to-date fork of this project): https://notitg.heysora.net/
+ * StepMania (parent project): https://github.com/stepmania/stepmania. 
 
 
-# WebITG
+# OpenITG
 
 An open-source rhythm dancing game which is a fork of StepMania 3.95
 with the goal of adding arcade-like ITG-style behavior and serving as a drop-in
 replacement for the ITG binary on arcade cabinents.
 
-* Project homepage: https://github.com/crittericallyonline/webitg/wiki
-* Project bug tracker: https://github.com/crittericallyonline/webitg/issues
-<!-- * Project IRC channel: #openitg on irc.badnik.com -->
+* Project homepage: https://github.com/openitg/openitg/wiki
+* Project bug tracker: https://github.com/openitg/openitg/issues
+* Project IRC channel: #openitg on irc.badnik.com
 * Project source code: https://github.com/openitg/openitg
 
 ## TODOs
@@ -37,7 +34,7 @@ replacement for the ITG binary on arcade cabinents.
 ## How to check-out the source
 
 ```sh
-git clone https://github.com/crittericallyonline/webitg.git
+git clone https://github.com/openitg/openitg.git
 ```
 
 ## How to contribute
@@ -50,21 +47,12 @@ git clone https://github.com/crittericallyonline/webitg.git
 6. `git add <filename>` for every file you add or edit
 7. `git commit` # now your change is committed locally
 8. `git push` # now your change is pushed to your github
-9. From `https://github.com/<username>/webitg`, click "pull request".  Base branch is the
+9. From https://github.com/<username>/openitg, click "pull request".  Base branch is the
 branch you want to put your changes on, and head branch is the branch you made
 your changes to already.
 10. Write a short description of your change.  Be sure to include the goal, any
 bugs fixed, features added, etc, and any credit you wish to have.  Click "send
 pull request".
-
-## How to build for wasm
-
-Dependencies:
-- [make (Arch Linux)](https://archlinux.org/packages/core/x86_64/make/)
-- [Emscripten (Arch Linux)](https://archlinux.org/packages/core/x86_64/emscripten/)
-
-1. Edit the [WebITG-options](./WebITG-options) file to customize the options given in any specific way you like/prefer.
-2. Run make with `$ emmake make`
 
 ## How to build for arcade
 

@@ -51,6 +51,7 @@ private:
 	RageFile *m_pFile;
 	avcodec::AVIOContext *m_ioctx;
 	avcodec::AVFormatContext *m_fctx;
+	avcodec::AVCodecParameters *m_cparams;
 	avcodec::AVCodecContext *m_cctx;
 	avcodec::AVStream *m_stream;
 	avcodec::SwsContext *m_swsctx;

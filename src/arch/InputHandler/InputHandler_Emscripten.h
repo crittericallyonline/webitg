@@ -2,7 +2,7 @@
 #define INPUT_HANDLER_EMSCRIPTEN_H
 
 #include "InputHandler.h"
-#include "../../RageThreads.h"
+#include "RageThreads.h"
 
 class InputHandler_Emscripten: public InputHandler {
 public:

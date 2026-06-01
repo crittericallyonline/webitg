@@ -4,8 +4,10 @@
 #include "RageSurface_Load_XPM.h"
 #include "SDL_video.h"
 #include "LoadingWindow_SDL.h"
+#ifndef __EMSCRIPTEN__
 #include "loading.xpm"
 #include "StepMania.xpm" /* icon */
+#endif
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
 #include "RageSurfaceUtils_Zoom.h"
@@ -29,13 +31,13 @@ LoadingWindow_SDL::LoadingWindow_SDL()
 	SDL_WM_SetCaption("Loading StepMania", "");
 
 	CString error;
+#ifndef __EMSCRIPTEN__
 	RageSurface *srf = RageSurface_Load_XPM( icon, error );
-
 	uint32_t color;
 	if( srf->fmt.MapRGBA( 0xFF, 0, 0xFF, 0xFF, color ) )
 		srf->format->palette->colors[ color ].a = 0;
-
-#if !defined(DARWIN)
+#endif
+#if !defined(DARWIN) && !defined(__EMSCRIPTEN__)
 	/* Windows icons are 32x32 and SDL can't resize them for us, which
 	 * causes mask corruption.  (Actually, the above icon *is* 32x32;
 	 * this is here just in case it changes.) */
@@ -48,11 +50,10 @@ LoadingWindow_SDL::LoadingWindow_SDL()
 		SDL_WM_SetIcon( pSDLSurface, NULL ); /* derive from alpha */
 		SDL_FreeSurface( pSDLSurface );
 	}
-
 	delete srf;
 #endif
 
-
+#ifndef __EMSCRIPTEN__
 	/* Load the BMP - we need its dimensions */
     srf = RageSurface_Load_XPM( loading, error );
     if( srf == NULL ) // XXX SDL_GetError
@@ -71,7 +72,7 @@ LoadingWindow_SDL::LoadingWindow_SDL()
 	}
 
     delete srf;
-
+#endif
 	SDL_UpdateRect( loading_screen, 0,0,0,0 );
 }
 

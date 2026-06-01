@@ -48,6 +48,7 @@ SortOrder ForceAppropriateSort( PlayMode pm, SortOrder so )
 	case PLAY_MODE_ONI:		return SORT_ONI_COURSES;
 	case PLAY_MODE_NONSTOP:	return SORT_NONSTOP_COURSES;
 	case PLAY_MODE_ENDLESS:	return SORT_ENDLESS_COURSES;
+	default: break;
 	}
 
 	/* If we're not in a course mode, don't start in a course sort. */
@@ -58,6 +59,7 @@ SortOrder ForceAppropriateSort( PlayMode pm, SortOrder so )
 	case SORT_ENDLESS_COURSES:
 		so = SORT_INVALID;
 		break;
+	default: break;
 	}
 
 	return so;
@@ -439,6 +441,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 					/* Don't display course modes after the first stage. */
 					if( !GAMESTATE->IsEventMode() && GAMESTATE->m_iCurrentStageIndex )
 						continue;
+				default: break;
 				}
 
 				if( !wid.m_Action.IsPlayable() )
@@ -541,6 +544,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 				if( so != SORT_TITLE && so != SORT_GROUP )
 					bUseSections = false;
 				break;
+			default: break;
 			}
 
 			if( bUseSections )
@@ -703,6 +707,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 					case PLAY_MODE_ONI:		sThisSection = "Oni";		break;
 					case PLAY_MODE_NONSTOP:	sThisSection = "Nonstop";	break;
 					case PLAY_MODE_ENDLESS:	sThisSection = "Endless";	break;
+					default: break;
 					}
 				}
 
@@ -1081,6 +1086,7 @@ bool MusicWheel::Select()	// return true if this selection ends the screen
 	case STATE_FLYING_OFF_BEFORE_NEXT_SORT:
 	case STATE_ROULETTE_SLOWING_DOWN:
 		return false;
+	default: break;
 	}
 
 	m_Moving = 0;
@@ -1168,7 +1174,9 @@ void MusicWheel::StartRandom()
 	{
 		/* Shuffle and use the roulette wheel. */
 		RandomGen rnd;
+#ifndef __EMSCRIPTEN__
 		random_shuffle( m_WheelItemDatas[SORT_ROULETTE].begin(), m_WheelItemDatas[SORT_ROULETTE].end(), rnd );
+#endif
 		SetOpenGroup( "", SORT_ROULETTE );
 	}
 	else
@@ -1315,6 +1323,7 @@ Song* MusicWheel::GetSelectedSong()
 	{
 	case TYPE_PORTAL:
 		return GetPreferredSelectionForRandomOrPortal();
+	default: break;
 	}
 
 	return m_CurWheelItemData[m_iSelection]->m_pSong;

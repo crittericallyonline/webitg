@@ -2,8 +2,8 @@
 
 #include "global.h"
 #include "EmscriptenThreadHelpers.h"
-#include "../../RageUtil.h"
-#include "../../RageThreads.h"
+#include "RageUtil.h"
+#include "RageThreads.h"
 #include "Backtrace.h"
 #include "RunningUnderValgrind.h"
 

@@ -10,6 +10,8 @@ extern "C"
 {
 #include <libswscale/swscale.h>
 }
+const avcodec::AVInputFormat *ifmt = NULL;
+const avcodec::AVOutputFormat *ofmt = NULL;
 
 
 AVPixelFormat_t AVPixelFormats[5] = {
@@ -93,7 +95,7 @@ int64_t URLRageFile_seek( void *opaque, int64_t pos, int whence )
 FFMpeg_Helper::FFMpeg_Helper()
 {
 	m_fctx=NULL;
-	m_cctx=NULL;
+	// m_cctx=NULL;
 	m_ioctx=NULL;
 	m_stream=NULL;
 	m_swsctx=NULL;
@@ -152,7 +154,7 @@ CString FFMpeg_Helper::Open(CString what)
 	{
 		return ssprintf( "AVCodec(%s): Could not allocate avformat context", what.c_str() );
 	}
-	CHECKPOINT_M( ssprintf("%d", m_fctx->bit_rate) );
+	CHECKPOINT_M( ssprintf("%lld", m_fctx->bit_rate) );
 
 	m_ioctx = avcodec::avio_alloc_context( ctxbuffer, FFCTX_BUFFER_SIZE, 0,
 			m_pFile, &URLRageFile_read, NULL, &URLRageFile_seek );
@@ -161,58 +163,60 @@ CString FFMpeg_Helper::Open(CString what)
 		return ssprintf( "AVCodec (%s): Couldn't allocate AVIO context", what.c_str() );
 	}
 
-	CHECKPOINT_M( ssprintf("%lu", m_ioctx->pos) );
+	CHECKPOINT_M( ssprintf("%lld", m_ioctx->pos) );
 
 	m_fctx->pb = m_ioctx;
 	int ret = avcodec::avformat_open_input( &m_fctx, NULL, NULL, NULL );
 	if ( ret < 0 )
 	{
-		return ssprintf( averr_ssprintf(ret, "AVCodec (%s): Couldn't open input", what.c_str()) );
+		return ssprintf( "%s", averr_ssprintf(ret, "AVCodec (%s): Couldn't open input", what.c_str()).c_str() );
 	}
 
 	ret = avcodec::avformat_find_stream_info( m_fctx, NULL );
 	if ( ret < 0 )
 	{
-		return ssprintf( averr_ssprintf(ret, "AVCodec (%s): Couldn't find codec parameters", what.c_str()) );
+		return ssprintf( "%s", averr_ssprintf(ret, "AVCodec (%s): Couldn't find codec parameters", what.c_str()).c_str() );
 	}
 
 	avcodec::AVCodec *codec;
-	ret = avcodec::av_find_best_stream( m_fctx, avcodec::AVMEDIA_TYPE_VIDEO, -1, -1, &codec, 0 );
+	ret = avcodec::av_find_best_stream( m_fctx, avcodec::AVMEDIA_TYPE_VIDEO, -1, -1, (const avcodec::AVCodec **)(&codec), 0 );
 	if ( ret < 0 )
 	{
-		return ssprintf( averr_ssprintf(ret, "AVCodec (%s): Couldn't find codec", what.c_str()) );
+		return ssprintf( "%s", averr_ssprintf(ret, "AVCodec (%s): Couldn't find codec", what.c_str()).c_str() );
 	}
 
 	CHECKPOINT_M( ssprintf("%d", ret) );
-
 	avcodec::AVStream *stream = m_fctx->streams[ret];
 	if ( stream == NULL )
 	{
 		return ssprintf( "AVCodec (%s): Couldn't find any video streams", what.c_str() );
 	}
 
-	m_cctx = stream->codec;
+	m_cparams = stream->codecpar;
 	if ( m_cctx == NULL )
 	{
 		return ssprintf( "AVCodec (%s): Couldn't find codec", what.c_str() );
 	}
+	
+	m_width  = m_cparams->width;
+	m_height = m_cparams->height;
 
-	m_width  = m_cctx->width;
-	m_height = m_cctx->height;
-
+	m_cctx = avcodec::avcodec_alloc_context3(codec);
+	avcodec::avcodec_parameters_to_context(m_cctx, m_cparams);
+	
 	LOG->Trace("Opening codec %s (%dx%d)", codec->name, m_width, m_height );
 
 	ret = avcodec::avcodec_open2( m_cctx, codec, NULL );
 	if ( ret < 0 )
 	{
-		return ssprintf( averr_ssprintf(ret, "AVCodec (%s): Couldn't open codec \"%s\"", what.c_str(), codec->name) );
+		return ssprintf( "%s", averr_ssprintf(ret, "AVCodec (%s): Couldn't open codec \"%s\"", what.c_str(), codec->name).c_str() );
 	}
 
 	/* Don't set this until we successfully open stream->codec, so we don't try to close it
 	 * on an exception unless it was really opened. */
 	m_stream = stream;
 
-	LOG->Trace("Bitrate: %ld", m_cctx->bit_rate );
+	LOG->Trace("Bitrate: %lld", m_cctx->bit_rate );
 	LOG->Trace("Codec pixel format: %s", avcodec::av_get_pix_fmt_name(m_cctx->pix_fmt) );
 
 	if (this->frame == NULL)
@@ -231,7 +235,7 @@ void FFMpeg_Helper::Close()
 {
 	if( m_cctx )
 	{
-		avcodec::avcodec_close( m_cctx );
+		avcodec::avcodec_free_context( &m_cctx );
 		m_cctx = NULL;
 	}
 	if( m_fctx )
@@ -266,13 +270,13 @@ void FFMpeg_Helper::RegisterProtocols()
 	if( Done )
 		return;
 	Done = true;
-
-	avcodec::av_register_all();
+	ifmt = avcodec::av_demuxer_iterate(NULL);
+	ofmt = avcodec::av_muxer_iterate(NULL);
 }
 
 int FFMpeg_Helper::GetRawFrameNumber()
 {
-	return m_cctx->frame_number;
+	return m_cctx->frame_num;
 }
 
 /* Read until we get a frame, EOF or error.  Return -1 on error, 0 on EOF, 1 if we have a frame. */
@@ -372,7 +376,7 @@ void FFMpeg_Helper::RenderFrame(RageSurface *img, int tex_fmt)
 		m_swsctx = avcodec::sws_getCachedContext(m_swsctx,
 				m_width, m_height, m_cctx->pix_fmt,
 				m_width, m_height, AVPixelFormats[tex_fmt].pf,
-				SWS_BICUBIC, NULL, NULL, NULL);
+				4, NULL, NULL, NULL);
 	}
 
 	if (m_swsctx == NULL)
@@ -413,10 +417,8 @@ int FFMpeg_Helper::DecodePacket()
 		if( pkt.size == 0 && FrameNumber == -1 )
 			return 0; /* eof */
 
-		int got_frame;
-		int len = avcodec::avcodec_decode_video2(
-				m_cctx, 
-				frame, &got_frame, &pkt);
+		int len = avcodec::avcodec_receive_frame(m_cctx, frame);
+		int got_frame = frame != NULL;
 		//CHECKPOINT;
 
 		if (len < 0)
@@ -448,8 +450,9 @@ int FFMpeg_Helper::DecodePacket()
 		}
 
 		/* Length of this frame: */
-		LastFrameDelay = (float)m_stream->codec->time_base.num / m_stream->codec->time_base.den;
+		LastFrameDelay = (float)m_cctx->time_base.num / m_cctx->time_base.den;
 		LastFrameDelay += frame->repeat_pict * (LastFrameDelay * 0.5f);
+		
 
 		return 1;
 	}

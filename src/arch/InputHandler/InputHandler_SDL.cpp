@@ -54,8 +54,8 @@ static RageKeySym SDLSymToKeySym( SDLKey key )
 		return ASCIIKeySyms[key];
 
 	/* SDLK_WORLD_0 ... SDLK_WORLD_95 to KEY_OTHER_0 ... KEY_OTHER_0 + 95 */
-	if( key >= SDLK_WORLD_0 && key <= SDLK_WORLD_95 )
-		return (RageKeySym) (key - SDLK_WORLD_0 + KEY_OTHER_0);
+	if( key >= 0 && key <= 95 )
+		return (RageKeySym) (key - 0 + KEY_OTHER_0);
 
 	/* SDLK_KP0 ... SDLK_KP9 to KEY_KP_C0 ... KEY_KP_C9 */
 	if( key >= SDLK_KP0 && key <= SDLK_KP9 )
@@ -108,8 +108,8 @@ static RageKeySym SDLSymToKeySym( SDLKey key )
 	case SDLK_LALT:			return KEY_LALT;
 	case SDLK_RMETA:		return KEY_RMETA;
 	case SDLK_LMETA:		return KEY_LMETA;
-	case SDLK_LSUPER:		return KEY_LSUPER;
-	case SDLK_RSUPER:		return KEY_RSUPER;
+	// case SDLK_LSUPER:		return KEY_LSUPER;
+	// case SDLK_RSUPER:		return KEY_RSUPER;
 	case SDLK_MENU:			return KEY_MENU;
 	}
 

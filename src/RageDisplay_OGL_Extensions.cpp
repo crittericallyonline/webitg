@@ -17,7 +17,7 @@
 #endif
 
 #undef __glext_h_
-#include "glext.h"
+#include <glext.h>
 
 #include "RageDisplay_OGL_Extensions.h"
 #include "RageLog.h"
