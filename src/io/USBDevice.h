@@ -10,7 +10,9 @@
 #include "MiniMaid.h"
 #include "P3IO.h"
 
+#ifndef __EMSCRIPTEN__
 #include <usb.h>
+#endif
 #ifdef PRODUCT_ID_BARE
 #define PSTRING std::string
 #else

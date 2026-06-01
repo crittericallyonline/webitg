@@ -193,13 +193,13 @@ CString DiagnosticsUtil::GetGuidFromSerial( const CString &sSerial )
 
 bool DiagnosticsUtil::HubIsConnected()
 {
+#ifndef __EMSCRIPTEN__
 	vector<USBDevice> vDevices;
 	GetUSBDeviceList( vDevices );
-
 	for( unsigned i = 0; i < vDevices.size(); i++ )
 		if( vDevices[i].IsHub() )
 			return true;
-
+#endif
 	return false;
 }
 

@@ -9,7 +9,9 @@
 #include "io/P3IO.h"
 
 #include <map>
+#ifndef __EMSCRIPTEN__
 #include <usb.h>
+#endif
 
 static PSTRING sClassDescriptions[] = {
 	"Unknown", // 0
@@ -30,14 +32,19 @@ static PSTRING sClassDescriptions[] = {
 
 PSTRING USBDevice::GetClassDescription( unsigned iClass )
 {
+#ifndef __EMSCRIPTEN__
 	if ( iClass == 255 ) return "Vendor";
 	if ( iClass > 10)
 		return "Unknown";
 	return sClassDescriptions[iClass];
+#else
+	return "Unknown";
+#endif
 }
 
 PSTRING USBDevice::GetDescription()
 {
+#ifndef __EMSCRIPTEN__
 	if( IsITGIO() || IsPIUIO() || IsMiniMaid() || IsP3IO() )
 		return "Input/lights controller";
 	
@@ -47,16 +54,24 @@ PSTRING USBDevice::GetDescription()
 		sInterfaceDescriptions.push_back( GetClassDescription(m_iInterfaceClasses[i]) );
 
 	return join( ", ", sInterfaceDescriptions );
+#else
+	return "";
+#endif
 }
 
 bool USBDevice::GetDeviceProperty( const PSTRING &sProperty, PSTRING &out )
 {
+#ifndef __EMSCRIPTEN__
 	PSTRING sTargetFile = "/rootfs/sys/bus/usb/devices/" + m_sDeviceDir + "/" + sProperty;
 	return GetFileContents(sTargetFile, out, true);
+#else
+	return false;
+#endif
 }
 
 bool USBDevice::GetInterfaceProperty( const PSTRING &sProperty, const unsigned iInterface, PSTRING &out)
 {
+#ifndef __EMSCRIPTEN__
 	if (iInterface > m_sInterfaceDeviceDirs.size() - 1)
 	{
 		LOG->Warn( "Cannot access interface %i with USBDevice interface count %i", iInterface, m_sInterfaceDeviceDirs.size() );
@@ -64,6 +79,9 @@ bool USBDevice::GetInterfaceProperty( const PSTRING &sProperty, const unsigned i
 	}
 	PSTRING sTargetFile = "/rootfs/sys/bus/usb/devices/" + m_sDeviceDir + ":" + m_sInterfaceDeviceDirs[iInterface] + "/" + sProperty;
 	return GetFileContents( sTargetFile, out, true );
+#else
+	return false;
+#endif
 }
 
 PSTRING USBDevice::GetDeviceDir()
@@ -97,11 +115,16 @@ bool USBDevice::IsMiniMaid()
 
 bool USBDevice::IsP3IO()
 {
+#ifndef __EMSCRIPTEN__
 	return P3IO::DeviceMatches( m_iIdVendor, m_iIdProduct );
+#else
+	return false;
+#endif
 }
 
 bool USBDevice::Load(const PSTRING &nDeviceDir, const vector<PSTRING> &interfaces)
 {
+#ifndef __EMSCRIPTEN__
 	m_sDeviceDir = nDeviceDir;
 	m_sInterfaceDeviceDirs = interfaces;
 	PSTRING buf;
@@ -142,11 +165,15 @@ bool USBDevice::Load(const PSTRING &nDeviceDir, const vector<PSTRING> &interface
 		m_iInterfaceClasses.push_back(iClass);
 	}
 	return true;
+#else
+	return false;
+#endif
 }
 
 // this is the diary of a mad man
 bool GetUSBDeviceList(vector<USBDevice> &pDevList)
 {
+#ifndef __EMSCRIPTEN__
 	FlushDirCache();
 
 	std::map< PSTRING, vector<PSTRING> > sDevInterfaceList;
@@ -182,6 +209,9 @@ bool GetUSBDeviceList(vector<USBDevice> &pDevList)
 	}
 
 	return true;
+#else
+	return false;
+#endif
 }
 
 /*

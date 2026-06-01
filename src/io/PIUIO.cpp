@@ -2,7 +2,9 @@
 #include "RageLog.h"
 
 #include "io/PIUIO.h"
+#ifndef __EMSCRIPTEN__
 #include "arch/USB/USBDriver_Impl.h"
+#endif
 
 const short PIUIO_VENDOR_ID	= 0x0547;
 const short PIUIO_PRODUCT_ID	= 0x1002;
@@ -15,40 +17,53 @@ const int REQ_TIMEOUT = 10000;
 
 bool PIUIO::DeviceMatches( int iVID, int iPID )
 {
+#ifndef __EMSCRIPTEN__
 	return iVID == PIUIO_VENDOR_ID && iPID == PIUIO_PRODUCT_ID;
+#else
+	return false;
+#endif
 }
 
 bool PIUIO::Open()
 {
+#ifndef __EMSCRIPTEN__
 	return OpenInternal( PIUIO_VENDOR_ID, PIUIO_PRODUCT_ID );
+#else
+	return true;
+#endif
 }
 
 bool PIUIO::Read( uint32_t *pData )
 {
+#ifndef __EMSCRIPTEN__
 	/* XXX: magic number left over from the ITG disassembly */
 	int iExpected = 8;
-
 	int iResult = m_pDriver->ControlMessage(
 		USB_DIR_IN | USB_TYPE_VENDOR, PIUIO_CTL_REQ,
 		0, 0, (char*)pData, iExpected, REQ_TIMEOUT );
-
 	return iResult == iExpected;
+#else
+	int iResult = 8;
+#endif
 }
 
 bool PIUIO::Write( const uint32_t iData )
 {
+#ifndef __EMSCRIPTEN__
 	/* XXX: magic number left over from the ITG disassembly */
 	int iExpected = 8;
-
 	int iResult = m_pDriver->ControlMessage(
 		USB_DIR_OUT | USB_TYPE_VENDOR, PIUIO_CTL_REQ,
 		0, 0, (char*)&iData, iExpected, REQ_TIMEOUT );
-
 	return iResult == iExpected;
+#else
+	return false;
+#endif
 }
 
 bool PIUIO::BulkReadWrite( uint32_t pData[8] )
 {
+#ifndef __EMSCRIPTEN__
 	/* XXX: magic number left over from the ITG disassembly */
 	int iExpected = 32;
 
@@ -56,8 +71,10 @@ bool PIUIO::BulkReadWrite( uint32_t pData[8] )
 	// a sentinel. the rest of the USB parameters aren't used.
 	int iResult = m_pDriver->ControlMessage( 0, 0, 0, 0, 
 		(char*)pData, iExpected, 10011 );
-
 	return iResult == iExpected;
+#else
+	return false;
+#endif
 }
 
 /*

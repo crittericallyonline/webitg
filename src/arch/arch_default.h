@@ -34,13 +34,13 @@
 	#include "LowLevelWindow/LowLevelWindow_SDL.h"
 	#include "USB/USBDriver_Impl_Libusb.h"
 
-	// #if defined(LINUX)
-	// 	#include "MemoryCard/MemoryCardDriverThreaded_Linux.h"
-	// #endif
+	#if defined(LINUX)
+		#include "MemoryCard/MemoryCardDriverThreaded_Linux.h"
+	#endif
 
-	// #if defined(HAVE_GTK)
-	// 	#include "LoadingWindow/LoadingWindow_Gtk.h"
-	// #endif
+	#if defined(HAVE_GTK)
+		#include "LoadingWindow/LoadingWindow_Gtk.h"
+	#endif
 
 
 	#define DEFAULT_INPUT_DRIVER_LIST "GLFW,Joystick"

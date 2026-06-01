@@ -63,8 +63,11 @@ Dependencies:
 - [make (Arch Linux)](https://archlinux.org/packages/core/x86_64/make/)
 - [Emscripten (Arch Linux)](https://archlinux.org/packages/core/x86_64/emscripten/)
 
-1. Edit the [WebITG-options](./WebITG-options) file to customize the options given in any specific way you like/prefer.
-2. Run make with `$ emmake make`
+1. Edit the [CMakeLists.txt](CMakeLists.txt) file to customize the options given in any specific way you like/prefer.
+2. Build `extern/FFmpeg`
+    - run `cd extern/FFmpeg` then `emconfigure ./configure --disable-asm --ar=emar --arch=x86 --cc=emcc --cxx=em++ --ranlib=emranlib` to configure the build tools when compiling, specified cc, cxx, ar, ranlib with emscripten variants.
+    - next run `emmake make -j -s` (to specify the amount of cores, put a number after j to prevent lag, or remove -j entirely.)
+<!-- 2. Run make with `$ emmake make` -->
 
 ## How to build for arcade
 
