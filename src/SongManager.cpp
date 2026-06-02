@@ -1388,10 +1388,14 @@ void SongManager::UpdateShuffled()
 {
 	// update shuffled
 	m_pShuffledSongs = m_pSongs;
+#ifndef __EMSCRIPTEN__
 	random_shuffle( m_pShuffledSongs.begin(), m_pShuffledSongs.end() );
+#endif
 
 	m_pShuffledCourses = m_pCourses;
+#ifndef __EMSCRIPTEN__
 	random_shuffle( m_pShuffledCourses.begin(), m_pShuffledCourses.end() );
+#endif
 }
 
 void SongManager::SortSongs()

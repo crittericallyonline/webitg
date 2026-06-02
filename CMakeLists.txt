@@ -590,6 +590,14 @@ add_library(madlib STATIC
 target_compile_definitions(madlib PUBLIC FPM_64BIT)
 target_include_directories(madlib PUBLIC src/mad-0.15.1b)
 
+add_library(libresample STATIC
+    src/libresample/src/resamplesubs.c
+    src/libresample/src/resample.c
+    src/libresample/src/hackedresamplesubs.c
+    src/libresample/src/filterkit.c
+)
+target_include_directories(libresample PUBLIC src/libresample/include)
+
 target_link_directories(WebITG BEFORE PUBLIC archive/)
 target_link_libraries(WebITG PUBLIC
     lua
@@ -597,6 +605,7 @@ target_link_libraries(WebITG PUBLIC
     libtommath
     # libtomcrypt
     madlib
+    libresample
     
     #precompiled archives
     libavcodec.a
@@ -613,6 +622,7 @@ target_include_directories(WebITG BEFORE PUBLIC
     src/mad-0.15.1b
     src/lua-5.0/include/
     src/libtomcrypt/src/headers
+    src/libresample/include
     extern/FFmpeg/include
     extern/FFmpeg/
 )
