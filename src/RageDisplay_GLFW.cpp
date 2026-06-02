@@ -10,13 +10,19 @@
 
 #ifdef __EMSCRIPTEN__
 #include <GLFW/emscripten_glfw3.h>
+// #ifdef HAS_GLES3
+#include <GLES3/gl3.h>
+#include <GLES3/gl2ext.h>
+// #endif
 #else
 #include <GLFW/glfw3.h>
 #endif
 
 #if !defined(DARWIN)
+#ifndef __EMSCRIPTEN__
 # include <GL/gl.h>
 # include <GL/glu.h>
+#endif
 #else
 /* XXX: Instead, try creating a directory "archutils/Darwin/include/GL", containing "gl.h" and
  * "glu.h", which each contain a single line "#include <OpenGL/gl.h>".  Then, add
@@ -57,7 +63,6 @@
 
 #if defined(_MSC_VER)
 #pragma comment(lib, "opengl32.lib")
-#pragma comment(lib, "glu32.lib")
 #endif
 
 //
@@ -76,8 +81,8 @@ float g_point_range[2];
 /* OpenGL version * 10: */
 int g_glVersion;
 
-/* GLU version * 10: */
-int g_gluVersion;
+/* GLFW version * 10: */
+int g_glfwVersion;
 
 static int g_iMaxTextureUnits = 0;
 
@@ -441,7 +446,7 @@ CString RageDisplay_OGL::Init( VideoModeParams p, bool bAllowUnacceleratedRender
 	LOG->Info( "OGL Max texture size: %i", GetMaxTextureSize() );
 	LOG->Info( "OGL Texture units: %i", g_iMaxTextureUnits );
 	LOG->Info( "OGL Extensions: %s", glGetString(GL_EXTENSIONS) );
-	LOG->Info( "GLU Version: %s", gluGetString(GLU_VERSION) );
+	LOG->Info( "GLFW Version: %s", glfwGetVersionString() );
 
 	LogGLXDebugInformation();
 
@@ -552,15 +557,15 @@ static void CheckPalettedTextures()
 		GL_CHECK_ERROR( "glTexImage2D" );
 
 		GLuint ifmt = 0;
-		glGetTexLevelParameteriv( GL_PROXY_TEXTURE_2D, 0, GLenum(GL_TEXTURE_INTERNAL_FORMAT), (GLint *)&ifmt );
-		GL_CHECK_ERROR( "glGetTexLevelParameteriv(GL_TEXTURE_INTERNAL_FORMAT)" );
-		if( ifmt != glTexFormat )
-		{
-			error = ssprintf( "Expected format %s, got %s instead",
-					GLToString(glTexFormat).c_str(),
-					GLToString(ifmt).c_str() );
-			break;
-		}
+		// glGetTexLevelParameteriv( GL_PROXY_TEXTURE_2D, 0, GLenum(GL_TEXTURE_INTERNAL_FORMAT), (GLint *)&ifmt );
+		// GL_CHECK_ERROR( "glGetTexLevelParameteriv(GL_TEXTURE_INTERNAL_FORMAT)" );
+		// if( ifmt != glTexFormat )
+		// {
+		// 	error = ssprintf( "Expected format %s, got %s instead",
+		// 			GLToString(glTexFormat).c_str(),
+		// 			GLToString(ifmt).c_str() );
+		// 	break;
+		// }
 
 		GLubyte palette[256*4];
 		memset(palette, 0, sizeof(palette));
@@ -568,13 +573,13 @@ static void CheckPalettedTextures()
 		GL_CHECK_ERROR( "glColorTableEXT" );
 
 		GLint size = 0;
-		glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GLenum(GL_TEXTURE_INDEX_SIZE_EXT), &size);
-		GL_CHECK_ERROR( "glGetTexLevelParameteriv(GL_TEXTURE_INDEX_SIZE_EXT)" );
-		if( bits > size || size > 8 )
-		{
-			error = ssprintf("Expected %i-bit palette, got a %i-bit one instead", bits, int(size));
-			break;
-		}
+		// glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GLenum(GL_TEXTURE_INDEX_SIZE_EXT), &size);
+		// GL_CHECK_ERROR( "glGetTexLevelParameteriv(GL_TEXTURE_INDEX_SIZE_EXT)" );
+		// if( bits > size || size > 8 )
+		// {
+		// 	error = ssprintf("Expected %i-bit palette, got a %i-bit one instead", bits, int(size));
+		// 	break;
+		// }
 
 		GLint RealWidth = 0;
 		GLExt.glGetColorTableParameterivEXT(GL_PROXY_TEXTURE_2D, GL_COLOR_TABLE_WIDTH, &RealWidth);
@@ -631,8 +636,8 @@ void SetupExtensions()
 	const float fGLVersion = strtof( (const char *) glGetString(GL_VERSION), NULL );
 	g_glVersion = int(roundf(fGLVersion * 10));
 
-	const float fGLUVersion = strtof( (const char *) gluGetString(GLU_VERSION), NULL );
-	g_gluVersion = int(roundf(fGLUVersion * 10));
+	const float fGLFWVersion = strtof( (const char *) glfwGetVersionString(), NULL );
+	g_glfwVersion = int(roundf(fGLFWVersion * 10));
 
 	GLExt.Load( wind );
 
@@ -803,34 +808,35 @@ static void SetupVertices( const RageSpriteVertex v[], int iNumVerts )
 		Normal[i*3+1] = v[i].n[1];
 		Normal[i*3+2] = v[i].n[2];
 	}
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, 0, Vertex);
 
-	glEnableClientState(GL_COLOR_ARRAY);
-	glColorPointer(4, GL_UNSIGNED_BYTE, 0, Color);
+	// glEnableClientState(GL_VERTEX_ARRAY);
+	// glVertexPointer(3, GL_FLOAT, 0, Vertex);
 
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glTexCoordPointer(2, GL_FLOAT, 0, Texture);
+	// glEnableClientState(GL_COLOR_ARRAY);
+	// glColorPointer(4, GL_UNSIGNED_BYTE, 0, Color);
 
-	glEnableClientState(GL_NORMAL_ARRAY);
-	glNormalPointer(GL_FLOAT, 0, Normal);
+	// glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	// glTexCoordPointer(2, GL_FLOAT, 0, Texture);
+
+	// glEnableClientState(GL_NORMAL_ARRAY);
+	// glNormalPointer(GL_FLOAT, 0, Normal);
 }
 
 void RageDisplay_OGL::SendCurrentMatrices()
 {
 	RageMatrix projection;
 	RageMatrixMultiply( &projection, GetCentering(), GetProjectionTop() );
-	glMatrixMode( GL_PROJECTION );
-	glLoadMatrixf( (const float*)&projection );
+	// glMatrixMode( GL_PROJECTION );
+	// glLoadMatrixf( (const float*)&projection );
 
 	// OpenGL has just "modelView", whereas D3D has "world" and "view"
 	RageMatrix modelView;
 	RageMatrixMultiply( &modelView, GetViewTop(), GetWorldTop() );
-	glMatrixMode( GL_MODELVIEW );
-	glLoadMatrixf( (const float*)&modelView );
+	// glMatrixMode( GL_MODELVIEW );
+	// glLoadMatrixf( (const float*)&modelView );
 
-	glMatrixMode( GL_TEXTURE );
-	glLoadMatrixf( (const float*)GetTextureTop() );
+	// glMatrixMode( GL_TEXTURE );
+	// glLoadMatrixf( (const float*)GetTextureTop() );
 }
 
 class RageCompiledGeometrySWOGL : public RageCompiledGeometry
@@ -876,16 +882,16 @@ public:
 
 		const MeshInfo& meshInfo = m_vMeshInfo[iMeshIndex];
 
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(3, GL_FLOAT, 0, &m_vPosition[0]);
+		// glEnableClientState(GL_VERTEX_ARRAY);
+		// glVertexPointer(3, GL_FLOAT, 0, &m_vPosition[0]);
 
-		glDisableClientState(GL_COLOR_ARRAY);
+		// glDisableClientState(GL_COLOR_ARRAY);
 
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glTexCoordPointer(2, GL_FLOAT, 0, &m_vTexture[0]);
+		// glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		// glTexCoordPointer(2, GL_FLOAT, 0, &m_vTexture[0]);
 
-		glEnableClientState(GL_NORMAL_ARRAY);
-		glNormalPointer(GL_FLOAT, 0, &m_vNormal[0]);
+		// glEnableClientState(GL_NORMAL_ARRAY);
+		// glNormalPointer(GL_FLOAT, 0, &m_vNormal[0]);
 
 		glDrawElements( 
 			GL_TRIANGLES, 
@@ -906,10 +912,14 @@ class RageCompiledGeometryHWOGL : public RageCompiledGeometrySWOGL
 {
 protected:
 	// vertex buffer object names
+#ifdef __EMSCRIPTEN__
+	GLuint m_nVertexArrayBufferObject;
+#endif
+
 	GLuint m_nPositions;
 	GLuint m_nTextureCoords;
 	GLuint m_nNormals;
-	GLuint m_nTriangles;
+	GLuint m_nTriangles; // indicies
 	GLuint m_nTextureMatrixScale;
 
 	void AllocateBuffers();
@@ -948,55 +958,102 @@ RageCompiledGeometryHWOGL::~RageCompiledGeometryHWOGL()
 	g_GeometryList.erase( this );
 	FlushGLErrors();
 
-	GLExt.glDeleteBuffersARB( 1, &m_nPositions );
+	glDeleteBuffers( 1, &m_nPositions );
 	AssertNoGLError();
-	GLExt.glDeleteBuffersARB( 1, &m_nTextureCoords );
+	glDeleteBuffers( 1, &m_nTextureCoords );
 	AssertNoGLError();
-	GLExt.glDeleteBuffersARB( 1, &m_nNormals );
+	glDeleteBuffers( 1, &m_nNormals );
 	AssertNoGLError();
-	GLExt.glDeleteBuffersARB( 1, &m_nTriangles );
+	glDeleteBuffers( 1, &m_nTriangles );
 	AssertNoGLError();
-	GLExt.glDeleteBuffersARB( 1, &m_nTextureMatrixScale );
+	glDeleteBuffers( 1, &m_nTextureMatrixScale );
 	AssertNoGLError();
 }
 
 void RageCompiledGeometryHWOGL::AllocateBuffers()
 {
 	FlushGLErrors();
+	// if( !m_nVertexArrayBufferObject ) {
+	// 	glGenVertexArrays(1, &m_nVertexArrayBufferObject);
+	// 	glBindVertexArray(m_nVertexArrayBufferObject);
+	// }
 
+	/*
+    // index
+    glGenBuffers(1, &indexBuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), &indices, GL_STATIC_DRAW);
+
+    // verts
+    glEnableVertexAttribArray(Program.vertex_position);
+    glVertexAttribPointer(Program.vertex_position, 3, GL_FLOAT, false, 6 * sizeof(GLfloat), (void *)(sizeof(GLfloat)));
+
+    // uvs
+    glEnableVertexAttribArray(Program.texcoord);
+    glVertexAttribPointer(Program.texcoord, 2, GL_FLOAT, false, 6 * sizeof(GLfloat), (void *)(sizeof(GLfloat)));
+    
+    glEnableVertexAttribArray(Program.vertex_id);
+    glVertexAttribPointer(Program.vertex_id, 1, GL_FLOAT, false, 6 * sizeof(GLfloat), NULL);
+    
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(0);
+	*/
 	if( !m_nPositions )
 	{
+#ifndef __EMSCRIPTEN__
 		GLExt.glGenBuffersARB( 1, &m_nPositions );
 		AssertNoGLError();
+#else
+		glGenBuffers(1, &m_nPositions);
+#endif
 	}
 
 	if( !m_nTextureCoords )
 	{
+#ifndef __EMSCRIPTEN__
 		GLExt.glGenBuffersARB( 1, &m_nTextureCoords );
 		AssertNoGLError();
+#else
+		glGenBuffers(1, &m_nTextureCoords);
+#endif
 	}
 
 	if( !m_nNormals )
 	{
+#ifndef __EMSCRIPTEN__
 		GLExt.glGenBuffersARB( 1, &m_nNormals );
 		AssertNoGLError();
+#else
+		glGenBuffers(1, &m_nNormals);
+#endif
 	}
 
 	if( !m_nTriangles )
 	{
+#ifndef __EMSCRIPTEN__
 		GLExt.glGenBuffersARB( 1, &m_nTriangles );
 		AssertNoGLError();
+#else
+		glGenBuffers(1, &m_nTriangles);
+
+#endif
 	}
 
 	if( !m_nTextureMatrixScale )
 	{
+#ifndef __EMSCRIPTEN__
 		GLExt.glGenBuffersARB( 1, &m_nTextureMatrixScale );
 		AssertNoGLError();
+#else
+		glGenBuffers(1, &m_nTextureMatrixScale);
+#endif
 	}
 }
 
 void RageCompiledGeometryHWOGL::UploadData()
 {
+#ifndef __EMSCRIPTEN__
 	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nPositions );
 	GLExt.glBufferDataARB( 
 		GL_ARRAY_BUFFER_ARB, 
@@ -1039,6 +1096,24 @@ void RageCompiledGeometryHWOGL::UploadData()
 			&m_vTexMatrixScale[0],
 			GL_STATIC_DRAW_ARB );
 	}
+#else
+	glBindBuffer(GL_VERTEX_ARRAY, m_nPositions);
+	glBufferData(GL_VERTEX_ARRAY, GetTotalVertices()*sizeof(RageVector3), &m_vPosition, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_VERTEX_ARRAY, m_nTextureCoords);
+	glBufferData(GL_VERTEX_ARRAY, GetTotalVertices()*sizeof(RageVector2), &m_vPosition, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_VERTEX_ARRAY, m_nNormals);
+	glBufferData(GL_VERTEX_ARRAY, GetTotalVertices()*sizeof(RageVector3), &m_vPosition, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_nTriangles);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, GetTotalTriangles()*sizeof(msTriangle), &m_vTriangles, GL_STATIC_DRAW);
+	
+	if( m_bNeedsTextureMatrixScale ) {
+		glBindBuffer(GL_VERTEX_ARRAY, m_nTextureMatrixScale);
+		glBufferData(GL_VERTEX_ARRAY, GetTotalVertices()*sizeof(RageVector2), &m_vTexMatrixScale, GL_STATIC_DRAW);
+	}
+#endif
 }
 
 void RageCompiledGeometryHWOGL::Invalidate()
@@ -1052,6 +1127,7 @@ void RageCompiledGeometryHWOGL::Invalidate()
 void RageCompiledGeometryHWOGL::Allocate( const vector<msMesh> &vMeshes )
 {
 	RageCompiledGeometrySWOGL::Allocate( vMeshes );
+#ifndef __EMSCRIPTEN__
 	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nPositions );
 	GLExt.glBufferDataARB( 
 		GL_ARRAY_BUFFER_ARB, 
@@ -1090,6 +1166,42 @@ void RageCompiledGeometryHWOGL::Allocate( const vector<msMesh> &vMeshes )
 		GetTotalVertices()*sizeof(RageVector2), 
 		NULL,
 		GL_STATIC_DRAW_ARB );
+#else
+	glBindBuffer( GL_ARRAY_BUFFER, m_nPositions );
+	glBufferData( 
+		GL_ARRAY_BUFFER, 
+		GetTotalVertices()*sizeof(RageVector3), 
+		NULL, 
+		GL_STATIC_DRAW );
+	AssertNoGLError();
+
+	glBindBuffer( GL_ARRAY_BUFFER, m_nTextureCoords );
+	glBufferData( 
+		GL_ARRAY_BUFFER, 
+		GetTotalVertices()*sizeof(RageVector2), 
+		NULL, 
+		GL_STATIC_DRAW );
+	AssertNoGLError();
+
+	glBindBuffer( GL_ARRAY_BUFFER, m_nNormals );
+	glBufferData( 
+		GL_ARRAY_BUFFER_ARB, 
+		GetTotalVertices()*sizeof(RageVector3), 
+		NULL, 
+		GL_STATIC_DRAW_ARB );
+	AssertNoGLError();
+
+	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, m_nTriangles );
+	glBufferData( 
+		GL_ELEMENT_ARRAY_BUFFER, 
+		GetTotalTriangles()*sizeof(msTriangle), 
+		NULL, 
+		GL_STATIC_DRAW );
+	AssertNoGLError();
+
+	glBindBuffer( GL_ARRAY_BUFFER, m_nTextureMatrixScale );
+	glBufferData( GL_ARRAY_BUFFER, GetTotalVertices()*sizeof(RageVector2), NULL, GL_STATIC_DRAW );
+#endif
 }
 
 void RageCompiledGeometryHWOGL::Change( const vector<msMesh> &vMeshes )
@@ -1107,19 +1219,19 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 	if( !meshInfo.iVertexCount || !meshInfo.iTriangleCount )
 		return;
 
-	glEnableClientState(GL_VERTEX_ARRAY);
-	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nPositions );
+	// glEnableClientState(GL_VERTEX_ARRAY);
+	glBindBuffer( GL_ARRAY_BUFFER, m_nPositions );
 	AssertNoGLError();
 	glVertexPointer(3, GL_FLOAT, 0, NULL );
 	AssertNoGLError();
 
-	glDisableClientState(GL_COLOR_ARRAY);
+	// glDisableClientState(GL_COLOR_ARRAY);
 
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureCoords );
+	// glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glBindBuffer( GL_ARRAY_BUFFER, m_nTextureCoords );
 	AssertNoGLError();
-	glTexCoordPointer(2, GL_FLOAT, 0, NULL);
-	AssertNoGLError();
+	// glTexCoordPointer(2, GL_FLOAT, 0, NULL);
+	// AssertNoGLError();
 
 	// TRICKY:  Don't bind and send normals if lighting is disabled.  This 
 	// will save some effort transforming these values.
@@ -1131,15 +1243,15 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 	glGetBooleanv( GL_TEXTURE_GEN_T, &bTextureGenT );
 	if( bLighting || bTextureGenS || bTextureGenT )
 	{
-		glEnableClientState(GL_NORMAL_ARRAY);
-		GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nNormals );
+		// glEnableClientState(GL_NORMAL_ARRAY);
+		glBindBuffer( GL_ARRAY_BUFFER, m_nNormals );
 		AssertNoGLError();
-		glNormalPointer(GL_FLOAT, 0, NULL);
-		AssertNoGLError();
+		// glNormalPointer(GL_FLOAT, 0, NULL);
+		// AssertNoGLError();
 	}
 	else
 	{
-		glDisableClientState(GL_NORMAL_ARRAY);
+		// glDisableClientState(GL_NORMAL_ARRAY);
 		AssertNoGLError();
 	}
 
@@ -1184,7 +1296,7 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 			mat.m[3][2] = 0;
 
 			glMatrixMode( GL_TEXTURE );
-			glLoadMatrixf( (const float*)mat );
+			// glLoadMatrixf( (const float*)mat );
 			AssertNoGLError();
 		}
 	}
@@ -1326,7 +1438,7 @@ void RageDisplay_OGL::DrawLineStripInternal( const RageSpriteVertex v[], int iNu
 	/* Round off the corners.  This isn't perfect; the point is sometimes a little
 	 * larger than the line, causing a small bump on the edge.  Not sure how to fix
 	 * that. */
-	glPointSize(LineWidth);
+	// glPointSize(LineWidth);
 
 	/* Hack: if the points will all be the same, we don't want to draw
 	 * any points at all, since there's nothing to connect.  That'll happen
@@ -1403,7 +1515,7 @@ void RageDisplay_OGL::SetTexture( int iTextureUnitIndex, RageTexture* pTexture )
 }
 void RageDisplay_OGL::SetTextureModeModulate()
 {
-	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	// glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 }
 
 void RageDisplay_OGL::SetTextureModeGlow()
@@ -1416,22 +1528,22 @@ void RageDisplay_OGL::SetTextureModeGlow()
 		return;
 	}
 
-	/* Source color is the diffuse color only: */
-	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
-	glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_COMBINE_RGB_EXT), GL_REPLACE);
-	glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_SOURCE0_RGB_EXT), GL_PRIMARY_COLOR_EXT);
+	// /* Source color is the diffuse color only: */
+	// glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
+	// glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_COMBINE_RGB_EXT), GL_REPLACE);
+	// glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_SOURCE0_RGB_EXT), GL_PRIMARY_COLOR_EXT);
 
-	/* Source alpha is texture alpha * diffuse alpha: */
-	glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_COMBINE_ALPHA_EXT), GL_MODULATE);
-	glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_OPERAND0_ALPHA_EXT), GL_SRC_ALPHA);
-	glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_SOURCE0_ALPHA_EXT), GL_PRIMARY_COLOR_EXT);
-	glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_OPERAND1_ALPHA_EXT), GL_SRC_ALPHA);
-	glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_SOURCE1_ALPHA_EXT), GL_TEXTURE);
+	// /* Source alpha is texture alpha * diffuse alpha: */
+	// glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_COMBINE_ALPHA_EXT), GL_MODULATE);
+	// glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_OPERAND0_ALPHA_EXT), GL_SRC_ALPHA);
+	// glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_SOURCE0_ALPHA_EXT), GL_PRIMARY_COLOR_EXT);
+	// glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_OPERAND1_ALPHA_EXT), GL_SRC_ALPHA);
+	// glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_SOURCE1_ALPHA_EXT), GL_TEXTURE);
 }
 
 void RageDisplay_OGL::SetTextureModeAdd()
 {
-	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_ADD);
+	// glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_ADD);
 }
 
 void RageDisplay_OGL::SetTextureFiltering( bool b )
@@ -1532,15 +1644,15 @@ void RageDisplay_OGL::SetMaterial(
 
 	if( bLighting )
 	{
-		glMaterialfv( GL_FRONT, GL_EMISSION, emissive );
-		glMaterialfv( GL_FRONT, GL_AMBIENT, ambient );
-		glMaterialfv( GL_FRONT, GL_DIFFUSE, diffuse );
-		glMaterialfv( GL_FRONT, GL_SPECULAR, specular );
-		glMaterialf( GL_FRONT, GL_SHININESS, shininess );
+		// glMaterialfv( GL_FRONT, GL_EMISSION, emissive );
+		// glMaterialfv( GL_FRONT, GL_AMBIENT, ambient );
+		// glMaterialfv( GL_FRONT, GL_DIFFUSE, diffuse );
+		// glMaterialfv( GL_FRONT, GL_SPECULAR, specular );
+		// glMaterialf( GL_FRONT, GL_SHININESS, shininess );
 	}
 	else
 	{
-		glColor4fv( emissive + ambient + diffuse );
+		// glColor4fv( emissive + ambient + diffuse );
 	}
 }
 
@@ -1563,17 +1675,17 @@ void RageDisplay_OGL::SetLightDirectional(
 {
 	// Light coordinates are transformed by the modelview matrix, but
 	// we are being passed in world-space coords.
-	glPushMatrix();
+	// glPushMatrix();
 	glLoadIdentity();
 
 	glEnable( GL_LIGHT0+index );
-	glLightfv(GL_LIGHT0+index, GL_AMBIENT, ambient);
-	glLightfv(GL_LIGHT0+index, GL_DIFFUSE, diffuse);
-	glLightfv(GL_LIGHT0+index, GL_SPECULAR, specular);
+	// glLightfv(GL_LIGHT0+index, GL_AMBIENT, ambient);
+	// glLightfv(GL_LIGHT0+index, GL_DIFFUSE, diffuse);
+	// glLightfv(GL_LIGHT0+index, GL_SPECULAR, specular);
 	float position[4] = {dir.x, dir.y, dir.z, 0};
-	glLightfv(GL_LIGHT0+index, GL_POSITION, position);
+	// glLightfv(GL_LIGHT0+index, GL_POSITION, position);
 
-	glPopMatrix();
+	// glPopMatrix();
 }
 
 void RageDisplay_OGL::SetCullMode( CullMode mode )
@@ -1654,7 +1766,7 @@ void SetPixelMapForSurface( int glImageFormat, int glTexFormat, const RageSurfac
 {
 	if( glImageFormat != GL_COLOR_INDEX || glTexFormat == GL_COLOR_INDEX8_EXT )
 	{
-		glPixelTransferi( GL_MAP_COLOR, false );
+		glPixelStorei( GL_MAP_COLOR, false );
 		return;
 	}
 
@@ -1670,11 +1782,11 @@ void SetPixelMapForSurface( int glImageFormat, int glTexFormat, const RageSurfac
 	}
 
 	FlushGLErrors();
-	glPixelMapusv( GL_PIXEL_MAP_I_TO_R, 256, buf[0] );
-	glPixelMapusv( GL_PIXEL_MAP_I_TO_G, 256, buf[1] );
-	glPixelMapusv( GL_PIXEL_MAP_I_TO_B, 256, buf[2] );
-	glPixelMapusv( GL_PIXEL_MAP_I_TO_A, 256, buf[3] );
-	glPixelTransferi( GL_MAP_COLOR, true );
+	// glPixelMapusv( GL_PIXEL_MAP_I_TO_R, 256, buf[0] );
+	// glPixelMapusv( GL_PIXEL_MAP_I_TO_G, 256, buf[1] );
+	// glPixelMapusv( GL_PIXEL_MAP_I_TO_B, 256, buf[2] );
+	// glPixelMapusv( GL_PIXEL_MAP_I_TO_A, 256, buf[3] );
+	glPixelStorei( GL_MAP_COLOR, true );
 	GLenum error = glGetError();
 	ASSERT_M( error == GL_NO_ERROR, GLToString(error) );
 }
@@ -1703,23 +1815,23 @@ unsigned RageDisplay_OGL::CreateTexture(
 	// HACK:  OpenGL 1.2 types aren't available in GLU 1.3.  Don't call GLU for mip
 	// mapping if we're using an OGL 1.2 type and don't have >= GLU 1.3.
 	// http://pyopengl.sourceforge.net/documentation/manual/gluBuild2DMipmaps.3G.html
-	if( bGenerateMipMaps && g_gluVersion < 13 )
-	{
-		switch( pixfmt )
-		{
-		// OpenGL 1.1 types
-		case FMT_RGBA8:
-		case FMT_RGB8:
-		case FMT_PAL:
-		case FMT_BGR8:
-			break;
-		// OpenGL 1.2 types
-		default:
-			LOG->Trace( "Can't generate mipmaps for type %s because GLU version %.1f is too old.", GLToString(glImageType).c_str(), g_gluVersion/10.f );
-			bGenerateMipMaps = false;
-			break;
-		}
-	}
+	// if( bGenerateMipMaps && g_glfwVersion < 13 )
+	// {
+	// 	switch( pixfmt )
+	// 	{
+	// 	// OpenGL 1.1 types
+	// 	case FMT_RGBA8:
+	// 	case FMT_RGB8:
+	// 	case FMT_PAL:
+	// 	case FMT_BGR8:
+	// 		break;
+	// 	// OpenGL 1.2 types
+	// 	default:
+	// 		LOG->Trace( "Can't generate mipmaps for type %s because GLFW version %.1f is too old.", GLToString(glImageType).c_str(), g_glfwVersion/10.f );
+	// 		bGenerateMipMaps = false;
+	// 		break;
+	// 	}
+	// }
 
 	// allocate OpenGL texture resource
 	unsigned int uTexHandle;
@@ -1783,7 +1895,7 @@ unsigned RageDisplay_OGL::CreateTexture(
 	{
 		ostringstream s;
 		
-		s << (bGenerateMipMaps? "gluBuild2DMipmaps":"glTexImage2D");
+		s << (bGenerateMipMaps? "glfwBuild2DMipmaps":"glTexImage2D");
 		s << "(format " << GLToString(glTexFormat) <<
 				", " << img->w << "x" <<  img->h <<
 				", format " << GLToString(glImageFormat) <<
@@ -1798,11 +1910,12 @@ unsigned RageDisplay_OGL::CreateTexture(
 
 	if( bGenerateMipMaps )
 	{
-		GLenum error = gluBuild2DMipmaps(
-			GL_TEXTURE_2D, glTexFormat, 
-			img->w, img->h,
-			glImageFormat, glImageType, img->pixels );
-		ASSERT_M( error == 0, (char *) gluErrorString(error) );
+		glGenerateMipmap(GL_TEXTURE_2D);
+		// GLenum error = gluBuild2DMipmaps(
+		// 	GL_TEXTURE_2D, glTexFormat, 
+		// 	img->w, img->h,
+		// 	glImageFormat, glImageType, img->pixels );
+		// ASSERT_M( error == 0, (char *) gluErrorString(error) );
 	}
 	else
 	{
@@ -1820,7 +1933,7 @@ unsigned RageDisplay_OGL::CreateTexture(
 	if( pixfmt == FMT_PAL )
 	{
 		GLint size = 0;
-		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GLenum(GL_TEXTURE_INDEX_SIZE_EXT), &size);
+		glGetTexParameteriv(GL_TEXTURE_2D, GLenum(GL_TEXTURE_INDEX_SIZE_EXT), &size);
 		if(size != 8)
 			RageException::Throw("Thought paletted textures worked, but they don't.");
 	}
@@ -1873,7 +1986,7 @@ void RageDisplay_OGL::SetPolygonMode( PolygonMode pm )
 	case POLYGON_LINE:	m = GL_LINE; break;
 	default:	ASSERT(0);	return;
 	}
-	glPolygonMode( GL_FRONT_AND_BACK, m );
+	glPolygonOffset(GL_FRONT_AND_BACK, m);
 }
 
 void RageDisplay_OGL::SetLineWidth( float fWidth )
@@ -1888,7 +2001,7 @@ CString RageDisplay_OGL::GetTextureDiagnostics( unsigned id ) const
 
 void RageDisplay_OGL::SetAlphaTest( bool b )
 {
-	glAlphaFunc( GL_GREATER, 0.01f );
+	// glAlphaFunc( GL_GREATER, 0.01f );
 	if( b )
 		glEnable( GL_ALPHA_TEST );
 	else
@@ -1946,8 +2059,10 @@ void RageDisplay_OGL::SetSphereEnvironmentMapping( bool b )
 {
 	if( b )
 	{
+#ifndef __EMSCRIPTEN__
 		glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
 		glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+#endif
 		glEnable(GL_TEXTURE_GEN_S);
 		glEnable(GL_TEXTURE_GEN_T);
 	}
