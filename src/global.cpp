@@ -11,6 +11,8 @@
 
 #if defined(CRASH_HANDLER) && (defined(LINUX) || defined(DARWIN))
 #include "archutils/Unix/CrashHandler.h"
+#elif defined(CRASH_HANDLER) && defined(__EMSCRIPTEN__)
+#include "archutils/Emscripten/CrashHandler.h"
 #endif
 
 void NORETURN sm_crash( const char *reason )

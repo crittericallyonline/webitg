@@ -30,6 +30,7 @@ LowLevelWindow_Null::~LowLevelWindow_Null()
 void *LowLevelWindow_Null::GetProcAddress(CString s)
 {
 	// return SDL_GL_GetProcAddress(s);
+	return NULL;
 }
 
 CString LowLevelWindow_Null::TryVideoMode( RageDisplay::VideoModeParams p, bool &bNewDeviceOut )

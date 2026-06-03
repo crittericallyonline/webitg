@@ -18,10 +18,14 @@ USBDriver_Impl::~USBDriver_Impl()
 
 USBDriver_Impl* USBDriver_Impl::Create()
 {
+#ifndef __EMSCRIPTEN__
 #if defined(HAS_USBDRIVER_IMPL_WINUSB)
 	return new USBDriver_Impl_WinUSB;
 #elif defined(HAS_USBDRIVER_IMPL_LIBUSB)
 	return new USBDriver_Impl_Libusb;
+#else
+	return NULL;
+#endif
 #else
 	return NULL;
 #endif
@@ -30,10 +34,14 @@ USBDriver_Impl* USBDriver_Impl::Create()
 /* XXX: can we do this better? */
 bool USBDriver_Impl::DeviceExists( uint16_t iVendorID, uint16_t iProductID )
 {
+#ifndef __EMSCRIPTEN__
 #if defined(HAS_USBDRIVER_IMPL_WINUSB)
 	return USBDriver_Impl_WinUSB::DeviceExists( iVendorID, iProductID );
 #elif defined(HAS_USBDRIVER_IMPL_LIBUSB)
 	return USBDriver_Impl_Libusb::DeviceExists( iVendorID, iProductID );
+#else
+	return false;
+#endif
 #else
 	return false;
 #endif

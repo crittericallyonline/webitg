@@ -68,7 +68,7 @@ Dependencies:
 2. Build [FFmpeg](https://github.com/ffmpeg/ffmpeg):
 ```sh
 cd extern/FFmpeg && \
-emconfigure ./configure --disable-asm --ar=emar --arch=x86 --cc=emcc --cxx=em++ --ranlib=emranlib && \
+emconfigure ./configure --disable-asm --ar=emar --arch=x86 --cc=emcc --cxx=em++ --ranlib=emranlib --nm=emnm --disable-doc --disable-programs --enable-gpl && \
 emmake make -j -s # its laggy but faster, to make your pc usable remove -j or specify -j(NUMBER OF CORES)
 ```
 3. make a entry for [config.h](src/config.h) in the src directory

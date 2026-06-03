@@ -1,7 +1,7 @@
 /* USBDriver_Impl_Libusb: a low-level USB control system for any system
  * which implements the libusb-0.1 API calls (Windows, Linux, Mac). */
 
-#ifndef USB_DRIVER_IMPL_LIBUSB_H
+#if defined(USB_DRIVER_IMPL_LIBUSB_H) && !defined(__EMSCRIPTEN__)
 #define USB_DRIVER_IMPL_LIBUSB_H
 
 #include "USBDriver_Impl.h"

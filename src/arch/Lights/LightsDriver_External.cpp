@@ -12,7 +12,9 @@ LightsState LightsDriver_External::m_LightsState;
 
 LightsDriver_External::LightsDriver_External()
 {
+#ifndef __EMSCRIPTEN__
 	ZERO( m_LightsState );
+#endif
 	LOG->Trace( "LightsDriver_External::LightsDriver_External()" );
 }
 

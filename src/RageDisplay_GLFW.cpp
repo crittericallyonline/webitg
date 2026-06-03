@@ -1003,30 +1003,30 @@ void RageCompiledGeometryHWOGL::AllocateBuffers()
 	{
 #ifndef __EMSCRIPTEN__
 		GLExt.glGenBuffersARB( 1, &m_nPositions );
-		AssertNoGLError();
 #else
 		glGenBuffers(1, &m_nPositions);
 #endif
+		AssertNoGLError();
 	}
 
 	if( !m_nTextureCoords )
 	{
 #ifndef __EMSCRIPTEN__
 		GLExt.glGenBuffersARB( 1, &m_nTextureCoords );
-		AssertNoGLError();
 #else
 		glGenBuffers(1, &m_nTextureCoords);
 #endif
+		AssertNoGLError();
 	}
 
 	if( !m_nNormals )
 	{
 #ifndef __EMSCRIPTEN__
 		GLExt.glGenBuffersARB( 1, &m_nNormals );
-		AssertNoGLError();
 #else
 		glGenBuffers(1, &m_nNormals);
 #endif
+		AssertNoGLError();
 	}
 
 	if( !m_nTriangles )
@@ -1036,18 +1036,18 @@ void RageCompiledGeometryHWOGL::AllocateBuffers()
 		AssertNoGLError();
 #else
 		glGenBuffers(1, &m_nTriangles);
-
 #endif
+		AssertNoGLError();
 	}
 
 	if( !m_nTextureMatrixScale )
 	{
 #ifndef __EMSCRIPTEN__
 		GLExt.glGenBuffersARB( 1, &m_nTextureMatrixScale );
-		AssertNoGLError();
 #else
 		glGenBuffers(1, &m_nTextureMatrixScale);
 #endif
+		AssertNoGLError();
 	}
 }
 

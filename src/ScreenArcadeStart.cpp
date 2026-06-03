@@ -14,9 +14,11 @@
 #include "RageInput.h"
 #include "InputMapper.h"
 #include "arch/InputHandler/InputHandler_Iow.h"
+#ifndef __EMSCRIPTEN__
 #include "arch/InputHandler/InputHandler_PIUIO.h"
 #include "arch/InputHandler/InputHandler_MiniMaid.h"
 #include "arch/InputHandler/InputHandler_P3IO.h"
+#endif
 #include "arch/InputHandler/InputHandler_Emscripten.h"
 
 #define NEXT_SCREEN	THEME->GetMetric( m_sName, "NextScreen" )
@@ -144,6 +146,7 @@ bool ScreenArcadeStart::CheckForHub()
 
 bool ScreenArcadeStart::LoadHandler()
 {
+#ifndef __EMSCRIPTEN__
 	// this makes it so much easier to keep track of. --Vyhd
 	enum Board { BOARD_NONE, BOARD_ITGIO, BOARD_PIUIO, BOARD_MINIMAID, BOARD_P3IO };
 	Board iBoard = BOARD_NONE;
@@ -154,7 +157,6 @@ bool ScreenArcadeStart::LoadHandler()
 
 		for( unsigned i = 0; i < vDevices.size(); i++ )
 		{
-#ifndef __EMSCRIPTEN__
 			if( vDevices[i].IsITGIO() )
 				iBoard = BOARD_ITGIO;
 			else if( vDevices[i].IsPIUIO() )
@@ -163,7 +165,6 @@ bool ScreenArcadeStart::LoadHandler()
 				iBoard = BOARD_MINIMAID;
 			else if( vDevices[i].IsP3IO() )
 				iBoard = BOARD_P3IO;
-#endif
 
 			// early abort if we found something
 			if( iBoard != BOARD_NONE )
@@ -180,6 +181,7 @@ bool ScreenArcadeStart::LoadHandler()
 	else if( iBoard == BOARD_MINIMAID )
 		pDriver = new MiniMaid;
 	else
+#endif
 #ifdef ITG_ARCADE
 	{
 		m_sMessage = "The input/lights controller is not connected or is not receiving power.\n\nPlease consult the service manual.";
@@ -192,7 +194,7 @@ bool ScreenArcadeStart::LoadHandler()
 		return true;
 	}
 #endif
-
+#ifndef __EMSCRIPTEN__
 	/* Attempt a connection */
 	if( !pDriver->Open() )
 	{
@@ -207,10 +209,10 @@ bool ScreenArcadeStart::LoadHandler()
 
 	if( iBoard == BOARD_ITGIO )
 		INPUTMAN->AddHandler( new InputHandler_Iow );
-	else if( iBoard == BOARD_PIUIO )
-		INPUTMAN->AddHandler( new InputHandler_PIUIO );
-	else if( iBoard == BOARD_MINIMAID )
-		INPUTMAN->AddHandler( new InputHandler_MiniMaid );
+	// else if( iBoard == BOARD_PIUIO )
+	// 	INPUTMAN->AddHandler( new InputHandler_PIUIO );
+	// else if( iBoard == BOARD_MINIMAID )
+	// 	INPUTMAN->AddHandler( new InputHandler_MiniMaid );
 	else
 		ASSERT(0);
 
@@ -220,6 +222,8 @@ bool ScreenArcadeStart::LoadHandler()
 	INPUTMAPPER->SaveMappingsToDisk();
 
 	return true;
+#endif
+	return false;
 }
 
 /*
