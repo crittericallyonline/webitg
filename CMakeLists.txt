@@ -1,12 +1,14 @@
 cmake_minimum_required(VERSION 3.10.0)
 project(WebITG VERSION 0.1.0 LANGUAGES C CXX)
 
+set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_SYSTEM_NAME Emscripten)
 set(CMAKE_EXECUTABLE_SUFFIX ".js")
 set(CMAKE_CXX_COMPILER em++)
 set(CMAKE_C_COMPILER emcc)
 set(CMAKE_AR emar)
 set(CMAKE_RANLIB emranlib)
+set(CMAKE_CXX_FLAGS_RELEASE "-O0 -flto=full")
 
 # set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/archive)
 set(NDEBUG 0)
@@ -14,11 +16,13 @@ set(WITHOUT_NETWORKING 1)
 set(HAVE_FFMPEG 1)
 set(HAVE_CONFIG_H 1)
 set(HAVE_SDL 0) # i dont like SDL, too complicated rn
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread --use-port=vorbis --use-port=ogg --use-port=libpng --use-port=libjpeg")
-
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --use-port=vorbis --use-port=ogg --use-port=libpng --use-port=libjpeg")
+# --closure 1
+set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -Os -sASYNCIFY=1 -sSTANDALONE_WASM=0 -sFORCE_FILESYSTEM=0 -sSPLIT_MODULE")
 # CRASH_HANDLER
 add_compile_definitions(HAVE_FFMPEG HAS_USBDRIVER_IMPL_WINUSB=0 HAS_USBDRIVER_IMPL_LIBUSB=0)
 
+# could  make this a target definition instead of it being global
 if(NDEBUG)
 add_compile_definitions(NDEBUG FPM_64BIT)
 endif()
@@ -27,8 +31,7 @@ if(HAVE_CONFIG_H)
 add_compile_definitions(HAVE_CONFIG_H)
 endif()
 
-
-set(CMAKE_MAKE_PROGRAM="emmake make -j")
+set(CMAKE_MAKE_PROGRAM="emmake make -j4")
 
 if(WITHOUT_NETWORKING)
     add_compile_definitions(WITHOUT_NETWORKING)
@@ -109,7 +112,7 @@ add_library(lua STATIC
     src/lua-5.0/src/lobject.c
 )
 target_include_directories(lua PUBLIC src/lua-5.0/include/)
-target_link_options(lua PRIVATE "-pthread -sUSE_PTHREADS=1 -sSHARED_MEMORY=1")
+target_link_options(lua PRIVATE "-pthread")
 
 add_library(aes STATIC
     src/aes/aeskey.c
@@ -162,12 +165,12 @@ target_include_directories(libresample PUBLIC src/libresample/include)
 target_link_directories(WebITG BEFORE PUBLIC archive/)
 target_link_libraries(WebITG PUBLIC
     #precompiled archives
-    liblua.a
-    libaes.a
-    liblibtomcrypt.a
-    libmadlib.a
-    liblibresample.a
-    libtommath.a
+    lua
+    aes
+    libtomcrypt
+    madlib
+    libresample
+    tommath
     libavcodec.a
     libavdevice.a
     libavfilter.a
