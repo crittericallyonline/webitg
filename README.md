@@ -68,7 +68,7 @@ Dependencies:
 2. Build [FFmpeg](https://github.com/ffmpeg/ffmpeg):
 ```sh
 cd extern/FFmpeg && \
-emconfigure ./configure --disable-asm --ar=emar --arch=x86 --cc=emcc --cxx=em++ --ranlib=emranlib --nm=emnm --disable-doc --disable-programs --enable-gpl && \
+emconfigure ./configure --disable-asm --ar=emar --arch=x86 --cc=emcc --cxx=em++ --ranlib=emranlib --nm=emnm --disable-doc --disable-programs --enable-gpl --disable-network && \
 emmake make -j -s # its laggy but faster, to make your pc usable remove -j or specify -j(NUMBER OF CORES)
 ```
 3. make a entry for [config.h](src/config.h) in the src directory
@@ -96,6 +96,7 @@ emmake make -j -s # its laggy but faster, to make your pc usable remove -j or sp
 5. Create the directory in which you will put the final build of the wasm in. `mkdir -p <BUILD_DIR>` then `cd <BUILD_DIR>`
     - . for how many directorys youve made, you will put `../` for each directory entered when building to reach `CMakeLists.txt`.
 6. `emcmake cmake ../
+
 ## How to build for arcade
 
 1. Choose a location for your chroot:  MY_CHROOT=/home/cmyers/chroot

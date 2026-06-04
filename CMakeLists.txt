@@ -18,7 +18,7 @@ set(HAVE_CONFIG_H 1)
 set(HAVE_SDL 0) # i dont like SDL, too complicated rn
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --use-port=vorbis --use-port=ogg --use-port=libpng --use-port=libjpeg")
 # --closure 1
-set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -Os -sASYNCIFY=1 -sSTANDALONE_WASM=0 -sFORCE_FILESYSTEM=0 -sSPLIT_MODULE")
+set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -O0 -sASYNCIFY=1 -sWASM -sMAX_WEBGL_VERSION=2 -sMIN_WEBGL_VERSION=2 -sUSE_GLFW=1 -sFULL_ES3")
 # CRASH_HANDLER
 add_compile_definitions(HAVE_FFMPEG HAS_USBDRIVER_IMPL_WINUSB=0 HAS_USBDRIVER_IMPL_LIBUSB=0)
 
@@ -31,7 +31,7 @@ if(HAVE_CONFIG_H)
 add_compile_definitions(HAVE_CONFIG_H)
 endif()
 
-set(CMAKE_MAKE_PROGRAM="emmake make -j4")
+set(CMAKE_MAKE_PROGRAM="emmake make -j")
 
 if(WITHOUT_NETWORKING)
     add_compile_definitions(WITHOUT_NETWORKING)
@@ -57,7 +57,7 @@ else()
     file(GLOB SOURCES APPEND
     src/arch/LoadingWindow/LoadingWindow_Emscripten.cpp
     src/arch/InputHandler/InputHandler_Emscripten.cpp
-    src/arch/LowLevelWindow/LowLevelWindow_Emscripten.cpp
+    src/arch/LowLevelWindow/LowLevelWindow_GLFW.cpp
     )
 endif()
 
