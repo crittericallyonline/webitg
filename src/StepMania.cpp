@@ -998,7 +998,7 @@ int main(int argc, char* argv[])
 #ifndef __EMSCRIPTEN__
 	FILEMAN = new RageFileManager( argv[0] );
 #else
-	printf("I dont know wjere \"%s\" is btw lul\n", argv[0]);
+	// printf("I dont know wjere \"%s\" is btw lul\n", argv[0]);
 	FILEMAN = new RageFileManager(".");
 #endif
 	FILEMAN->MountInitialFilesystems();
@@ -1088,6 +1088,9 @@ int main(int argc, char* argv[])
 #if defined(HAVE_SDL)
 	SetupSDL();
 #endif
+
+	// glfw should be initialized if sdl
+	// isint present and glfw is
 
 	/* initialize the pack manager and mount all data after prefs loading.
 	 * this helps to make sure that packages can't mess with core data. */
