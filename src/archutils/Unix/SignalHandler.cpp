@@ -114,6 +114,7 @@ static void *CreateStack( int size )
 /* Hook up events to fatal signals, so we can clean up if we're killed. */
 void SignalHandler::OnClose(handler h)
 {
+	printf("More testing!\n");
 	if(saved_sigs == NULL)
 	{
 		saved_sigs = new SaveSignals;

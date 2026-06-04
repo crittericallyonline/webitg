@@ -471,6 +471,7 @@ static void AddFilesystemDriver( LoadedDriver *pLoadedDriver, bool bAddToEnd )
 
 bool RageFileManager::Mount( const CString &sType, const CString &sRoot_, const CString &sMountPoint_, bool bAddToEnd )
 {
+#ifndef __EMSCRIPTEN__
 	CString sRoot = sRoot_;
 	CString sMountPoint = sMountPoint_;
 
@@ -511,6 +512,9 @@ bool RageFileManager::Mount( const CString &sType, const CString &sRoot_, const 
 
 	AddFilesystemDriver( pLoadedDriver, bAddToEnd );
 	return true;
+#else
+	return false;
+#endif
 }
 
 void RageFileManager::Unmount( const CString &sType, const CString &sRoot_, const CString &sMountPoint_ )

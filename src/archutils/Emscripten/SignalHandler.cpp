@@ -4,9 +4,7 @@
 #include "SignalHandler.h"
 #include "GetSysInfo.h"
 
-#if defined(__EMSCRIPTEN__)
 #include "EmscriptenThreadHelpers.h"
-#endif
 
 #include <signal.h>
 #include <cstdlib>

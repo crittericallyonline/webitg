@@ -19,7 +19,7 @@
 
 
 #if defined(CRASH_HANDLER)
-#include "../../archutils/Emscripten/CrashHandler.h"
+#include "archutils/Emscripten/CrashHandler.h"
 #endif
 
 int64_t ArchHooks_Emscripten::m_iStartTime = 0;
@@ -68,35 +68,35 @@ static bool IsReadOnlyMountPoint( const CString &mountPoint )
 	return found && isReadOnly;
 }
 
-void ArchHooks_Emscripten::MountInitialFilesystems( const CString &sDirOfExecutable )
-{
-	/* Mount the root filesystem, so we can read files in /proc, /etc, and so on.
-	 * This is /rootfs, not /root, to avoid confusion with root's home directory. */
-	FILEMAN->Mount( "dirro", "/", "/rootfs" );
+// void ArchHooks_Emscripten::MountInitialFilesystems( const CString &sDirOfExecutable )
+// {
+// 	/* Mount the root filesystem, so we can read files in /proc, /etc, and so on.
+// 	 * This is /rootfs, not /root, to avoid confusion with root's home directory. */
+// 	FILEMAN->Mount( "dirro", "/", "/rootfs" );
 
-	/* Mount /proc, so Alsa9Buf::GetSoundCardDebugInfo() and others can access it.
-	 * (Deprecated; use rootfs.) */
-	FILEMAN->Mount( "dirro", "/proc", "/proc" );
+// 	/* Mount /proc, so Alsa9Buf::GetSoundCardDebugInfo() and others can access it.
+// 	 * (Deprecated; use rootfs.) */
+// 	FILEMAN->Mount( "dirro", "/proc", "/proc" );
 
-	/* FileDB cannot accept relative paths, so Root must be absolute */
-	/* using DirOfExecutable for now  --infamouspat */
-	CString Root = sDirOfExecutable;
+// 	/* FileDB cannot accept relative paths, so Root must be absolute */
+// 	/* using DirOfExecutable for now  --infamouspat */
+// 	CString Root = sDirOfExecutable;
 
 
-	/* OpenITG-specific paths */
-	FILEMAN->Mount( "oitg", Root + "/CryptPackages", "/Packages" );
+// 	/* OpenITG-specific paths */
+// 	FILEMAN->Mount( "oitg", Root + "/CryptPackages", "/Packages" );
 
-	/*
-	* Mount an OpenITG root in the home directory.
-	* This is where custom data (songs, themes, etc) should go. 
-	* Any files OpenITG tries to modify will be written here.
-	*/
-	CString home = CString( getenv( "HOME" ) ) + "/";
-	FILEMAN->Mount( "dir", home + ".openitg", "/" );
+// 	/*
+// 	* Mount an OpenITG root in the home directory.
+// 	* This is where custom data (songs, themes, etc) should go. 
+// 	* Any files OpenITG tries to modify will be written here.
+// 	*/
+// 	CString home = CString( getenv( "HOME" ) ) + "/";
+// 	FILEMAN->Mount( "dir", home + ".openitg", "/" );
 
-	/* This mounts everything else, including Cache, Data, UserPacks, etc. */
-	FILEMAN->Mount( "dir", Root, "/" );
-}
+// 	/* This mounts everything else, including Cache, Data, UserPacks, etc. */
+// 	FILEMAN->Mount( "dir", Root, "/" );
+// }
 
 static void GetDiskSpace( const CString &sDir, uint64_t *pSpaceFree, uint64_t *pSpaceTotal )
 {
@@ -117,54 +117,54 @@ uint64_t ArchHooks_Emscripten::GetDiskSpaceTotal( const CString &sDir )
 	return iSpaceTotal;
 }
 
-bool ArchHooks_Emscripten::OpenMemoryRange( unsigned short start_port, unsigned short bytes )
-{
-	LOG->Trace( "ArchHooks_Emscripten::OpenMemoryRange( %#x, %d )", start_port, bytes );
-	return 1;
+// bool ArchHooks_Emscripten::OpenMemoryRange( unsigned short start_port, unsigned short bytes )
+// {
+// 	LOG->Trace( "ArchHooks_Emscripten::OpenMemoryRange( %#x, %d )", start_port, bytes );
+// 	return 1;
 
-	// int ret = iopl(3);
+// 	// int ret = iopl(3);
 
-	// if( ret != 0 )
-	// 	LOG->Warn( "OpenMemoryRange(): iopl error: %s", strerror(errno) );
+// 	// if( ret != 0 )
+// 	// 	LOG->Warn( "OpenMemoryRange(): iopl error: %s", strerror(errno) );
 
-	// return (ret == 0);
-}
+// 	// return (ret == 0);
+// }
 
-void ArchHooks_Emscripten::CloseMemoryRange( unsigned short start_port, unsigned short bytes )
-{
-	// if( (start_port+bytes) <= 0x3FF )
-	// {
-	// 	if( ioperm( start_port, bytes, 0 ) != 0 )
-	LOG->Warn( "CloseMemoryRange(): ioperm error: %s", strerror(errno) );
+// void ArchHooks_Emscripten::CloseMemoryRange( unsigned short start_port, unsigned short bytes )
+// {
+// 	// if( (start_port+bytes) <= 0x3FF )
+// 	// {
+// 	// 	if( ioperm( start_port, bytes, 0 ) != 0 )
+// 	LOG->Warn( "CloseMemoryRange(): ioperm error: %s", strerror(errno) );
 
-	// 	return;
-	// }
+// 	// 	return;
+// 	// }
 
-	// if( iopl(0) != 0 )
-	LOG->Warn( "CloseMemoryRange(): iopl error: %s", strerror(errno) );
-}
+// 	// if( iopl(0) != 0 )
+// 	LOG->Warn( "CloseMemoryRange(): iopl error: %s", strerror(errno) );
+// }
 
-bool ArchHooks_Emscripten::GetNetworkAddress( CString &sIP, CString &sNetmask, CString &sError )
-{
-	return true;
-}
+// bool ArchHooks_Emscripten::GetNetworkAddress( CString &sIP, CString &sNetmask, CString &sError )
+// {
+// 	return true;
+// }
 
-void ArchHooks_Emscripten::SystemReboot( bool bForceSync )
-{
-	ExitGame();
-}
+// void ArchHooks_Emscripten::SystemReboot( bool bForceSync )
+// {
+// 	ExitGame();
+// }
 
-void ArchHooks_Emscripten::BoostThreadPriority()
-{
-	if( setpriority(PRIO_PROCESS, 0, -15) != 0 )
-		LOG->Warn( "BoostThreadPriority failed: %s", strerror(errno) );
-}
+// void ArchHooks_Emscripten::BoostThreadPriority()
+// {
+// 	// if( setpriority(PRIO_PROCESS, 0, -15) != 0 )
+// 		LOG->Warn( "BoostThreadPriority failed: %s", strerror(errno) );
+// }
 
-void ArchHooks_Emscripten::UnBoostThreadPriority()
-{
-	if( setpriority(PRIO_PROCESS, 0, 0) != 0 )
-		LOG->Warn( "UnBoostThreadPriority failed: %s", strerror(errno) );
-}
+// void ArchHooks_Emscripten::UnBoostThreadPriority()
+// {
+// 	// if( setpriority(PRIO_PROCESS, 0, 0) != 0 )
+// 		LOG->Warn( "UnBoostThreadPriority failed: %s", strerror(errno) );
+// }
 
 static void DoCleanShutdown( int signal, siginfo_t *si, const ucontext_t *uc )
 {
@@ -238,7 +238,6 @@ static int64_t GetMicrosecondsSinceEpoch()
 
 	return int64_t(tv.tv_sec) * 1000000 + int64_t(tv.tv_usec);
 }
-
 int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 {
 	if( ArchHooks_Emscripten::m_iStartTime == 0 )
@@ -253,7 +252,7 @@ int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 ArchHooks_Emscripten::ArchHooks_Emscripten()
 {
 	/* First, handle non-fatal termination signals. */
-	SignalHandler::OnClose( DoCleanShutdown );
+	// SignalHandler::OnClose( DoCleanShutdown );
 
 #if defined(CRASH_HANDLER)
 	CrashHandlerHandleArgs( g_argc, g_argv );
@@ -263,9 +262,9 @@ ArchHooks_Emscripten::ArchHooks_Emscripten()
 
 	/* Set up EmergencyShutdown, to try to shut down the window if we crash.
 	 * This might blow up, so be sure to do it after the crash handler. */
-	SignalHandler::OnClose( EmergencyShutdown );
+	// SignalHandler::OnClose( EmergencyShutdown );
 
-	InstallExceptionHandler();
+	// InstallExceptionHandler();
 	
 #if defined(HAVE_TLS)
 	TestTLS();
