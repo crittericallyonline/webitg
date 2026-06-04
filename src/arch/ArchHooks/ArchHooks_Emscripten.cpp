@@ -12,7 +12,7 @@
 #include "archutils/Emscripten/AssertionHandler.h"
 
 #include <sys/time.h>
-#include <sys/resource.h>
+// #include <sys/resource.h>
 #include <unistd.h>
 #include <cerrno>
 #include <mntent.h>
@@ -68,35 +68,19 @@ static bool IsReadOnlyMountPoint( const CString &mountPoint )
 	return found && isReadOnly;
 }
 
-// void ArchHooks_Emscripten::MountInitialFilesystems( const CString &sDirOfExecutable )
-// {
-// 	/* Mount the root filesystem, so we can read files in /proc, /etc, and so on.
-// 	 * This is /rootfs, not /root, to avoid confusion with root's home directory. */
-// 	FILEMAN->Mount( "dirro", "/", "/rootfs" );
+void ArchHooks_Emscripten::MountInitialFilesystems( const CString &sDirOfExecutable )
+{
+	/*
+	* Mount an OpenITG root in the root directory. (emulated file-system)
+	* This is where custom data (songs, themes, etc) should go. 
+	* Any files OpenITG tries to modify will be written here.
+	*/
+	/* OpenITG-specific paths */
+	FILEMAN->Mount( "oitg", "/CryptPackages", "/Packages" );
 
-// 	/* Mount /proc, so Alsa9Buf::GetSoundCardDebugInfo() and others can access it.
-// 	 * (Deprecated; use rootfs.) */
-// 	FILEMAN->Mount( "dirro", "/proc", "/proc" );
-
-// 	/* FileDB cannot accept relative paths, so Root must be absolute */
-// 	/* using DirOfExecutable for now  --infamouspat */
-// 	CString Root = sDirOfExecutable;
-
-
-// 	/* OpenITG-specific paths */
-// 	FILEMAN->Mount( "oitg", Root + "/CryptPackages", "/Packages" );
-
-// 	/*
-// 	* Mount an OpenITG root in the home directory.
-// 	* This is where custom data (songs, themes, etc) should go. 
-// 	* Any files OpenITG tries to modify will be written here.
-// 	*/
-// 	CString home = CString( getenv( "HOME" ) ) + "/";
-// 	FILEMAN->Mount( "dir", home + ".openitg", "/" );
-
-// 	/* This mounts everything else, including Cache, Data, UserPacks, etc. */
-// 	FILEMAN->Mount( "dir", Root, "/" );
-// }
+	/* This mounts everything else, including Cache, Data, UserPacks, etc. */
+	FILEMAN->Mount( "dir", "/", "/" );
+}
 
 static void GetDiskSpace( const CString &sDir, uint64_t *pSpaceFree, uint64_t *pSpaceTotal )
 {
@@ -117,37 +101,39 @@ uint64_t ArchHooks_Emscripten::GetDiskSpaceTotal( const CString &sDir )
 	return iSpaceTotal;
 }
 
-// bool ArchHooks_Emscripten::OpenMemoryRange( unsigned short start_port, unsigned short bytes )
-// {
-// 	LOG->Trace( "ArchHooks_Emscripten::OpenMemoryRange( %#x, %d )", start_port, bytes );
-// 	return 1;
+bool ArchHooks_Emscripten::OpenMemoryRange( unsigned short start_port, unsigned short bytes )
+{
+	LOG->Trace( "ArchHooks_Emscripten::OpenMemoryRange( %#x, %d )", start_port, bytes );
+	return false;
 
-// 	// int ret = iopl(3);
+	// int ret = iopl(3);
 
-// 	// if( ret != 0 )
-// 	// 	LOG->Warn( "OpenMemoryRange(): iopl error: %s", strerror(errno) );
+	// if( ret != 0 )
+	// 	LOG->Warn( "OpenMemoryRange(): iopl error: %s", strerror(errno) );
 
-// 	// return (ret == 0);
-// }
+	// return (ret == 0);
+}
 
-// void ArchHooks_Emscripten::CloseMemoryRange( unsigned short start_port, unsigned short bytes )
-// {
-// 	// if( (start_port+bytes) <= 0x3FF )
-// 	// {
-// 	// 	if( ioperm( start_port, bytes, 0 ) != 0 )
-// 	LOG->Warn( "CloseMemoryRange(): ioperm error: %s", strerror(errno) );
+void ArchHooks_Emscripten::CloseMemoryRange( unsigned short start_port, unsigned short bytes )
+{
+	// if( (start_port+bytes) <= 0x3FF )
+	// {
+	// 	if( ioperm( start_port, bytes, 0 ) != 0 )
+	LOG->Warn( "CloseMemoryRange(): ioperm error: %s", strerror(errno) );
 
-// 	// 	return;
-// 	// }
+	// 	return;
+	// }
 
-// 	// if( iopl(0) != 0 )
-// 	LOG->Warn( "CloseMemoryRange(): iopl error: %s", strerror(errno) );
-// }
+	// if( iopl(0) != 0 )
+	LOG->Warn( "CloseMemoryRange(): iopl error: %s", strerror(errno) );
+}
 
-// bool ArchHooks_Emscripten::GetNetworkAddress( CString &sIP, CString &sNetmask, CString &sError )
-// {
-// 	return true;
-// }
+#ifndef WITHOUT_NETWORKING
+bool ArchHooks_Emscripten::GetNetworkAddress( CString &sIP, CString &sNetmask, CString &sError )
+{
+	return true;
+}
+#endif
 
 // void ArchHooks_Emscripten::SystemReboot( bool bForceSync )
 // {
@@ -315,7 +301,7 @@ void ArchHooks_Emscripten::SetTime( tm newtime )
 		newtime.tm_sec );
 
 	LOG->Trace( "executing '%s'", sCommand.c_str() ); 
-	system( sCommand );
-
-	system( "hwclock --systohc" );
+	// system( sCommand );
+	// system( "hwclock --systohc" );
+	LOG->Trace( "System commands are not permitted." ); 
 }

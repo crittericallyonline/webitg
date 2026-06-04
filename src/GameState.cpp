@@ -37,9 +37,13 @@
 GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our program
 static Preference<CString> pSongBroadcastURL("SongBroadcastURL", "");
 
+#ifndef __EMSCRIPTEN__
 #define CHARACTERS_DIR "Characters/"
 #define NAME_BLACKLIST_FILE "Data/NamesBlacklist.dat"
-
+#else
+#define NAME_BLACKLIST_FILE "/Data/NamesBlacklist.dat"
+#define CHARACTERS_DIR "/Characters/"
+#endif
 ThemeMetric<bool> USE_NAME_BLACKLIST("GameState","UseNameBlacklist");
 
 ThemeMetric<CString> DEFAULT_SORT	("GameState","DefaultSort");

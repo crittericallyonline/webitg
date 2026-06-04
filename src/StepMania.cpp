@@ -995,13 +995,19 @@ int main(int argc, char* argv[])
 #endif
 
 	/* Almost everything uses this to read and write files.  Load this early. */
+#ifndef __EMSCRIPTEN__
 	FILEMAN = new RageFileManager( argv[0] );
+#else
+	printf("I dont know wjere \"%s\" is btw lul\n", argv[0]);
+	FILEMAN = new RageFileManager(".");
+#endif
 	FILEMAN->MountInitialFilesystems();
 
 	/* Set this up next.  Do this early, since it's needed for RageException::Throw. */
 	LOG			= new RageLog();
 
 	/* Whew--we should be able to crash safely now! */
+	// about that....
 
 	//
 	// load preferences and mount any alternative trees.

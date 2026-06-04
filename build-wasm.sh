@@ -37,6 +37,7 @@ if emmake make -s -j6; then
     # cp WebITG.html ../html
     cp WebITG.js ../html
     cp WebITG.wasm ../html
+    cp WebITG.data ../html
 else
     @echo "ERROR WITH COMPILING"
 fi

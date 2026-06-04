@@ -7,7 +7,7 @@ class ArchHooks_Emscripten: public ArchHooks
 public:
 	ArchHooks_Emscripten();
 
-	// void MountInitialFilesystems( const CString &sDirOfExecutable );
+	void MountInitialFilesystems( const CString &sDirOfExecutable );
 
 	void DumpDebugInfo();
 	// void SystemReboot( bool bForceSync = true );
@@ -20,10 +20,11 @@ public:
 	uint64_t GetDiskSpaceTotal( const CString &sDir );
 	uint64_t GetDiskSpaceFree( const CString &sDir );
 
-	// bool OpenMemoryRange( unsigned short start_port, unsigned short bytes );
-	// void CloseMemoryRange( unsigned short start_port, unsigned short bytes );
-
-	// bool GetNetworkAddress( CString &sIP, CString &sNetmask, CString &sError );
+	bool OpenMemoryRange( unsigned short start_port, unsigned short bytes );
+	void CloseMemoryRange( unsigned short start_port, unsigned short bytes );
+#ifndef WITHOUT_NETWORKING
+	bool GetNetworkAddress( CString &sIP, CString &sNetmask, CString &sError );
+#endif
 
 	static int64_t m_iStartTime;
 };
