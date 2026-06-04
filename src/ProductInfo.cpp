@@ -29,6 +29,8 @@ namespace
 		return "AC";
 	#elif defined(XBOX)
 		return "CS";
+	#elif defined(__EMSCRIPTEN__)
+		return "WEB";
 	#else
 		return "PC";
 	#endif

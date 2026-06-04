@@ -916,8 +916,10 @@ static void WriteLogHeader()
 static void ApplyLogPreferences()
 {
 	LOG->SetShowLogOutput( PREFSMAN->m_bShowLogOutput );
+#ifndef __EMSCRIPTEN__
 	LOG->SetLogToDisk( PREFSMAN->m_bLogToDisk );
 	LOG->SetInfoToDisk( true );
+#endif
 	LOG->SetFlushing( PREFSMAN->m_bForceLogFlush );
 	Checkpoints::LogCheckpoints( PREFSMAN->m_bLogCheckpoints );
 }
@@ -976,11 +978,9 @@ int main(int argc, char* argv[])
 	g_argc = argc;
 	g_argv = argv;
 
-	printf("%s\n", "Running!, Can you see me?1");
 	/* Set up arch hooks first.  This may set up crash handling. */
 	HOOKS = MakeArchHooks();
 
-	printf("%s\n", "Running!, Can you see me?2");
 #if !defined(DEBUG)
 	/* Tricky: for other exceptions, we want a backtrace.  To do this in Windows,
 	 * we need to catch the exception and force a crash.  The call stack is still
@@ -994,7 +994,6 @@ int main(int argc, char* argv[])
 
 #endif
 
-	printf("%s\n", "Running!, Can you see me?3");
 	/* Almost everything uses this to read and write files.  Load this early. */
 	FILEMAN = new RageFileManager( argv[0] );
 	FILEMAN->MountInitialFilesystems();
