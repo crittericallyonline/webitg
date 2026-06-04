@@ -8,7 +8,7 @@ set(CMAKE_CXX_COMPILER em++)
 set(CMAKE_C_COMPILER emcc)
 set(CMAKE_AR emar)
 set(CMAKE_RANLIB emranlib)
-set(CMAKE_CXX_FLAGS_RELEASE "-O0 -flto=full")
+set(CMAKE_CXX_FLAGS_RELEASE "-Os")
 
 # set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/archive)
 set(NDEBUG 0)
@@ -18,7 +18,7 @@ set(HAVE_CONFIG_H 1)
 set(HAVE_SDL 0) # i dont like SDL, too complicated rn
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --use-port=vorbis --use-port=ogg --use-port=libpng --use-port=libjpeg")
 # --closure 1
-set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -O0 -sASYNCIFY=1 -sWASM -sMAX_WEBGL_VERSION=2 -sMIN_WEBGL_VERSION=2 -sUSE_GLFW=1 -sFULL_ES3")
+set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -DDEBUG -sWASM_ASYNC_COMPILATION -g -O0 -sWASM -sALLOW_MEMORY_GROWTH  -sGL_UNSAFE_OPTS -sINVOKE_RUN=1 -sMAX_WEBGL_VERSION=2 -sMIN_WEBGL_VERSION=2 -sUSE_GLFW=1 -sFULL_ES3 -sEXPORT_ALL=1 -sASSERTIONS=0") #  -sTOTAL_STACK=512mb
 # CRASH_HANDLER
 add_compile_definitions(HAVE_FFMPEG HAS_USBDRIVER_IMPL_WINUSB=0 HAS_USBDRIVER_IMPL_LIBUSB=0)
 
@@ -55,6 +55,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -sUSE_SDL=1")
 else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --use-port=contrib.glfw3")
     file(GLOB SOURCES APPEND
+    # thinking of renaming these from "Emscripten" to "GLFW"
     src/arch/LoadingWindow/LoadingWindow_Emscripten.cpp
     src/arch/InputHandler/InputHandler_Emscripten.cpp
     src/arch/LowLevelWindow/LowLevelWindow_GLFW.cpp

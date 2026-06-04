@@ -972,12 +972,15 @@ int main(int argc, char* argv[])
 	char *argv[] = {"default.xbe"};
 #endif
 
+
 	g_argc = argc;
 	g_argv = argv;
 
+	printf("%s\n", "Running!, Can you see me?2");
 	/* Set up arch hooks first.  This may set up crash handling. */
 	HOOKS = MakeArchHooks();
 
+	printf("%s\n", "Running!, Can you see me?1");
 #if !defined(DEBUG)
 	/* Tricky: for other exceptions, we want a backtrace.  To do this in Windows,
 	 * we need to catch the exception and force a crash.  The call stack is still
@@ -991,6 +994,7 @@ int main(int argc, char* argv[])
 
 #endif
 
+	printf("%s\n", "Running!, Can you see me?3");
 	/* Almost everything uses this to read and write files.  Load this early. */
 	FILEMAN = new RageFileManager( argv[0] );
 	FILEMAN->MountInitialFilesystems();
