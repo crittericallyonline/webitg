@@ -579,6 +579,7 @@ void RageMutex::Lock()
 		/* Pass the crash handle of the other thread, so it can backtrace that thread. */
 		ForceCrashHandlerDeadlock( sReason, CrashHandle );
 #else
+		LOG->Info("BEFORE WEBITG CRASHES");
 		FAIL_M( sReason );
 #endif
 	}

@@ -482,9 +482,9 @@ bool RageFileManager::Mount( const CString &sType, const CString &sRoot_, const 
 
 	const CString &sPaths = ssprintf( "\"%s\", \"%s\", \"%s\"", sType.c_str(), sRoot.c_str(), sMountPoint.c_str() );
 	CHECKPOINT_M( sPaths );
-// #if defined(DEBUG)
+#if defined(DEBUG)
 	puts( sPaths );
-// #endif
+#endif
 
 	// Unmount anything that was previously mounted here.
 	Unmount( sType, sRoot, sMountPoint );
@@ -510,9 +510,7 @@ bool RageFileManager::Mount( const CString &sType, const CString &sRoot_, const 
 	pLoadedDriver->m_sRoot = sRoot;
 	pLoadedDriver->m_sMountPoint = sMountPoint;
 
-#ifndef __EMSCRIPTEN__ // we are unable to lock ANYTHING with emscripten, it has to go.
 	AddFilesystemDriver( pLoadedDriver, bAddToEnd );
-#endif
 
 	return true;
 }

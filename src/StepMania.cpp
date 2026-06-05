@@ -1121,7 +1121,6 @@ int main(int argc, char* argv[])
 #if defined(HAVE_TLS)
 	LOG->Info( "TLS is %savailable", RageThread::GetSupportsTLS()? "":"not " );
 #endif
-
 	CheckSettings();
 
 	GAMEMAN		= new GameManager;
@@ -1162,9 +1161,12 @@ int main(int argc, char* argv[])
 	/* depends on SONGINDEX: */
 	SONGMAN		= new SongManager();
 
+	LOG->Info("LoadingWindow File %s ----- Line: %d", __FILE__, __LINE__ + 1);
 	SONGMAN->InitAll( loading_window );		// this takes a long time
 
+	LOG->Info("CryptManager File %s ----- Line: %d", __FILE__, __LINE__ + 1);
 	CRYPTMAN	= new CryptManager;	// need to do this before ProfileMan
+	LOG->Info("MemoryCardmanager File %s ----- Line: %d", __FILE__, __LINE__ + 1);
 	MEMCARDMAN	= new MemoryCardManager;
 	PROFILEMAN	= new ProfileManager;
 	PROFILEMAN->Init();				// must load after SONGMAN
@@ -1184,14 +1186,18 @@ int main(int argc, char* argv[])
 	/* This shouldn't need to be here; if it's taking long enough that this is
 	 * even visible, we should be fixing it, not showing a progress display. */
 	SaveCatalogXml( loading_window );
+
+	LOG->Info("LOG NIKO 3 SETUP");
 	
 	NSMAN 		= new NetworkSyncManager( loading_window ); 
 	MESSAGEMAN	= new MessageManager;
 	STATSMAN	= new StatsManager;
+	LOG->Info("LOG NIKO 4 amaze");
 
 	SAFE_DELETE( loading_window );		// destroy this before init'ing Display
 
 	StartDisplay();
+	LOG->Info("LOG NIKO 5 DISPLAY SETUP");
 
 	StoreActualGraphicOptions( true );
 

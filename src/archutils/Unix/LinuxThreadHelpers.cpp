@@ -13,9 +13,11 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#ifndef __EMSCRIPTEN__
 #include <sys/ptrace.h>
+#endif // emscripten
 #include <sys/stat.h>
-//#include <linux/unistd.h>
+// #include <linux/unistd.h>
 #include <sys/syscall.h>
 #define _LINUX_PTRACE_H // hack to prevent broken linux/ptrace.h from conflicting with sys/ptrace.h
 #include <sys/user.h>
@@ -93,6 +95,7 @@ static int waittid( int ThreadID, int *status, int options )
 /* Attempt to PTRACE_ATTACH to a thread, and wait for the SIGSTOP. */
 static int PtraceAttach( int ThreadID )
 {
+#ifndef __EMSCRIPTEN__
 	int ret;
 	ret = ptrace( PTRACE_ATTACH, ThreadID, NULL, NULL );
 	if( ret == -1 )
@@ -109,12 +112,17 @@ static int PtraceAttach( int ThreadID )
 
 //	printf( "ret %i, exited %i, signalled %i, sig %i, stopped %i, stopsig %i\n", ret, WIFEXITED(status),
 //			WIFSIGNALED(status), WTERMSIG(status), WIFSTOPPED(status), WSTOPSIG(status));
+#endif
 	return 0;
 }
 
 static int PtraceDetach( int ThreadID )
 {
+#ifndef __EMSCRIPTEN__
 	return ptrace( PTRACE_DETACH, ThreadID, NULL, NULL );
+#else
+	return -1;
+#endif
 }
 
 
@@ -134,8 +142,12 @@ static uint64_t GetCurrentThreadIdInternal()
 	static bool GetTidUnsupported = 0;
 	if( !GetTidUnsupported )
 	{
-		//pid_t ret = gettid();
+		// pid_t ret = gettid();
+#ifndef __EMSCRIPTEN__
 		pid_t ret = syscall(__NR_gettid);
+#else
+		pid_t ret = 1;
+#endif
 
 		/* If this fails with ENOSYS, we're on a kernel before gettid, or we're
 		 * under valgrind.  If we don't have NPTL, then just use getpid().  If

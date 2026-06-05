@@ -722,8 +722,8 @@ void GameState::ReloadCharacters()
 		RageException::Throw( "'Characters/default' is missing." );
 
 	// If FoundDefault, then we're not empty. -Chris
-//	if( m_pCharacters.empty() )
-//		RageException::Throw( "Couldn't find any character definitions" );
+	if( m_pCharacters.empty() )
+		RageException::Throw( "Couldn't find any character definitions" );
 }
 
 const float GameState::MUSIC_SECONDS_INVALID = -5000.0f;

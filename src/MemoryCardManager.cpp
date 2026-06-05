@@ -248,6 +248,7 @@ MemoryCardManager::MemoryCardManager()
 {
 	ASSERT( g_pWorker == NULL );
 
+	LOG->Info("Test1");
 	// Register with Lua.
 	{
 		Lua *L = LUA->Get();
@@ -256,8 +257,9 @@ MemoryCardManager::MemoryCardManager()
 		lua_settable( L, LUA_GLOBALSINDEX );
 		LUA->Release( L );
 	}
-
+#ifndef __EMSCRIPTEN__
 	g_pWorker = new ThreadedMemoryCardWorker;
+#endif
 
 	m_bCardsLocked = false;
 
@@ -267,11 +269,16 @@ MemoryCardManager::MemoryCardManager()
 		m_State[p] = MEMORY_CARD_STATE_NO_CARD;
 	}
 	
+	LOG->Info("Test2");
+	
+#ifndef __EMSCRIPTEN__
 	/* These can play at any time.  Preload them, so we don't cause a skip in gameplay. */
 	m_soundReady.Load( THEME->GetPathS("MemoryCardManager","ready"), true );
 	m_soundError.Load( THEME->GetPathS("MemoryCardManager","error"), true );
 	m_soundTooLate.Load( THEME->GetPathS("MemoryCardManager","too late"), true );
 	m_soundDisconnect.Load( THEME->GetPathS("MemoryCardManager","disconnect"), true );
+#endif
+	LOG->Info("Test3");
 
 	/* Mount the filesystems that we'll use with Mount().  Use a bogus root for the internal
 	 * mount for now, since we don't know where we'll mount to yet; nothing reads from it
@@ -281,6 +288,8 @@ MemoryCardManager::MemoryCardManager()
 		FILEMAN->Mount( "dir", "/", MEM_CARD_MOUNT_POINT_INTERNAL[pn] );
 		FILEMAN->Mount( "timeout", MEM_CARD_MOUNT_POINT_INTERNAL[pn], MEM_CARD_MOUNT_POINT[pn] );
 	}
+	LOG->Info("Test4");
+
 }
 
 MemoryCardManager::~MemoryCardManager()

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="Stats.xsl"?>
+
+<Stats>
+<CalorieData>
+</CalorieData>
+<CategoryScores/>
+<CoinData>
+</CoinData>
+<CoinDataService>
+</CoinDataService>
+<CourseScores/>
+<GeneralData>
+<Course/>
+<CurrentCombo>0</CurrentCombo>
+<Data>local tab1 = { }
+tab1[&quot;Ghost&quot;] = { }
+tab1[&quot;CutOffTime&quot;] = 0
+tab1[&quot;Love&quot;] = { }
+tab1[&quot;TimedSets&quot;] = false
+tab1[&quot;SessionTimer&quot;] = 0
+tab1[&quot;Ghost&quot;][&quot;Save&quot;] = false
+tab1[&quot;Love&quot;][&quot;Color&quot;] = 1
+tab1[&quot;Love&quot;][&quot;Dir&quot;] = &quot;simply-love-notitg&quot;
+return tab1</Data>
+<DefaultModifiers/>
+<DisplayName/>
+<GoalCalories>0</GoalCalories>
+<GoalSeconds>0</GoalSeconds>
+<GoalType>0</GoalType>
+<Guid>2219a1f864f7a2e7</Guid>
+<IsMachine>1</IsMachine>
+<IsWeightSet>0</IsWeightSet>
+<LastCourseDifficulty/>
+<LastDifficulty/>
+<LastPlayedDate>2026-06-03</LastPlayedDate>
+<LastPlayedMachineGuid>2219a1f864f7a2e7</LastPlayedMachineGuid>
+<NumExtraStagesFailed>0</NumExtraStagesFailed>
+<NumExtraStagesPassed>0</NumExtraStagesPassed>
+<NumSongsPlayedByDifficulty>
+</NumSongsPlayedByDifficulty>
+<NumSongsPlayedByMeter>
+</NumSongsPlayedByMeter>
+<NumSongsPlayedByPlayMode>
+<Regular>0</Regular>
+</NumSongsPlayedByPlayMode>
+<NumSongsPlayedByStyle>
+</NumSongsPlayedByStyle>
+<NumStagesPassedByGrade>
+</NumStagesPassedByGrade>
+<NumStagesPassedByPlayMode>
+<Regular>0</Regular>
+</NumStagesPassedByPlayMode>
+<NumToasties>0</NumToasties>
+<NumTotalSongsPlayed>0</NumTotalSongsPlayed>
+<Song Dir='' />
+<SortOrder/>
+<TotalCaloriesBurned>0</TotalCaloriesBurned>
+<TotalDancePoints>0</TotalDancePoints>
+<TotalGameplaySeconds>0</TotalGameplaySeconds>
+<TotalHands>0</TotalHands>
+<TotalHolds>0</TotalHolds>
+<TotalJumps>0</TotalJumps>
+<TotalMines>0</TotalMines>
+<TotalPlaySeconds>0</TotalPlaySeconds>
+<TotalPlays>0</TotalPlays>
+<TotalRolls>0</TotalRolls>
+<TotalTapsAndHolds>0</TotalTapsAndHolds>
+<UnlockedSongs/>
+</GeneralData>
+<RecentCourseScores/>
+<RecentSongScores>
+</RecentSongScores>
+<ScreenshotData/>
+<SongScores>
+</SongScores>
+</Stats>

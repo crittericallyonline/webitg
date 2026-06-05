@@ -20,26 +20,31 @@
 
 static RageMutex g_SoundManMutex("SoundMan");
 
-static Preference<CString> g_sSoundDrivers( "SoundDrivers", "" ); // "" = DEFAULT_SOUND_DRIVER_LIST
+static Preference<CString> g_sSoundDrivers( "SoundDrivers", "Null" ); // "" = DEFAULT_SOUND_DRIVER_LIST
 
 RageSoundManager *SOUNDMAN = NULL;
 
 RageSoundManager::RageSoundManager()
 {
+#ifndef __EMSCRIPTEN__
 	pos_map_queue.reserve( 1024 );
 	MixVolume = 1.0f;
+#endif
 }
 
 void RageSoundManager::Init()
 {
+#ifndef __EMSCRIPTEN__
 	driver = RageSoundDriver::Create( g_sSoundDrivers );
 
 	if( driver == NULL )
 		RageException::Throw( "Couldn't find a sound driver that works" );
+#endif
 }
 
 RageSoundManager::~RageSoundManager()
 {
+#ifndef __EMSCRIPTEN__
 	g_SoundManMutex.Lock(); /* lock for access to owned_sounds */
 	set<RageSound *> sounds = owned_sounds;
 	g_SoundManMutex.Unlock(); /* finished with owned_sounds */
@@ -51,6 +56,7 @@ RageSoundManager::~RageSoundManager()
 
 	/* Don't lock while deleting the driver (the decoder thread might deadlock). */
 	delete driver;
+#endif
 }
 
 /*
