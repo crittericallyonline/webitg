@@ -1,13 +1,13 @@
-/* RageDisplay_OGL: OpenGL renderer. */
+/* RageDisplay_GLFW: OpenGL renderer. */
 
-#ifndef RAGEDISPLAY_OGL_H
-#define RAGEDISPLAY_OGL_H
+#ifndef RAGEDISPLAY_GLFW_H
+#define RAGEDISPLAY_GLFW_H
 
-class RageDisplay_OGL: public RageDisplay
+class RageDisplay_GLFW: public RageDisplay
 {
 public:
-	RageDisplay_OGL();
-	virtual ~RageDisplay_OGL();
+	RageDisplay_GLFW();
+	virtual ~RageDisplay_GLFW();
 	CString Init( VideoModeParams p, bool bAllowUnacceleratedRenderer );
 	void Update(float fDeltaTime);
 

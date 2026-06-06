@@ -1,24 +1,29 @@
 #include "global.h"
 #include "LowLevelWindow_GLFW.h"
+#include <GLFW/glfw3.h>
+
+#ifdef __EMSCRIPTEN__ // --use-port=contrib.glfw3
 #include <GLFW/emscripten_glfw3.h>
 #include <emscripten/html5_webgl.h>
+#endif
+
 #include "RageLog.h"
 #include "RageDisplay.h" // for REFRESH_DEFAULT
 #include "StepMania.h"
 
-void *ResizeEvent(GLFWwindow* glfwDisplay, int width, int height) {
+static void *ResizeEvent(GLFWwindow* glfwDisplay, int width, int height) {
     LowLevelWindow_GLFW istg = *(LowLevelWindow_GLFW *)glfwGetWindowUserPointer(glfwDisplay);
     istg.SetSize(width, height);
     return NULL;
 
 }
-void *FocusEvent(GLFWwindow* glfwDisplay, int focused) {
+static void *FocusEvent(GLFWwindow* glfwDisplay, int focused) {
     LowLevelWindow_GLFW istg = *(LowLevelWindow_GLFW *)glfwGetWindowUserPointer(glfwDisplay);
     istg.SetClosed();
     return NULL;
 
 }
-void *CloseEvent(GLFWwindow* glfwDisplay) {
+static void *CloseEvent(GLFWwindow* glfwDisplay) {
     // i swear to god
     LowLevelWindow_GLFW istg = *(LowLevelWindow_GLFW *)glfwGetWindowUserPointer(glfwDisplay);
     istg.SetClosed();
@@ -28,52 +33,64 @@ void *CloseEvent(GLFWwindow* glfwDisplay) {
 LowLevelWindow_GLFW::LowLevelWindow_GLFW()
 {
     if(!glfwInit()) {
+        LOG->Trace("glfwInit() Failed, exiting program.");
         throw "UNABLE TO INITIALIZE GLFW";
     }
 
-    glfwDisplay = glfwCreateWindow(640, 480, "GLFW Window", 0, 0);
-    emscripten::glfw3::MakeCanvasResizable(glfwDisplay, "#canvas");
+#ifdef __EMSCRIPTEN__
+    emscripten::glfw3::SetNextWindowCanvasSelector("#canvas");
+#endif
 
+    glfwDisplay = glfwCreateWindow(640, 480, "GLFW Window", 0, 0);
     glfwMakeContextCurrent(glfwDisplay);
-    
     glfwSetWindowUserPointer(glfwDisplay, reinterpret_cast<void *>(this));
     
     // setting the callbacks early
     glfwSetWindowSizeCallback(glfwDisplay, (GLFWwindowsizefun) &ResizeEvent);
     glfwSetWindowFocusCallback(glfwDisplay, (GLFWwindowfocusfun) &FocusEvent);
     glfwSetWindowCloseCallback(glfwDisplay, (GLFWwindowclosefun) &CloseEvent);
-    // (aka 'void (*)(struct GLFWwindow *, int)
-    // void *(LowLevelWindow_GLFW::*)(GLFWwindow *)
-
 }
 
 LowLevelWindow_GLFW::~LowLevelWindow_GLFW()
 {
+#ifndef __EMSCRIPTEN__
     emscripten::glfw3::UnmakeCanvasResizable(glfwDisplay);
     glfwDestroyWindow(glfwDisplay);
     glfwMakeContextCurrent(0);
     glfwTerminate();
+#else
+    emscripten_webgl_destroy_context(WebGL_contextHandle);
+    WebGL_contextHandle = 0;
+#endif
 }
 
 void *LowLevelWindow_GLFW::GetProcAddress(CString s)
 {
+#ifndef __EMSCRIPTEN__
 	return (void *) glfwGetProcAddress(s.c_str());
+#else
+    return emscripten_webgl2_get_proc_address("#canvas");
+#endif
 }
 
 // we never actually delete and make a new context so yea
 CString LowLevelWindow_GLFW::TryVideoMode( RageDisplay::VideoModeParams p, bool &bNewDeviceOut )
 {
+    LOG->Info("TEST CAN THIS WINDOW BE SEEN?");
 	CurrentParams = p;
+#ifndef __EMSCRIPTEN__
     glfwSetWindowTitle(glfwDisplay, p.sWindowTitle);
 
     // use (p.sIconFile)
-#ifdef __EMSCRIPTEN__
-// do some magic with javascript to change the page icon
-#else
     // magic here too 
-#endif
 
 	ASSERT( p.bpp == 16 || p.bpp == 32 );
+
+#else
+    // do some magic with javascript to change the page icon and title
+#endif
+    LOG->Info("NIKO LOW LEVEL WINDOW 1");
+#ifndef __EMSCRIPTEN__
 	switch( p.bpp )
 	{
 	case 16:
@@ -93,6 +110,7 @@ CString LowLevelWindow_GLFW::TryVideoMode( RageDisplay::VideoModeParams p, bool 
     glfwSetWindowAttrib(glfwDisplay, GLFW_CURSOR_HIDDEN, !p.windowed);
 
     glfwSwapInterval(!p.vsync);
+
 	static bool bLogged = false;
 	if( !bLogged )
 	{
@@ -111,18 +129,26 @@ CString LowLevelWindow_GLFW::TryVideoMode( RageDisplay::VideoModeParams p, bool 
 		LOG->Info("Got %i bpp (%i%i%i%i), %i depth, %i stencil",
 			colorbits, r, g, b, a, depth, stencil);
 	}
-
+#endif
 	return "";	// we set the video mode successfully
 }
 
 void LowLevelWindow_GLFW::SwapBuffers()
 {
+#ifndef __EMSCRIPTEN__
 	glfwSwapBuffers(glfwDisplay);
+#else
+    emscripten_webgl_commit_frame();
+#endif
 }
 void LowLevelWindow_GLFW::Update(float fDeltaTime)
 {
+#ifndef __EMSCRIPTEN__ // browser handles events
     glfwPollEvents();
+#endif
 }
+
+
 
 void LowLevelWindow_GLFW::SetSize(int width, int height) {
     CurrentParams.width = width;
@@ -141,4 +167,3 @@ void LowLevelWindow_GLFW::SetClosed() {
     LOG->Trace("SDL_QUIT: shutting down");
     ExitGame();
 }
-

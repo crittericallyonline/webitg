@@ -23,11 +23,8 @@ public:
 
 private:
 	RageDisplay::VideoModeParams CurrentParams;
-	// uwu, my silly implementation - Niko
 	GLFWwindow *glfwDisplay;
-	// void *ResizeEvent(GLFWwindow *window, int width, int height);
-	// void *FocusEvent(GLFWwindow *window, int focused);
-	// void *CloseEvent(GLFWwindow *window);
+	unsigned long WebGL_contextHandle;
 };
 
 #ifdef ARCH_LOW_LEVEL_WINDOW

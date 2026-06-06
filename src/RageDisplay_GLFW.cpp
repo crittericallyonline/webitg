@@ -1,13 +1,5 @@
 #include "global.h"
 
-/* ours may be more up-to-date */
-#define __glext_h_
-
-#if defined(WIN32)
-#include <windows.h>
-#endif
-
-
 #ifdef __EMSCRIPTEN__
 #include <GLFW/emscripten_glfw3.h>
 // #ifdef HAS_GLES3
@@ -18,32 +10,10 @@
 #include <GLFW/glfw3.h>
 #endif
 
-#if !defined(DARWIN)
-#ifndef __EMSCRIPTEN__
-# include <GL/gl.h>
-# include <GL/glu.h>
-#endif
-#else
-/* XXX: Instead, try creating a directory "archutils/Darwin/include/GL", containing "gl.h" and
- * "glu.h", which each contain a single line "#include <OpenGL/gl.h>".  Then, add
- * "archutils/Darwin/include" to your -I paths, so the above <GL/gl.h> includes will work
- * without changes. */
-# include <OpenGL/gl.h>
-# include <OpenGL/glu.h>
-#endif
-
-#undef __glext_h_
-#include "glext.h"
-
-
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
 #include "ScreenDimensions.h" // XXX
 
-/* Windows's broken gl.h defines GL_EXT_paletted_texture incompletely: */
-#ifndef GL_TEXTURE_INDEX_SIZE_EXT
-#define GL_TEXTURE_INDEX_SIZE_EXT         0x80ED
-#endif
 #include <set>
 #include <sstream>
 
@@ -53,17 +23,12 @@
 
 
 #include "RageDisplay.h"
-#include "RageDisplay_OGL_Extensions.h"
 #include "RageDisplay_GLFW.h"
 #include "RageLog.h"
 #include "RageTextureManager.h"
 #include "RageMath.h"
 
 #include "arch/LowLevelWindow/LowLevelWindow.h"
-
-#if defined(_MSC_VER)
-#pragma comment(lib, "opengl32.lib")
-#endif
 
 //
 // Globals
@@ -91,7 +56,7 @@ static int g_iMaxTextureUnits = 0;
 const GLenum RageSpriteVertexFormat = GL_T2F_C4F_N3F_V3F;
 
 /* If we support texture matrix scaling, a handle to the vertex program: */
-static GLhandleARB g_bTextureMatrixShader = 0;
+static GLuint g_bTextureMatrixShader = 0;
 
 LowLevelWindow *wind;
 
@@ -288,68 +253,46 @@ static void FlushGLErrors()
 static void TurnOffHardwareVBO()
 {
 	
-	if( GLExt.glBindBufferARB )
+	if( &glBindBuffer )
 	{
-		GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
-		GLExt.glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, 0 );
+		glBindBuffer( GL_ARRAY_BUFFER, 0 );
+		glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
 	}
 }
 
-#if defined(UNIX)
-#define Font X11___Font
-#define Screen X11___Screen
-#include "GL/glx.h"
-#undef Font
-#undef Screen
-
-Display *g_X11Display = NULL;
-#endif
-
-static void LogGLXDebugInformation()
+RageDisplay_GLFW::RageDisplay_GLFW()
 {
-#if defined(UNIX)
-	ASSERT( g_X11Display );
-#endif
-}
-
-RageDisplay_OGL::RageDisplay_OGL()
-{
-	LOG->Trace( "RageDisplay_OGL::RageDisplay_OGL()" );
+	LOG->Trace( "RageDisplay_GLFW::RageDisplay_GLFW()" );
 	LOG->MapLog("renderer", "Current renderer: OpenGL");
 
 	FixLittleEndian();
 	InitStringMap();
 
-	wind = NULL;
+	wind = LowLevelWindow::Create();
 	g_bTextureMatrixShader = 0;
 }
 
-CString GetInfoLog( GLhandleARB h )
+CString GetInfoLog( GLuint h )
 {
 	GLint iLength;
-	GLExt.glGetObjectParameterivARB( h, GL_OBJECT_INFO_LOG_LENGTH_ARB, &iLength );
-	if( !iLength )
-		return "";
-
-	GLcharARB *pInfoLog = new GLcharARB[iLength];
-	GLExt.glGetInfoLogARB( h, iLength, &iLength, pInfoLog );
+	GLchar *pInfoLog = new GLchar[512];
+	glGetShaderInfoLog(h, 512, &iLength, pInfoLog);
 	CString sRet = pInfoLog;
 	delete [] pInfoLog;
 	return sRet;
 }
 
-GLhandleARB CompileShader( GLenum ShaderType, CString sBuffer )
+GLuint CompileShader( GLenum ShaderType, CString sBuffer )
 {
 	LOG->Info( "Attempting Shader Compilation: %s", sBuffer.c_str() );
-	GLhandleARB VertexShader = GLExt.glCreateShaderObjectARB( GL_VERTEX_SHADER_ARB );
-	const GLcharARB *pData = sBuffer.data();
+	GLuint VertexShader = glCreateShader( GL_VERTEX_SHADER );
+	const GLchar *pData = sBuffer.data();
 	int iLength = sBuffer.size();
-	GLExt.glShaderSourceARB( VertexShader, 1, &pData, (GLint*)&iLength );
-
-	GLExt.glCompileShaderARB( VertexShader );
+	glShaderSource(VertexShader, 1, &pData, (GLint*)&iLength);
+	glCompileShader(VertexShader);
 
 	GLint bCompileStatus  = GL_FALSE;
-	GLExt.glGetObjectParameterivARB( VertexShader, GL_OBJECT_COMPILE_STATUS_ARB, &bCompileStatus );
+	glGetShaderiv( VertexShader, GL_COMPILE_STATUS, &bCompileStatus );
 
 	if( !bCompileStatus )
 	{
@@ -399,56 +342,56 @@ void InitScalingScript()
 {
 	g_bTextureMatrixShader = 0;
 
-	if( !GLExt.m_bGL_ARB_shader_objects ||
-		!GLExt.m_bGL_ARB_vertex_shader ||
-		!GLExt.m_bGL_ARB_shading_language_100 )
-		return;
-
-	GLhandleARB VertexShader = CompileShader( GL_VERTEX_SHADER_ARB, g_TextureMatrixScaleShader );
+	GLuint VertexShader = CompileShader( GL_VERTEX_SHADER, g_TextureMatrixScaleShader );
 	if( VertexShader == 0 )
 		return;
 
-	g_bTextureMatrixShader = GLExt.glCreateProgramObjectARB();
-	GLExt.glAttachObjectARB( g_bTextureMatrixShader, VertexShader );
-	GLExt.glDeleteObjectARB( VertexShader );
+	g_bTextureMatrixShader = glCreateProgram();
+	glAttachShader( g_bTextureMatrixShader, VertexShader );
+	glDeleteShader( VertexShader );
 
-	// Bind attributes.
-	GLExt.glBindAttribLocationARB( g_bTextureMatrixShader, ATTRIB_TEXTURE_MATRIX_SCALE, "TextureMatrixScale" );
+	glBindAttribLocation( g_bTextureMatrixShader, ATTRIB_TEXTURE_MATRIX_SCALE, "TextureMatrixScale" );
 
 	// Link the program.
-	GLExt.glLinkProgramARB( g_bTextureMatrixShader );
+	glLinkProgram( g_bTextureMatrixShader );
 	GLint bLinkStatus = false;
-	GLExt.glGetObjectParameterivARB( g_bTextureMatrixShader, GL_OBJECT_LINK_STATUS_ARB, &bLinkStatus );
+	glGetShaderiv(g_bTextureMatrixShader, GL_OBJECT_LINK_STATUS_ARB, &bLinkStatus);
 
 	if( !bLinkStatus )
 	{
 		LOG->Trace( "Scaling shader link failed: %s", GetInfoLog(g_bTextureMatrixShader).c_str() );
-		GLExt.glDeleteObjectARB( g_bTextureMatrixShader );
+		glDeleteShader( g_bTextureMatrixShader );
 		return;
 	}
 
-	GLExt.glVertexAttrib2fARB( ATTRIB_TEXTURE_MATRIX_SCALE, 1, 1 );
+	glVertexAttrib2f(ATTRIB_TEXTURE_MATRIX_SCALE, 1, 1);
 }
 
-CString RageDisplay_OGL::Init( VideoModeParams p, bool bAllowUnacceleratedRenderer )
+CString RageDisplay_GLFW::Init( VideoModeParams p, bool bAllowUnacceleratedRenderer )
 {
-	wind = LowLevelWindow::Create();
+	LOG->Info("NIKO PRINT STATEMENT START 2");
 
 	bool bIgnore = false;
 	CString sError = SetVideoMode( p, bIgnore );
 	if( sError != "" )
 		return sError;
+	LOG->Info("NIKO PRINT STATEMENT START 3 1");
 
 	// Log driver details
 	LOG->Info( "OGL Vendor: %s", glGetString(GL_VENDOR) );
+	LOG->Info("NIKO PRINT STATEMENT START 3 2");
 	LOG->Info( "OGL Renderer: %s", glGetString(GL_RENDERER) );
+	LOG->Info("NIKO PRINT STATEMENT START 3 3");
 	LOG->Info( "OGL Version: %s", glGetString(GL_VERSION) );
+	LOG->Info("NIKO PRINT STATEMENT START 3 4");
 	LOG->Info( "OGL Max texture size: %i", GetMaxTextureSize() );
+	LOG->Info("NIKO PRINT STATEMENT START 3 5");
 	LOG->Info( "OGL Texture units: %i", g_iMaxTextureUnits );
+	LOG->Info("NIKO PRINT STATEMENT START 3 6");
 	LOG->Info( "OGL Extensions: %s", glGetString(GL_EXTENSIONS) );
+	LOG->Info("NIKO PRINT STATEMENT START 3 7");
 	LOG->Info( "GLFW Version: %s", glfwGetVersionString() );
-
-	LogGLXDebugInformation();
+	LOG->Info("NIKO PRINT STATEMENT START 3 8");
 
 	if( IsSoftwareRenderer() )
 	{
@@ -458,6 +401,7 @@ CString RageDisplay_OGL::Init( VideoModeParams p, bool bAllowUnacceleratedRender
 				"Please obtain an updated driver from your video card manufacturer.\n\n";
 		LOG->Warn("This is a software renderer!");
 	}
+	LOG->Info("NIKO PRINT STATEMENT START 4");
 
 #if defined(_WINDOWS)
 	/* GLDirect is a Direct3D wrapper for OpenGL.  It's rather buggy; and if in
@@ -479,22 +423,25 @@ CString RageDisplay_OGL::Init( VideoModeParams p, bool bAllowUnacceleratedRender
 	}
 #endif
 
+	LOG->Info("NIKO PRINT STATEMENT START 5");
 	/* Log this, so if people complain that the radar looks bad on their
 	 * system we can compare them: */
 	glGetFloatv(GL_LINE_WIDTH_RANGE, g_line_range);
 	glGetFloatv(GL_POINT_SIZE_RANGE, g_point_range);
 
+	LOG->Info("NIKO PRINT STATEMENT START 6");
 	InitScalingScript();
+	LOG->Info("NIKO PRINT STATEMENT START 7");
 
 	return "";
 }
 
-void RageDisplay_OGL::Update(float fDeltaTime)
+void RageDisplay_GLFW::Update(float fDeltaTime)
 {
 	wind->Update(fDeltaTime);
 }
 
-bool RageDisplay_OGL::IsSoftwareRenderer()
+bool RageDisplay_GLFW::IsSoftwareRenderer()
 {
 #if defined(WIN32)
 	return 
@@ -505,110 +452,9 @@ bool RageDisplay_OGL::IsSoftwareRenderer()
 #endif
 }
 
-RageDisplay_OGL::~RageDisplay_OGL()
+RageDisplay_GLFW::~RageDisplay_GLFW()
 {
 	delete wind;
-}
-
-static void CheckPalettedTextures()
-{
-	CString error;
-	do
-	{
-		if( !GLExt.HasExtension("GL_EXT_paletted_texture") )
-		{
-			error = "GL_EXT_paletted_texture missing";
-			break;
-		}
-
-		if( GLExt.glColorTableEXT == NULL )
-		{
-			error = "glColorTableEXT missing";
-			break;
-		}
-
-		if( GLExt.glGetColorTableParameterivEXT == NULL )
-		{
-			error = "glGetColorTableParameterivEXT missing";
-			break;
-		}
-
-		/* Check to see if paletted textures really work. */
-		GLenum glTexFormat = GL_PIXFMT_INFO[RageDisplay::FMT_PAL].internalfmt;
-		GLenum glImageFormat = GL_PIXFMT_INFO[RageDisplay::FMT_PAL].format;
-		GLenum glImageType = GL_PIXFMT_INFO[RageDisplay::FMT_PAL].type;
-
-		int bits = 8;
-
-		FlushGLErrors();
-#define GL_CHECK_ERROR(f) \
-{ \
-	GLenum glError = glGetError(); \
-	if( glError != GL_NO_ERROR ) { \
-		error = ssprintf(f " failed (%s)", GLToString(glError).c_str() ); \
-		break; \
-	} \
-}
-
-		glTexImage2D(GL_PROXY_TEXTURE_2D,
-				0, glTexFormat, 
-				16, 16, 0,
-				glImageFormat, glImageType, NULL);
-		GL_CHECK_ERROR( "glTexImage2D" );
-
-		GLuint ifmt = 0;
-		// glGetTexLevelParameteriv( GL_PROXY_TEXTURE_2D, 0, GLenum(GL_TEXTURE_INTERNAL_FORMAT), (GLint *)&ifmt );
-		// GL_CHECK_ERROR( "glGetTexLevelParameteriv(GL_TEXTURE_INTERNAL_FORMAT)" );
-		// if( ifmt != glTexFormat )
-		// {
-		// 	error = ssprintf( "Expected format %s, got %s instead",
-		// 			GLToString(glTexFormat).c_str(),
-		// 			GLToString(ifmt).c_str() );
-		// 	break;
-		// }
-
-		GLubyte palette[256*4];
-		memset(palette, 0, sizeof(palette));
-		GLExt.glColorTableEXT(GL_PROXY_TEXTURE_2D, GL_RGBA8, 256, GL_RGBA, GL_UNSIGNED_BYTE, palette);
-		GL_CHECK_ERROR( "glColorTableEXT" );
-
-		GLint size = 0;
-		// glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GLenum(GL_TEXTURE_INDEX_SIZE_EXT), &size);
-		// GL_CHECK_ERROR( "glGetTexLevelParameteriv(GL_TEXTURE_INDEX_SIZE_EXT)" );
-		// if( bits > size || size > 8 )
-		// {
-		// 	error = ssprintf("Expected %i-bit palette, got a %i-bit one instead", bits, int(size));
-		// 	break;
-		// }
-
-		GLint RealWidth = 0;
-		GLExt.glGetColorTableParameterivEXT(GL_PROXY_TEXTURE_2D, GL_COLOR_TABLE_WIDTH, &RealWidth);
-		GL_CHECK_ERROR( "glGetColorTableParameterivEXT(GL_COLOR_TABLE_WIDTH)" );
-		if( RealWidth != 1 << bits )
-		{
-			error = ssprintf("GL_COLOR_TABLE_WIDTH returned %i instead of %i", int(RealWidth), 1 << bits );
-			break;
-		}
-
-		GLint RealFormat = 0;
-		GLExt.glGetColorTableParameterivEXT(GL_PROXY_TEXTURE_2D, GL_COLOR_TABLE_FORMAT, &RealFormat);
-		GL_CHECK_ERROR( "glGetColorTableParameterivEXT(GL_COLOR_TABLE_FORMAT)" );
-		if( RealFormat != GL_RGBA8 )
-		{
-			error = ssprintf("GL_COLOR_TABLE_FORMAT returned %s instead of GL_RGBA8", GLToString(RealFormat).c_str() );
-			break;
-		}
-	} while(0);
-#undef GL_CHECK_ERROR
-
-	if( error == "" )
-		return;
-
-	/* If 8-bit palettes don't work, disable them entirely--don't trust 4-bit
-	 * palettes if it can't even get 8-bit ones right. */
-	GLExt.glColorTableEXT = NULL;
-	GLExt.glGetColorTableParameterivEXT = NULL;
-	LOG->Info("Paletted textures disabled: %s.", error.c_str());
 }
 
 static void CheckReversePackedPixels()
@@ -631,40 +477,39 @@ static void CheckReversePackedPixels()
 	}
 }
 
-void SetupExtensions()
-{
-	const float fGLVersion = strtof( (const char *) glGetString(GL_VERSION), NULL );
-	g_glVersion = int(roundf(fGLVersion * 10));
+// void SetupExtensions()
+// {
+// 	const float fGLVersion = strtof( (const char *) glGetString(GL_VERSION), NULL );
+// 	g_glVersion = int(roundf(fGLVersion * 10));
 
-	const float fGLFWVersion = strtof( (const char *) glfwGetVersionString(), NULL );
-	g_glfwVersion = int(roundf(fGLFWVersion * 10));
+// 	const float fGLFWVersion = strtof( (const char *) glfwGetVersionString(), NULL );
+// 	g_glfwVersion = int(roundf(fGLFWVersion * 10));
 
-	GLExt.Load( wind );
+// 	// GLExt.Load( wind );
 
-	g_iMaxTextureUnits = 1;
-	if( GLExt.glActiveTextureARB != NULL )
-		glGetIntegerv( GL_MAX_TEXTURE_UNITS_ARB, (GLint *) &g_iMaxTextureUnits );
+// 	g_iMaxTextureUnits = 1;
+// 	if( &glActiveTexture != NULL )
+// 		glGetIntegerv( GL_MAX_TEXTURE_UNITS, (GLint *) &g_iMaxTextureUnits );
 
-	CheckPalettedTextures();
-	CheckReversePackedPixels();
+// 	CheckReversePackedPixels();
 
-	{
-		GLint iMaxTableSize = 0;
-		glGetIntegerv( GL_MAX_PIXEL_MAP_TABLE, &iMaxTableSize );
-		if( iMaxTableSize < 256 )
-		{
-			/* The minimum GL_MAX_PIXEL_MAP_TABLE is 32; if it's not at least 256,
-			 * we can't fit a palette in it, so we can't send paletted data as input
-			 * for a non-paletted texture. */
-			LOG->Info( "GL_MAX_PIXEL_MAP_TABLE is only %d", int(iMaxTableSize) );
-			g_bColorIndexTableWorks = false;
-		}
-		else
-			g_bColorIndexTableWorks = true;
-	}
-}
+// 	{
+// 		GLint iMaxTableSize = 0;
+// 		glGetIntegerv( GL_MAX_PIXEL_MAP_TABLE, &iMaxTableSize );
+// 		if( iMaxTableSize < 256 )
+// 		{
+// 			/* The minimum GL_MAX_PIXEL_MAP_TABLE is 32; if it's not at least 256,
+// 			 * we can't fit a palette in it, so we can't send paletted data as input
+// 			 * for a non-paletted texture. */
+// 			LOG->Info( "GL_MAX_PIXEL_MAP_TABLE is only %d", int(iMaxTableSize) );
+// 			g_bColorIndexTableWorks = false;
+// 		}
+// 		else
+// 			g_bColorIndexTableWorks = true;
+// 	}
+// }
 
-void RageDisplay_OGL::ResolutionChanged()
+void RageDisplay_GLFW::ResolutionChanged()
 {
 	// re-init the vertex shader
 	InitScalingScript();
@@ -679,42 +524,55 @@ void RageDisplay_OGL::ResolutionChanged()
 // Return true if mode change was successful.
 // bNewDeviceOut is set true if a new device was created and textures
 // need to be reloaded.
-CString RageDisplay_OGL::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
+CString RageDisplay_GLFW::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 {
-//	LOG->Trace( "RageDisplay_OGL::TryVideoMode( { .windowed=%d, .width=%d, .height=%d, .bpp=%d, .rate=%d, .vsync=%d )", p.windowed, p.width, p.height, p.bpp, p.rate, p.vsync );
+	LOG->Info("NIKO LOG EPIC 1");
+	LOG->Trace( "RageDisplay_GLFW::TryVideoMode( { .windowed=%d, .width=%d, .height=%d, .bpp=%d, .rate=%d, .vsync=%d )", p.windowed, p.width, p.height, p.bpp, p.rate, p.vsync );
 	CString err;
+	LOG->Info("NIKO LOG EPIC 2 1");
 	err = wind->TryVideoMode( p, bNewDeviceOut );
+	LOG->Info("NIKO LOG EPIC 2 2");
 	if( err != "" )
 		return err;	// failed to set video mode
+	LOG->Info("NIKO LOG EPIC 2 3");
 
+	LOG->Info("NIKO LOG EPIC 3");
 	if( bNewDeviceOut )
 	{
 		/* We have a new OpenGL context, so we have to tell our textures that
 		 * their OpenGL texture number is invalid. */
 		if(TEXTUREMAN)
+	LOG->Info("NIKO LOG EPIC 3 1");
 			TEXTUREMAN->InvalidateTextures();
+	LOG->Info("NIKO LOG EPIC 3 2");
 
 		/* Recreate all vertex buffers. */
 		InvalidateAllGeometry();
+	LOG->Info("NIKO LOG EPIC 3 3");
 	}
 
+	LOG->Info("NIKO LOG EPIC 4");
 	this->SetDefaultRenderStates();
 
+	LOG->Info("NIKO LOG EPIC 5");
 	/* Now that we've initialized, we can search for extensions (some of which
 	 * we may need to set up the video mode). */
-	SetupExtensions();
+	// SetupExtensions();
 
+	LOG->Info("NIKO LOG EPIC 6");
 	/* Set vsync the Windows way, if we can.  (What other extensions are there
 	 * to do this, for other archs?) */
-	if( GLExt.wglSwapIntervalEXT )
-	    GLExt.wglSwapIntervalEXT(p.vsync);
+	// theres glfw now :3 - Niko
+	glfwSwapInterval(!p.vsync);
 	
+	LOG->Info("NIKO LOG EPIC 7");
 	ResolutionChanged();
 
+	LOG->Info("NIKO LOG EPIC 8");
 	return "";	// successfully set mode
 }
 
-void RageDisplay_OGL::SetViewport(int shift_left, int shift_down)
+void RageDisplay_GLFW::SetViewport(int shift_left, int shift_down)
 {
 	/* left and down are on a 0..SCREEN_WIDTH, 0..SCREEN_HEIGHT scale.
 	 * Scale them to the actual viewport range. */
@@ -724,14 +582,14 @@ void RageDisplay_OGL::SetViewport(int shift_left, int shift_down)
 	glViewport(shift_left, -shift_down, wind->GetVideoModeParams().width, wind->GetVideoModeParams().height);
 }
 
-int RageDisplay_OGL::GetMaxTextureSize() const
+int RageDisplay_GLFW::GetMaxTextureSize() const
 {
 	GLint size;
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &size);
 	return size;
 }
 
-bool RageDisplay_OGL::BeginFrame()
+bool RageDisplay_GLFW::BeginFrame()
 {
 	glClearColor( 0,0,0,1 );
 	SetZWrite( true );
@@ -739,7 +597,7 @@ bool RageDisplay_OGL::BeginFrame()
 	return true;
 }
 
-void RageDisplay_OGL::EndFrame()
+void RageDisplay_GLFW::EndFrame()
 {
 	// glFlush(), not glFinish(); NVIDIA_GLX's glFinish()'s behavior is
 	// nowhere near performance-friendly and uses unholy amounts of CPU for
@@ -750,7 +608,7 @@ void RageDisplay_OGL::EndFrame()
 	ProcessStatsOnFlip();
 }
 
-RageSurface* RageDisplay_OGL::CreateScreenshot()
+RageSurface* RageDisplay_GLFW::CreateScreenshot()
 {
 	int width = wind->GetVideoModeParams().width;
 	int height = wind->GetVideoModeParams().height;
@@ -773,7 +631,7 @@ RageSurface* RageDisplay_OGL::CreateScreenshot()
 	return image;
 }
 
-RageDisplay::VideoModeParams RageDisplay_OGL::GetVideoModeParams() const { return wind->GetVideoModeParams(); }
+RageDisplay::VideoModeParams RageDisplay_GLFW::GetVideoModeParams() const { return wind->GetVideoModeParams(); }
 
 static void SetupVertices( const RageSpriteVertex v[], int iNumVerts )
 {
@@ -822,7 +680,7 @@ static void SetupVertices( const RageSpriteVertex v[], int iNumVerts )
 	// glNormalPointer(GL_FLOAT, 0, Normal);
 }
 
-void RageDisplay_OGL::SendCurrentMatrices()
+void RageDisplay_GLFW::SendCurrentMatrices()
 {
 	RageMatrix projection;
 	RageMatrixMultiply( &projection, GetCentering(), GetProjectionTop() );
@@ -1001,52 +859,31 @@ void RageCompiledGeometryHWOGL::AllocateBuffers()
 	*/
 	if( !m_nPositions )
 	{
-#ifndef __EMSCRIPTEN__
-		GLExt.glGenBuffersARB( 1, &m_nPositions );
-#else
 		glGenBuffers(1, &m_nPositions);
-#endif
 		AssertNoGLError();
 	}
 
 	if( !m_nTextureCoords )
 	{
-#ifndef __EMSCRIPTEN__
-		GLExt.glGenBuffersARB( 1, &m_nTextureCoords );
-#else
 		glGenBuffers(1, &m_nTextureCoords);
-#endif
 		AssertNoGLError();
 	}
 
 	if( !m_nNormals )
 	{
-#ifndef __EMSCRIPTEN__
-		GLExt.glGenBuffersARB( 1, &m_nNormals );
-#else
 		glGenBuffers(1, &m_nNormals);
-#endif
 		AssertNoGLError();
 	}
 
 	if( !m_nTriangles )
 	{
-#ifndef __EMSCRIPTEN__
-		GLExt.glGenBuffersARB( 1, &m_nTriangles );
-		AssertNoGLError();
-#else
 		glGenBuffers(1, &m_nTriangles);
-#endif
 		AssertNoGLError();
 	}
 
 	if( !m_nTextureMatrixScale )
 	{
-#ifndef __EMSCRIPTEN__
-		GLExt.glGenBuffersARB( 1, &m_nTextureMatrixScale );
-#else
 		glGenBuffers(1, &m_nTextureMatrixScale);
-#endif
 		AssertNoGLError();
 	}
 }
@@ -1127,46 +964,6 @@ void RageCompiledGeometryHWOGL::Invalidate()
 void RageCompiledGeometryHWOGL::Allocate( const vector<msMesh> &vMeshes )
 {
 	RageCompiledGeometrySWOGL::Allocate( vMeshes );
-#ifndef __EMSCRIPTEN__
-	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nPositions );
-	GLExt.glBufferDataARB( 
-		GL_ARRAY_BUFFER_ARB, 
-		GetTotalVertices()*sizeof(RageVector3), 
-		NULL, 
-		GL_STATIC_DRAW_ARB );
-	AssertNoGLError();
-
-	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureCoords );
-	GLExt.glBufferDataARB( 
-		GL_ARRAY_BUFFER_ARB, 
-		GetTotalVertices()*sizeof(RageVector2), 
-		NULL, 
-		GL_STATIC_DRAW_ARB );
-	AssertNoGLError();
-
-	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nNormals );
-	GLExt.glBufferDataARB( 
-		GL_ARRAY_BUFFER_ARB, 
-		GetTotalVertices()*sizeof(RageVector3), 
-		NULL, 
-		GL_STATIC_DRAW_ARB );
-	AssertNoGLError();
-
-	GLExt.glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles );
-	GLExt.glBufferDataARB( 
-		GL_ELEMENT_ARRAY_BUFFER_ARB, 
-		GetTotalTriangles()*sizeof(msTriangle), 
-		NULL, 
-		GL_STATIC_DRAW_ARB );
-	AssertNoGLError();
-
-	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureMatrixScale );
-	GLExt.glBufferDataARB( 
-		GL_ARRAY_BUFFER_ARB, 
-		GetTotalVertices()*sizeof(RageVector2), 
-		NULL,
-		GL_STATIC_DRAW_ARB );
-#else
 	glBindBuffer( GL_ARRAY_BUFFER, m_nPositions );
 	glBufferData( 
 		GL_ARRAY_BUFFER, 
@@ -1201,7 +998,6 @@ void RageCompiledGeometryHWOGL::Allocate( const vector<msMesh> &vMeshes )
 
 	glBindBuffer( GL_ARRAY_BUFFER, m_nTextureMatrixScale );
 	glBufferData( GL_ARRAY_BUFFER, GetTotalVertices()*sizeof(RageVector2), NULL, GL_STATIC_DRAW );
-#endif
 }
 
 void RageCompiledGeometryHWOGL::Change( const vector<msMesh> &vMeshes )
@@ -1262,14 +1058,14 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 			/* If we're using texture matrix scales, set up that buffer, too, and enable the
 			* vertex shader.  This shader doesn't support all OpenGL state, so only enable it
 			* if we're using it. */
-			GLExt.glEnableVertexAttribArrayARB( ATTRIB_TEXTURE_MATRIX_SCALE );
+			glEnableVertexAttribArray(ATTRIB_TEXTURE_MATRIX_SCALE);
 			AssertNoGLError();
-			GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureMatrixScale );
+			glBindBuffer( GL_ARRAY_BUFFER, m_nTextureMatrixScale );
 			AssertNoGLError();
-			GLExt.glVertexAttribPointerARB( ATTRIB_TEXTURE_MATRIX_SCALE, 2, GL_FLOAT, false, 0, NULL );
+			glVertexAttribPointer( ATTRIB_TEXTURE_MATRIX_SCALE, 2, GL_FLOAT, false, 0, NULL );
 			AssertNoGLError();
 
-			GLExt.glUseProgramObjectARB( g_bTextureMatrixShader );
+			glUseProgram( g_bTextureMatrixShader );
 			// XXX: This causes the scrolling brackets problem, but avoids a crash.
 			//AssertNoGLError();
 			FlushGLErrors();
@@ -1301,13 +1097,13 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 		}
 	}
 
-	GLExt.glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles );
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles);
 //	AssertNoGLError();
 
 #define BUFFER_OFFSET(o) ((char*)(o))
 
-	ASSERT( GLExt.glDrawRangeElements);
-	GLExt.glDrawRangeElements( 
+	ASSERT( glDrawRangeElements );
+	glDrawRangeElements( 
 		GL_TRIANGLES, 
 		meshInfo.iVertexStart,	// minimum array index contained in indices
 		meshInfo.iVertexStart+meshInfo.iVertexCount-1,
@@ -1319,25 +1115,25 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 
 	if( m_bNeedsTextureMatrixScale && g_bTextureMatrixShader != 0 )
 	{
-		GLExt.glDisableVertexAttribArrayARB( ATTRIB_TEXTURE_MATRIX_SCALE );
-		GLExt.glUseProgramObjectARB( 0 );
+		glDisableVertexAttribArray( ATTRIB_TEXTURE_MATRIX_SCALE );
+		glUseProgram(0);
 	}
 }
 
-RageCompiledGeometry* RageDisplay_OGL::CreateCompiledGeometry()
+RageCompiledGeometry* RageDisplay_GLFW::CreateCompiledGeometry()
 {
-	if( GLExt.glGenBuffersARB )
+	if( &glGenBuffers )
 		return new RageCompiledGeometryHWOGL;
 	else
 		return new RageCompiledGeometrySWOGL;
 }
 
-void RageDisplay_OGL::DeleteCompiledGeometry( RageCompiledGeometry* p )
+void RageDisplay_GLFW::DeleteCompiledGeometry( RageCompiledGeometry* p )
 {
 	delete p;
 }
 
-void RageDisplay_OGL::DrawQuadsInternal( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_GLFW::DrawQuadsInternal( const RageSpriteVertex v[], int iNumVerts )
 {
 	TurnOffHardwareVBO();
 	SendCurrentMatrices();
@@ -1346,7 +1142,7 @@ void RageDisplay_OGL::DrawQuadsInternal( const RageSpriteVertex v[], int iNumVer
 	glDrawArrays( GL_QUADS, 0, iNumVerts );
 }
 
-void RageDisplay_OGL::DrawQuadStripInternal( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_GLFW::DrawQuadStripInternal( const RageSpriteVertex v[], int iNumVerts )
 {
 	TurnOffHardwareVBO();
 	SendCurrentMatrices();
@@ -1355,7 +1151,7 @@ void RageDisplay_OGL::DrawQuadStripInternal( const RageSpriteVertex v[], int iNu
 	glDrawArrays( GL_QUAD_STRIP, 0, iNumVerts );
 }
 
-void RageDisplay_OGL::DrawFanInternal( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_GLFW::DrawFanInternal( const RageSpriteVertex v[], int iNumVerts )
 {
 	TurnOffHardwareVBO();
 
@@ -1367,7 +1163,7 @@ void RageDisplay_OGL::DrawFanInternal( const RageSpriteVertex v[], int iNumVerts
 	glDrawArrays( GL_TRIANGLE_FAN, 0, iNumVerts );
 }
 
-void RageDisplay_OGL::DrawStripInternal( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_GLFW::DrawStripInternal( const RageSpriteVertex v[], int iNumVerts )
 {
 	TurnOffHardwareVBO();
 	SendCurrentMatrices();
@@ -1376,7 +1172,7 @@ void RageDisplay_OGL::DrawStripInternal( const RageSpriteVertex v[], int iNumVer
 	glDrawArrays( GL_TRIANGLE_STRIP, 0, iNumVerts );
 }
 
-void RageDisplay_OGL::DrawTrianglesInternal( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_GLFW::DrawTrianglesInternal( const RageSpriteVertex v[], int iNumVerts )
 {
 	TurnOffHardwareVBO();
 	SendCurrentMatrices();
@@ -1385,7 +1181,7 @@ void RageDisplay_OGL::DrawTrianglesInternal( const RageSpriteVertex v[], int iNu
 	glDrawArrays( GL_TRIANGLES, 0, iNumVerts );
 }
 
-void RageDisplay_OGL::DrawCompiledGeometryInternal( const RageCompiledGeometry *p, int iMeshIndex )
+void RageDisplay_GLFW::DrawCompiledGeometryInternal( const RageCompiledGeometry *p, int iMeshIndex )
 {
 	TurnOffHardwareVBO();
 	SendCurrentMatrices();
@@ -1393,7 +1189,7 @@ void RageDisplay_OGL::DrawCompiledGeometryInternal( const RageCompiledGeometry *
 	p->Draw( iMeshIndex );
 }
 
-void RageDisplay_OGL::DrawLineStripInternal( const RageSpriteVertex v[], int iNumVerts, float LineWidth )
+void RageDisplay_GLFW::DrawLineStripInternal( const RageSpriteVertex v[], int iNumVerts, float LineWidth )
 {
 	TurnOffHardwareVBO();
 
@@ -1461,28 +1257,28 @@ void RageDisplay_OGL::DrawLineStripInternal( const RageSpriteVertex v[], int iNu
 	glDisable(GL_POINT_SMOOTH);
 }
 
-void RageDisplay_OGL::ClearAllTextures()
+void RageDisplay_GLFW::ClearAllTextures()
 {
 	for( int i=0; i<MAX_TEXTURE_UNITS; i++ )
 		SetTexture( i, NULL );
 
 	// HACK:  Reset the active texture to 0.
 	// TODO:  Change all texture functions to take a stage number.
-	if( GLExt.glActiveTextureARB )
-		GLExt.glActiveTextureARB(GL_TEXTURE0_ARB);
+	if(&glActiveTexture)
+		glActiveTexture(GL_TEXTURE0);
 }
 
-int RageDisplay_OGL::GetNumTextureUnits()
+int RageDisplay_GLFW::GetNumTextureUnits()
 {
-	if( GLExt.glActiveTextureARB == NULL )
+	if( &glActiveTexture == NULL )
 		return 1;
 	else
 		return g_iMaxTextureUnits;
 }
 
-void RageDisplay_OGL::SetTexture( int iTextureUnitIndex, RageTexture* pTexture )
+void RageDisplay_GLFW::SetTexture( int iTextureUnitIndex, RageTexture* pTexture )
 {
-	if( GLExt.glActiveTextureARB == NULL )
+	if( &glActiveTexture == NULL )
 	{
 		// multitexture isn't supported.  Ignore all textures except for 0.
 		if( iTextureUnitIndex != 0 )
@@ -1493,10 +1289,10 @@ void RageDisplay_OGL::SetTexture( int iTextureUnitIndex, RageTexture* pTexture )
 		switch( iTextureUnitIndex )
 		{
 		case 0:
-			GLExt.glActiveTextureARB(GL_TEXTURE0_ARB);
+			glActiveTexture(GL_TEXTURE0);
 			break;
 		case 1:
-			GLExt.glActiveTextureARB(GL_TEXTURE1_ARB);
+			glActiveTexture(GL_TEXTURE1);
 			break;
 		default:
 			ASSERT(0);
@@ -1513,14 +1309,16 @@ void RageDisplay_OGL::SetTexture( int iTextureUnitIndex, RageTexture* pTexture )
 		glDisable( GL_TEXTURE_2D );
 	}
 }
-void RageDisplay_OGL::SetTextureModeModulate()
+void RageDisplay_GLFW::SetTextureModeModulate()
 {
 	// glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 }
 
-void RageDisplay_OGL::SetTextureModeGlow()
+void RageDisplay_GLFW::SetTextureModeGlow()
 {
-	if( !GLExt.m_bEXT_texture_env_combine )
+	
+	
+	if( !glfwExtensionSupported("GL_EXT_texture_env_combine") )
 	{
 		/* This is changing blend state, instead of texture state, which isn't
 		 * great, but it's better than doing nothing. */
@@ -1541,17 +1339,17 @@ void RageDisplay_OGL::SetTextureModeGlow()
 	// glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_SOURCE1_ALPHA_EXT), GL_TEXTURE);
 }
 
-void RageDisplay_OGL::SetTextureModeAdd()
+void RageDisplay_GLFW::SetTextureModeAdd()
 {
 	// glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_ADD);
 }
 
-void RageDisplay_OGL::SetTextureFiltering( bool b )
+void RageDisplay_GLFW::SetTextureFiltering( bool b )
 {
 
 }
 
-void RageDisplay_OGL::SetBlendMode( BlendMode mode )
+void RageDisplay_GLFW::SetBlendMode( BlendMode mode )
 {
 	glEnable(GL_BLEND);
 
@@ -1572,21 +1370,21 @@ void RageDisplay_OGL::SetBlendMode( BlendMode mode )
 	}
 }
 
-bool RageDisplay_OGL::IsZWriteEnabled() const
+bool RageDisplay_GLFW::IsZWriteEnabled() const
 {
 	bool a;
 	glGetBooleanv( GL_DEPTH_WRITEMASK, (unsigned char*)&a );
 	return a;
 }
 
-bool RageDisplay_OGL::IsZTestEnabled() const
+bool RageDisplay_GLFW::IsZTestEnabled() const
 {
 	GLenum a;
 	glGetIntegerv( GL_DEPTH_FUNC, (GLint*)&a );
 	return a != GL_ALWAYS;
 }
 
-void RageDisplay_OGL::ClearZBuffer()
+void RageDisplay_GLFW::ClearZBuffer()
 {
 	bool write = IsZWriteEnabled();
 	SetZWrite( true );
@@ -1594,12 +1392,12 @@ void RageDisplay_OGL::ClearZBuffer()
 	SetZWrite( write );
 }
 
-void RageDisplay_OGL::SetZWrite( bool b )
+void RageDisplay_GLFW::SetZWrite( bool b )
 {
 	glDepthMask( b );
 }
 
-void RageDisplay_OGL::SetZBias( float f )
+void RageDisplay_GLFW::SetZBias( float f )
 {
 	float fNear = SCALE( f, 0.0f, 1.0f, 0.05f, 0.0f );
 	float fFar = SCALE( f, 0.0f, 1.0f, 1.0f, 0.95f );
@@ -1607,7 +1405,7 @@ void RageDisplay_OGL::SetZBias( float f )
 	glDepthRange( fNear, fFar );
 }
 
-void RageDisplay_OGL::SetZTestMode( ZTestMode mode )
+void RageDisplay_GLFW::SetZTestMode( ZTestMode mode )
 {
 	glEnable( GL_DEPTH_TEST );
 	switch( mode )
@@ -1619,14 +1417,14 @@ void RageDisplay_OGL::SetZTestMode( ZTestMode mode )
 	}
 }
 
-void RageDisplay_OGL::SetTextureWrapping( bool b )
+void RageDisplay_GLFW::SetTextureWrapping( bool b )
 {
 	GLenum mode = b ? GL_REPEAT : GL_CLAMP_TO_EDGE;
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mode );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mode );
 }
 
-void RageDisplay_OGL::SetMaterial( 
+void RageDisplay_GLFW::SetMaterial( 
 	const RageColor &emissive,
 	const RageColor &ambient,
 	const RageColor &diffuse,
@@ -1656,23 +1454,26 @@ void RageDisplay_OGL::SetMaterial(
 	}
 }
 
-void RageDisplay_OGL::SetLighting( bool b )
+void RageDisplay_GLFW::SetLighting( bool b )
 {
 	if( b )	glEnable( GL_LIGHTING );
 	else	glDisable( GL_LIGHTING );
 }
 
-void RageDisplay_OGL::SetLightOff( int index )
+void RageDisplay_GLFW::SetLightOff( int index )
 {
+#ifndef __EMSCRIPTEN__
 	glDisable( GL_LIGHT0+index );
+#endif
 }
-void RageDisplay_OGL::SetLightDirectional( 
+void RageDisplay_GLFW::SetLightDirectional( 
 	int index, 
 	const RageColor &ambient, 
 	const RageColor &diffuse, 
 	const RageColor &specular, 
 	const RageVector3 &dir )
 {
+#ifndef __EMSCRIPTEN__
 	// Light coordinates are transformed by the modelview matrix, but
 	// we are being passed in world-space coords.
 	// glPushMatrix();
@@ -1686,9 +1487,10 @@ void RageDisplay_OGL::SetLightDirectional(
 	// glLightfv(GL_LIGHT0+index, GL_POSITION, position);
 
 	// glPopMatrix();
+#endif
 }
 
-void RageDisplay_OGL::SetCullMode( CullMode mode )
+void RageDisplay_GLFW::SetCullMode( CullMode mode )
 {
 	switch( mode )
 	{
@@ -1708,13 +1510,13 @@ void RageDisplay_OGL::SetCullMode( CullMode mode )
 	}
 }
 
-const RageDisplay::PixelFormatDesc *RageDisplay_OGL::GetPixelFormatDesc(RagePixelFormat pf) const
+const RageDisplay::PixelFormatDesc *RageDisplay_GLFW::GetPixelFormatDesc(RagePixelFormat pf) const
 {
 	ASSERT( pf < NUM_PIX_FORMATS );
 	return &PIXEL_FORMAT_DESC[pf];
 }
 
-void RageDisplay_OGL::DeleteTexture( unsigned uTexHandle )
+void RageDisplay_GLFW::DeleteTexture( unsigned uTexHandle )
 {
 	unsigned int uTexID = uTexHandle;
 
@@ -1725,7 +1527,7 @@ void RageDisplay_OGL::DeleteTexture( unsigned uTexHandle )
 }
 
 
-RageDisplay::RagePixelFormat RageDisplay_OGL::GetImgPixelFormat( RageSurface* &img, bool &FreeImg, int width, int height, bool bPalettedTexture )
+RageDisplay::RagePixelFormat RageDisplay_GLFW::GetImgPixelFormat( RageSurface* &img, bool &FreeImg, int width, int height, bool bPalettedTexture )
 {
 	RagePixelFormat pixfmt = FindPixelFormat( img->format->BitsPerPixel, img->format->Rmask, img->format->Gmask, img->format->Bmask, img->format->Amask );
 	
@@ -1791,7 +1593,7 @@ void SetPixelMapForSurface( int glImageFormat, int glTexFormat, const RageSurfac
 	ASSERT_M( error == GL_NO_ERROR, GLToString(error) );
 }
 
-unsigned RageDisplay_OGL::CreateTexture( 
+unsigned RageDisplay_GLFW::CreateTexture( 
 	RagePixelFormat pixfmt,
 	RageSurface* img,
 	bool bGenerateMipMaps )
@@ -1855,11 +1657,11 @@ unsigned RageDisplay_OGL::CreateTexture(
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
 
 	if( wind->GetVideoModeParams().bAnisotropicFiltering &&
-		GLExt.HasExtension("GL_EXT_texture_filter_anisotropic") )
+		glfwExtensionSupported("GL_EXT_texture_filter_anisotropic") )
 	{
 		GLfloat largest_supported_anisotropy;
-		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &largest_supported_anisotropy);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, largest_supported_anisotropy);
+		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &largest_supported_anisotropy);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, largest_supported_anisotropy);
 	}
 
 	SetTextureWrapping( false );
@@ -1881,13 +1683,14 @@ unsigned RageDisplay_OGL::CreateTexture(
 			palette[p++] = img->format->palette->colors[i].b;
 			palette[p++] = img->format->palette->colors[i].a;
 		}
-
+#ifndef __EMSCRIPTEN__
 		/* Set the palette. */
-		GLExt.glColorTableEXT(GL_TEXTURE_2D, GL_RGBA8, 256, GL_RGBA, GL_UNSIGNED_BYTE, palette);
+		glColorTable(GL_TEXTURE_2D, GL_RGBA8, 256, GL_RGBA, GL_UNSIGNED_BYTE, palette);
 
 		GLint RealFormat = 0;
-		GLExt.glGetColorTableParameterivEXT(GL_TEXTURE_2D, GL_COLOR_TABLE_FORMAT, &RealFormat);
+		glGetColorTableParameteriv(GL_TEXTURE_2D, GL_COLOR_TABLE_FORMAT, &RealFormat);
 		ASSERT( RealFormat == GL_RGBA8);	/* This is a case I don't expect to happen. */
+#endif
 	}
 
 
@@ -1948,7 +1751,7 @@ unsigned RageDisplay_OGL::CreateTexture(
 
 /* This doesn't support img being paletted if the surface itself isn't paletted.
  * This is only used for movies anyway, which are never paletted. */
-void RageDisplay_OGL::UpdateTexture( 
+void RageDisplay_GLFW::UpdateTexture( 
 	unsigned uTexHandle, 
 	RageSurface* img,
 	int xoffset, int yoffset, int width, int height )
@@ -1977,7 +1780,7 @@ void RageDisplay_OGL::UpdateTexture(
 		delete img;
 }
 
-void RageDisplay_OGL::SetPolygonMode( PolygonMode pm )
+void RageDisplay_GLFW::SetPolygonMode( PolygonMode pm )
 {
 	GLenum m;
 	switch( pm )
@@ -1989,17 +1792,17 @@ void RageDisplay_OGL::SetPolygonMode( PolygonMode pm )
 	glPolygonOffset(GL_FRONT_AND_BACK, m);
 }
 
-void RageDisplay_OGL::SetLineWidth( float fWidth )
+void RageDisplay_GLFW::SetLineWidth( float fWidth )
 {
 	glLineWidth( fWidth );
 }
 
-CString RageDisplay_OGL::GetTextureDiagnostics( unsigned id ) const
+CString RageDisplay_GLFW::GetTextureDiagnostics( unsigned id ) const
 {
 	return "";
 }
 
-void RageDisplay_OGL::SetAlphaTest( bool b )
+void RageDisplay_GLFW::SetAlphaTest( bool b )
 {
 	// glAlphaFunc( GL_GREATER, 0.01f );
 	if( b )
@@ -2023,19 +1826,19 @@ void RageDisplay_OGL::SetAlphaTest( bool b )
  * Another case of this is incomplete packed pixels support.  Some implementations
  * neglect GL_UNSIGNED_SHORT_*_REV. 
  */
-bool RageDisplay_OGL::SupportsSurfaceFormat( RagePixelFormat pixfmt )
+bool RageDisplay_GLFW::SupportsSurfaceFormat( RagePixelFormat pixfmt )
 {
 	switch( GL_PIXFMT_INFO[pixfmt].type )
 	{
 	case GL_UNSIGNED_SHORT_1_5_5_5_REV:
-		return GLExt.m_bGL_EXT_bgra && g_bReversePackedPixelsWorks;
+		return GL_EXT_bgra && g_bReversePackedPixelsWorks;
 	default:
 		return true;
 	}
 }
 
 
-bool RageDisplay_OGL::SupportsTextureFormat( RagePixelFormat pixfmt, bool realtime )
+bool RageDisplay_GLFW::SupportsTextureFormat( RagePixelFormat pixfmt, bool realtime )
 {
 	/* If we support a pixfmt for texture formats but not for surface formats, then
 	 * we'll have to convert the texture to a supported surface format before uploading.
@@ -2046,16 +1849,16 @@ bool RageDisplay_OGL::SupportsTextureFormat( RagePixelFormat pixfmt, bool realti
 	switch( GL_PIXFMT_INFO[pixfmt].format )
 	{
 	case GL_COLOR_INDEX:
-		return GLExt.glColorTableEXT && GLExt.glGetColorTableParameterivEXT;
+		return !!(&glColorTable);
 	case GL_BGR:
 	case GL_BGRA:
-		return GLExt.m_bGL_EXT_bgra;
+		return GL_BGRA;
 	default:
 		return true;
 	}
 }
 
-void RageDisplay_OGL::SetSphereEnvironmentMapping( bool b )
+void RageDisplay_GLFW::SetSphereEnvironmentMapping( bool b )
 {
 	if( b )
 	{
