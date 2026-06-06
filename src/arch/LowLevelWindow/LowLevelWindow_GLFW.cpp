@@ -89,8 +89,7 @@ CString LowLevelWindow_GLFW::TryVideoMode( RageDisplay::VideoModeParams p, bool 
 #else
     // do some magic with javascript to change the page icon and title
 #endif
-    LOG->Info("NIKO LOW LEVEL WINDOW 1");
-#ifndef __EMSCRIPTEN__
+
 	switch( p.bpp )
 	{
 	case 16:
@@ -129,7 +128,6 @@ CString LowLevelWindow_GLFW::TryVideoMode( RageDisplay::VideoModeParams p, bool 
 		LOG->Info("Got %i bpp (%i%i%i%i), %i depth, %i stencil",
 			colorbits, r, g, b, a, depth, stencil);
 	}
-#endif
 	return "";	// we set the video mode successfully
 }
 

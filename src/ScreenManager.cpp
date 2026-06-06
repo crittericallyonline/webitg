@@ -80,10 +80,14 @@ void ScreenManager::ThemeChanged()
 	LOG->Trace( "ScreenManager::ThemeChanged" );
 
 	// reload common sounds
+#ifndef __EMSCRIPTEN__
 	m_soundStart.Load( THEME->GetPathS("Common","start") );
 	m_soundCoin.Load( THEME->GetPathS("Common","coin"), true );
 	m_soundInvalid.Load( THEME->GetPathS("Common","invalid") );
 	m_soundScreenshot.Load( THEME->GetPathS("Common","screenshot") );
+#else
+	LOG->Warn("EMSCRIPTEN NEEDS TO LOAD THESE SOMEDAY!!!");
+#endif
 
 	// reload overlay screens
 	for( unsigned i=0; i<m_OverlayScreens.size(); i++ )

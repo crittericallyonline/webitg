@@ -47,8 +47,7 @@ CString RageDisplay::PixelFormatToString( RagePixelFormat pixfmt )
  * XXX: the renderer itself should probably be the one to try fallback modes */
 CString RageDisplay::SetVideoMode( VideoModeParams p, bool &bNeedReloadTextures )
 {
-	CString err;
-	err = this->TryVideoMode(p,bNeedReloadTextures);
+	CString err = this->TryVideoMode(p,bNeedReloadTextures);
 	if( err == "" )
 		return "";
 	LOG->Trace( "TryVideoMode failed: %s", err.c_str() );

@@ -132,19 +132,15 @@ bool MutexImpl_Pthreads::Lock()
 
 		while( tries-- )
 		{
-			printf("LINE 137 NIKO MUTEXIMPL_PTHREADS::LOCK %d\n", tries);
 			/* Wait for ten seconds.  If it takes longer than that, we're 
 			 * probably deadlocked. */
 			timeval tv;
 			gettimeofday( &tv, NULL );
 
-			printf("NIKO MUTEXIMPL_PTHREADS::LOCK A\n");
 			timespec ts;
 			ts.tv_sec = tv.tv_sec + len;
 			ts.tv_nsec = tv.tv_usec * 1000;
-			printf("NIKO MUTEXIMPL_PTHREADS::LOCK B\n");
 			int ret = pthread_mutex_timedlock( &mutex, &ts );
-			printf("NIKO MUTEXIMPL_PTHREADS::LOCK C\n");
 			switch( ret )
 			{
 			case 0:
@@ -160,7 +156,6 @@ bool MutexImpl_Pthreads::Lock()
 				 * timeout, just in case we're debugging and happened to stop while waiting
 				 * on the mutex. */
 				len = 1;
-			printf("NIKO MUTEXIMPL_PTHREADS::LOCK::DEADLOCKED C\n");
 				break;
 
 			default:

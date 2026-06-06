@@ -402,8 +402,9 @@ static void CheckSettings()
 #if defined(WIN32)
 #include "RageDisplay_D3D.h"
 #endif
-
-#if defined(SUPPORT_OPENGL)
+#ifdef __EMSCRIPTEN__
+#include "RageDisplay_GLFW.h"
+#elif defined(SUPPORT_OPENGL)
 #include "RageDisplay_OGL.h"
 #endif
 
@@ -719,8 +720,12 @@ RageDisplay *CreateDisplay()
 
 		if( sRenderer.CompareNoCase("opengl")==0 )
 		{
-#if defined(SUPPORT_OPENGL)
+#if defined(__EMSCRIPTEN__) || defined(SUPPORT_OPENGL)
+#if defined(__EMSCRIPTEN__)
+			RageDisplay_GLFW *pRet = new RageDisplay_GLFW;
+#else
 			RageDisplay_OGL *pRet = new RageDisplay_OGL;
+#endif
 			CString sError = pRet->Init( params, PREFSMAN->m_bAllowUnacceleratedRenderer );
 			if( sError == "" )
 				return pRet;

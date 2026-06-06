@@ -355,7 +355,7 @@ void InitScalingScript()
 	// Link the program.
 	glLinkProgram( g_bTextureMatrixShader );
 	GLint bLinkStatus = false;
-	glGetShaderiv(g_bTextureMatrixShader, GL_OBJECT_LINK_STATUS_ARB, &bLinkStatus);
+	glGetShaderiv(g_bTextureMatrixShader, GL_LINK_STATUS, &bLinkStatus);
 
 	if( !bLinkStatus )
 	{
@@ -369,29 +369,20 @@ void InitScalingScript()
 
 CString RageDisplay_GLFW::Init( VideoModeParams p, bool bAllowUnacceleratedRenderer )
 {
-	LOG->Info("NIKO PRINT STATEMENT START 2");
 
 	bool bIgnore = false;
 	CString sError = SetVideoMode( p, bIgnore );
 	if( sError != "" )
 		return sError;
-	LOG->Info("NIKO PRINT STATEMENT START 3 1");
 
 	// Log driver details
-	LOG->Info( "OGL Vendor: %s", glGetString(GL_VENDOR) );
-	LOG->Info("NIKO PRINT STATEMENT START 3 2");
-	LOG->Info( "OGL Renderer: %s", glGetString(GL_RENDERER) );
-	LOG->Info("NIKO PRINT STATEMENT START 3 3");
-	LOG->Info( "OGL Version: %s", glGetString(GL_VERSION) );
-	LOG->Info("NIKO PRINT STATEMENT START 3 4");
-	LOG->Info( "OGL Max texture size: %i", GetMaxTextureSize() );
-	LOG->Info("NIKO PRINT STATEMENT START 3 5");
-	LOG->Info( "OGL Texture units: %i", g_iMaxTextureUnits );
-	LOG->Info("NIKO PRINT STATEMENT START 3 6");
-	LOG->Info( "OGL Extensions: %s", glGetString(GL_EXTENSIONS) );
-	LOG->Info("NIKO PRINT STATEMENT START 3 7");
+	LOG->Info( "GLFW Vendor: %s", glGetString(GL_VENDOR) );
+	LOG->Info( "GLFW Renderer: %s", glGetString(GL_RENDERER) );
+	LOG->Info( "GLFW Version: %s", glGetString(GL_VERSION) );
+	LOG->Info( "GLFW Max texture size: %i", GetMaxTextureSize() );
+	LOG->Info( "GLFW Texture units: %i", g_iMaxTextureUnits );
+	LOG->Info( "GLFW Extensions: %s", glGetString(GL_EXTENSIONS) );
 	LOG->Info( "GLFW Version: %s", glfwGetVersionString() );
-	LOG->Info("NIKO PRINT STATEMENT START 3 8");
 
 	if( IsSoftwareRenderer() )
 	{
@@ -401,7 +392,6 @@ CString RageDisplay_GLFW::Init( VideoModeParams p, bool bAllowUnacceleratedRende
 				"Please obtain an updated driver from your video card manufacturer.\n\n";
 		LOG->Warn("This is a software renderer!");
 	}
-	LOG->Info("NIKO PRINT STATEMENT START 4");
 
 #if defined(_WINDOWS)
 	/* GLDirect is a Direct3D wrapper for OpenGL.  It's rather buggy; and if in
@@ -423,15 +413,11 @@ CString RageDisplay_GLFW::Init( VideoModeParams p, bool bAllowUnacceleratedRende
 	}
 #endif
 
-	LOG->Info("NIKO PRINT STATEMENT START 5");
 	/* Log this, so if people complain that the radar looks bad on their
 	 * system we can compare them: */
-	glGetFloatv(GL_LINE_WIDTH_RANGE, g_line_range);
-	glGetFloatv(GL_POINT_SIZE_RANGE, g_point_range);
-
-	LOG->Info("NIKO PRINT STATEMENT START 6");
+	glGetFloatv(GL_ALIASED_LINE_WIDTH_RANGE, g_line_range);
+	glGetFloatv(GL_ALIASED_POINT_SIZE_RANGE, g_point_range);
 	InitScalingScript();
-	LOG->Info("NIKO PRINT STATEMENT START 7");
 
 	return "";
 }
@@ -526,49 +512,36 @@ void RageDisplay_GLFW::ResolutionChanged()
 // need to be reloaded.
 CString RageDisplay_GLFW::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 {
-	LOG->Info("NIKO LOG EPIC 1");
 	LOG->Trace( "RageDisplay_GLFW::TryVideoMode( { .windowed=%d, .width=%d, .height=%d, .bpp=%d, .rate=%d, .vsync=%d )", p.windowed, p.width, p.height, p.bpp, p.rate, p.vsync );
 	CString err;
-	LOG->Info("NIKO LOG EPIC 2 1");
 	err = wind->TryVideoMode( p, bNewDeviceOut );
-	LOG->Info("NIKO LOG EPIC 2 2");
 	if( err != "" )
 		return err;	// failed to set video mode
-	LOG->Info("NIKO LOG EPIC 2 3");
 
-	LOG->Info("NIKO LOG EPIC 3");
 	if( bNewDeviceOut )
 	{
 		/* We have a new OpenGL context, so we have to tell our textures that
 		 * their OpenGL texture number is invalid. */
 		if(TEXTUREMAN)
-	LOG->Info("NIKO LOG EPIC 3 1");
 			TEXTUREMAN->InvalidateTextures();
-	LOG->Info("NIKO LOG EPIC 3 2");
 
 		/* Recreate all vertex buffers. */
 		InvalidateAllGeometry();
-	LOG->Info("NIKO LOG EPIC 3 3");
 	}
 
-	LOG->Info("NIKO LOG EPIC 4");
 	this->SetDefaultRenderStates();
 
-	LOG->Info("NIKO LOG EPIC 5");
 	/* Now that we've initialized, we can search for extensions (some of which
 	 * we may need to set up the video mode). */
 	// SetupExtensions();
 
-	LOG->Info("NIKO LOG EPIC 6");
 	/* Set vsync the Windows way, if we can.  (What other extensions are there
 	 * to do this, for other archs?) */
 	// theres glfw now :3 - Niko
 	glfwSwapInterval(!p.vsync);
 	
-	LOG->Info("NIKO LOG EPIC 7");
 	ResolutionChanged();
 
-	LOG->Info("NIKO LOG EPIC 8");
 	return "";	// successfully set mode
 }
 
@@ -1031,13 +1004,16 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 
 	// TRICKY:  Don't bind and send normals if lighting is disabled.  This 
 	// will save some effort transforming these values.
-	GLboolean bLighting;
-	glGetBooleanv( GL_LIGHTING, &bLighting );
+	// GLboolean bLighting;
+	// glGetBooleanv( GL_LIGHTING, &bLighting );
 	GLboolean bTextureGenS;
 	glGetBooleanv( GL_TEXTURE_GEN_S, &bTextureGenS );
 	GLboolean bTextureGenT;
 	glGetBooleanv( GL_TEXTURE_GEN_T, &bTextureGenT );
-	if( bLighting || bTextureGenS || bTextureGenT )
+	if(
+		// bLighting ||
+		bTextureGenS ||
+		bTextureGenT )
 	{
 		// glEnableClientState(GL_NORMAL_ARRAY);
 		glBindBuffer( GL_ARRAY_BUFFER, m_nNormals );
@@ -1437,27 +1413,27 @@ void RageDisplay_GLFW::SetMaterial(
 	// want Models to have basic color and transparency.
 	// We can do this fake lighting by setting the vertex color.
 	// XXX: unintended: SetLighting must be called before SetMaterial
-	GLboolean bLighting;
-	glGetBooleanv( GL_LIGHTING, &bLighting );
+	// GLboolean bLighting;
+	//  ( GL_LIGHTING, &bLighting );
 
-	if( bLighting )
-	{
-		// glMaterialfv( GL_FRONT, GL_EMISSION, emissive );
-		// glMaterialfv( GL_FRONT, GL_AMBIENT, ambient );
-		// glMaterialfv( GL_FRONT, GL_DIFFUSE, diffuse );
-		// glMaterialfv( GL_FRONT, GL_SPECULAR, specular );
-		// glMaterialf( GL_FRONT, GL_SHININESS, shininess );
-	}
-	else
-	{
-		// glColor4fv( emissive + ambient + diffuse );
-	}
+	// if( bLighting )
+	// {
+	// 	// glMaterialfv( GL_FRONT, GL_EMISSION, emissive );
+	// 	// glMaterialfv( GL_FRONT, GL_AMBIENT, ambient );
+	// 	// glMaterialfv( GL_FRONT, GL_DIFFUSE, diffuse );
+	// 	// glMaterialfv( GL_FRONT, GL_SPECULAR, specular );
+	// 	// glMaterialf( GL_FRONT, GL_SHININESS, shininess );
+	// }
+	// else
+	// {
+	// 	// glColor4fv( emissive + ambient + diffuse );
+	// }
 }
 
 void RageDisplay_GLFW::SetLighting( bool b )
 {
-	if( b )	glEnable( GL_LIGHTING );
-	else	glDisable( GL_LIGHTING );
+	// if( b )	glEnable( GL_LIGHTING );
+	// else	glDisable( GL_LIGHTING );
 }
 
 void RageDisplay_GLFW::SetLightOff( int index )
@@ -1566,11 +1542,13 @@ RageDisplay::RagePixelFormat RageDisplay_GLFW::GetImgPixelFormat( RageSurface* &
 /* If we're sending a paletted surface to a non-paletted texture, set the palette. */
 void SetPixelMapForSurface( int glImageFormat, int glTexFormat, const RageSurfacePalette *palette )
 {
+#ifndef __EMSCRIPTEN__ // dont think we have this in gles3
 	if( glImageFormat != GL_COLOR_INDEX || glTexFormat == GL_COLOR_INDEX8_EXT )
 	{
 		glPixelStorei( GL_MAP_COLOR, false );
 		return;
 	}
+#endif
 
 	GLushort buf[4][256];
 	memset( buf, 0, sizeof(buf) );
@@ -1588,7 +1566,8 @@ void SetPixelMapForSurface( int glImageFormat, int glTexFormat, const RageSurfac
 	// glPixelMapusv( GL_PIXEL_MAP_I_TO_G, 256, buf[1] );
 	// glPixelMapusv( GL_PIXEL_MAP_I_TO_B, 256, buf[2] );
 	// glPixelMapusv( GL_PIXEL_MAP_I_TO_A, 256, buf[3] );
-	glPixelStorei( GL_MAP_COLOR, true );
+	//  no support GLES3
+	// glPixelStorei( GL_MAP_COLOR, true );
 	GLenum error = glGetError();
 	ASSERT_M( error == GL_NO_ERROR, GLToString(error) );
 }
@@ -1733,13 +1712,13 @@ unsigned RageDisplay_GLFW::CreateTexture(
 
 
 	/* Sanity check: */
-	if( pixfmt == FMT_PAL )
-	{
-		GLint size = 0;
-		glGetTexParameteriv(GL_TEXTURE_2D, GLenum(GL_TEXTURE_INDEX_SIZE_EXT), &size);
-		if(size != 8)
-			RageException::Throw("Thought paletted textures worked, but they don't.");
-	}
+	// if( pixfmt == FMT_PAL )
+	// {
+	// 	GLint size = 0;
+	// 	glGetTexParameteriv(GL_TEXTURE_2D, GLenum(GL_TEXTURE_INDEX_SIZE_EXT), &size);
+	// 	if(size != 8)
+	// 		RageException::Throw("Thought paletted textures worked, but they don't.");
+	// }
 
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 	glFlush();
@@ -1805,10 +1784,10 @@ CString RageDisplay_GLFW::GetTextureDiagnostics( unsigned id ) const
 void RageDisplay_GLFW::SetAlphaTest( bool b )
 {
 	// glAlphaFunc( GL_GREATER, 0.01f );
-	if( b )
-		glEnable( GL_ALPHA_TEST );
-	else
-		glDisable( GL_ALPHA_TEST );
+	// if( b )
+	// 	glEnable( GL_ALPHA_TEST );
+	// else
+	// 	glDisable( GL_ALPHA_TEST );
 }
 
 
