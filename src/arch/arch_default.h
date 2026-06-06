@@ -50,7 +50,7 @@
 
 #elif defined(__EMSCRIPTEN__)
 	#include "ArchHooks/ArchHooks_Unix.h"
-	#include "LowLevelWindow/LowLevelWindow_Null.h"
+	#include "LowLevelWindow/LowLevelWindow_GLFW.h"
 	#include "USB/USBDriver_Impl_Libusb.h"
 
 	// #if defined(LINUX)
@@ -61,7 +61,7 @@
 	// 	#include "LoadingWindow/LoadingWindow_Gtk.h"
 	// #endif
 
-	#define DEFAULT_INPUT_DRIVER_LIST "GLFW,Joystick"
+	#define DEFAULT_INPUT_DRIVER_LIST "Null,Null"
 
 	#define DEFAULT_MOVIE_DRIVER_LIST "FFMpeg,Null"
 	#define DEFAULT_SOUND_DRIVER_LIST "Null"
