@@ -54,5 +54,7 @@ src/version.bin
 *.wasm
 tmp/
 out/
+html/*.js
+html/*.data
 
 CMakePresets.json
