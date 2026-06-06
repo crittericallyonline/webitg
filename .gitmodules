@@ -1,3 +1,6 @@
 [submodule "extern/FFmpeg"]
 	path = extern/FFmpeg
 	url = https://github.com/FFmpeg/FFmpeg.git
+[submodule "data/Themes/Simply-ITG"]
+	path = data/Themes/Simply-ITG
+	url = https://github.com/Connormgs/Simply-ITG.git
