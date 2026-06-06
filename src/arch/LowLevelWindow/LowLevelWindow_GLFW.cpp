@@ -76,7 +76,6 @@ void *LowLevelWindow_GLFW::GetProcAddress(CString s)
 // we never actually delete and make a new context so yea
 CString LowLevelWindow_GLFW::TryVideoMode( RageDisplay::VideoModeParams p, bool &bNewDeviceOut )
 {
-    LOG->Info("TEST CAN THIS WINDOW BE SEEN?");
 	CurrentParams = p;
 #ifndef __EMSCRIPTEN__
     glfwSetWindowTitle(glfwDisplay, p.sWindowTitle);
