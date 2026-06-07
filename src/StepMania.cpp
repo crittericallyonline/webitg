@@ -1228,10 +1228,10 @@ int main(int argc, char* argv[])
 
 	/* Initialize which courses are ranking courses here. */
 	SONGMAN->UpdateRankingCourses();
-
+#ifndef __EMSCRIPTEN__ 
 	if( GetCommandlineArgument("netip") )
 		NSMAN->DisplayStartupStatus();	// If we're using networking show what happened
-
+#endif
 	PREFSMAN->SaveGlobalPrefsToDisk();
 	SaveGamePrefsToDisk();
     

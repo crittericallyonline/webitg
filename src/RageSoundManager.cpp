@@ -34,11 +34,13 @@ RageSoundManager::RageSoundManager()
 
 void RageSoundManager::Init()
 {
-#ifndef __EMSCRIPTEN__
 	driver = RageSoundDriver::Create( g_sSoundDrivers );
 
 	if( driver == NULL )
+#ifndef __EMSCRIPTEN__
 		RageException::Throw( "Couldn't find a sound driver that works" );
+#else
+		LOG->Warn("!!!NO AUDIO IMPLEMENTATION!!!");
 #endif
 }
 
@@ -127,7 +129,7 @@ void RageSoundManager::Update(float delta)
 	/* Be sure to release g_SoundManMutex before deleting sounds. */
 	for( set<RageSound *>::iterator it = ToDelete.begin(); it != ToDelete.end(); ++it )
 		delete *it;
-
+		
 	if( driver != NULL )
 		driver->Update(delta);
 }

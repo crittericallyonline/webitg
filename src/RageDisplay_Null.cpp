@@ -42,10 +42,6 @@ static RageDisplay::PixelFormatDesc PIXEL_FORMAT_DESC[RageDisplay::NUM_PIX_FORMA
 		  0x0000FF,
 		  0x000000 }
 	}, {
-		/* Paletted */
-		8,
-		{ 0,0,0,0 } /* N/A */
-	}, {
 		/* B8G8R8A8 */
 		24,
 		{ 0x0000FF,

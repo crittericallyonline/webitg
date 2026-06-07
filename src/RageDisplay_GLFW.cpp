@@ -99,10 +99,6 @@ static RageDisplay::PixelFormatDesc PIXEL_FORMAT_DESC[RageDisplay::NUM_PIX_FORMA
 		  0x0000FF,
 		  0x000000 }
 	}, {
-		/* Paletted */
-		8,
-		{ 0,0,0,0 } /* N/A */
-	}, {
 		/* B8G8R8A8 */
 		24,
 		{ 0x0000FF,
@@ -128,7 +124,7 @@ static void InitStringMap()
 	#define X(a) g_Strings[a] = #a;
 	X(GL_RGBA8);	X(GL_RGBA4);	X(GL_RGB5_A1);	X(GL_RGB5);	X(GL_RGBA);	X(GL_RGB);
 	X(GL_BGR);	X(GL_BGRA);
-	X(GL_COLOR_INDEX8_EXT);	X(GL_COLOR_INDEX4_EXT);	X(GL_COLOR_INDEX);
+	X(GL_COLOR_INDEX);
 	X(GL_UNSIGNED_BYTE);	X(GL_UNSIGNED_SHORT_4_4_4_4); X(GL_UNSIGNED_SHORT_5_5_5_1);
 	X(GL_UNSIGNED_SHORT_1_5_5_5_REV);
 	X(GL_INVALID_ENUM); X(GL_INVALID_VALUE); X(GL_INVALID_OPERATION);
@@ -183,12 +179,14 @@ struct GLPixFmtInfo_t {
 		GL_RGB8,
 		GL_RGB,
 		GL_UNSIGNED_BYTE,
-	}, {
-		/* Paletted */
-		GL_COLOR_INDEX8_EXT,
-		GL_COLOR_INDEX,
-		GL_UNSIGNED_BYTE,
-	}, {
+	},
+	// {
+	// 	/* Paletted */
+	// 	GL_COLOR_INDEX8_EXT,
+	// 	GL_COLOR_INDEX,
+	// 	GL_UNSIGNED_BYTE,
+	// },
+	{
 		/* B8G8R8 */
 		GL_RGB8,
 		GL_BGR,
@@ -1542,14 +1540,6 @@ RageDisplay::RagePixelFormat RageDisplay_GLFW::GetImgPixelFormat( RageSurface* &
 /* If we're sending a paletted surface to a non-paletted texture, set the palette. */
 void SetPixelMapForSurface( int glImageFormat, int glTexFormat, const RageSurfacePalette *palette )
 {
-#ifndef __EMSCRIPTEN__ // dont think we have this in gles3
-	if( glImageFormat != GL_COLOR_INDEX || glTexFormat == GL_COLOR_INDEX8_EXT )
-	{
-		glPixelStorei( GL_MAP_COLOR, false );
-		return;
-	}
-#endif
-
 	GLushort buf[4][256];
 	memset( buf, 0, sizeof(buf) );
 
@@ -1583,7 +1573,7 @@ unsigned RageDisplay_GLFW::CreateTexture(
 
 	/* Find the pixel format of the image we've been given. */
 	bool FreeImg;
-	RagePixelFormat imgpixfmt = GetImgPixelFormat( img, FreeImg, img->w, img->h, pixfmt == FMT_PAL );
+	RagePixelFormat imgpixfmt = GetImgPixelFormat( img, FreeImg, img->w, img->h, pixfmt == FMT_RGBA8 );
 
 	GLenum glTexFormat = GL_PIXFMT_INFO[pixfmt].internalfmt;
 	GLenum glImageFormat = GL_PIXFMT_INFO[imgpixfmt].format;
@@ -1648,31 +1638,21 @@ unsigned RageDisplay_GLFW::CreateTexture(
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, img->pitch / img->format->BytesPerPixel);
 
 
-	if( pixfmt == FMT_PAL )
-	{
-		/* The texture is paletted; set the texture palette. */
-		GLubyte palette[256*4];
-		memset(palette, 0, sizeof(palette));
-		int p = 0;
-		/* Copy the palette to the format OpenGL expects. */
-		for(int i = 0; i < img->format->palette->ncolors; ++i)
-		{
-			palette[p++] = img->format->palette->colors[i].r;
-			palette[p++] = img->format->palette->colors[i].g;
-			palette[p++] = img->format->palette->colors[i].b;
-			palette[p++] = img->format->palette->colors[i].a;
-		}
-#ifndef __EMSCRIPTEN__
-		/* Set the palette. */
-		glColorTable(GL_TEXTURE_2D, GL_RGBA8, 256, GL_RGBA, GL_UNSIGNED_BYTE, palette);
-
-		GLint RealFormat = 0;
-		glGetColorTableParameteriv(GL_TEXTURE_2D, GL_COLOR_TABLE_FORMAT, &RealFormat);
-		ASSERT( RealFormat == GL_RGBA8);	/* This is a case I don't expect to happen. */
-#endif
-	}
-
-
+	// if( pixfmt == FMT_PAL )
+	// {
+	// 	/* The texture is paletted; set the texture palette. */
+	// 	GLubyte palette[256*4];
+	// 	memset(palette, 0, sizeof(palette));
+	// 	int p = 0;
+	// 	/* Copy the palette to the format OpenGL expects. */
+	// 	for(int i = 0; i < img->format->palette->ncolors; ++i)
+	// 	{
+	// 		palette[p++] = img->format->palette->colors[i].r;
+	// 		palette[p++] = img->format->palette->colors[i].g;
+	// 		palette[p++] = img->format->palette->colors[i].b;
+	// 		palette[p++] = img->format->palette->colors[i].a;
+	// 	}
+	// }
 	
 	{
 		ostringstream s;
@@ -1690,25 +1670,19 @@ unsigned RageDisplay_GLFW::CreateTexture(
 
 	FlushGLErrors();
 
+	GLenum error;
+	glTexImage2D(
+		GL_TEXTURE_2D, 0, glTexFormat, 
+		img->w, img->h, 0,
+		glImageFormat, glImageType, img->pixels);
+	
+	error = glGetError();
+	ASSERT_M( error == GL_NO_ERROR, GLToString(error) );
+
 	if( bGenerateMipMaps )
-	{
 		glGenerateMipmap(GL_TEXTURE_2D);
-		// GLenum error = gluBuild2DMipmaps(
-		// 	GL_TEXTURE_2D, glTexFormat, 
-		// 	img->w, img->h,
-		// 	glImageFormat, glImageType, img->pixels );
-		// ASSERT_M( error == 0, (char *) gluErrorString(error) );
-	}
-	else
-	{
-		glTexImage2D(
-			GL_TEXTURE_2D, 0, glTexFormat, 
-			img->w, img->h, 0,
-			glImageFormat, glImageType, img->pixels);
-		
-		GLenum error = glGetError();
-		ASSERT_M( error == GL_NO_ERROR, GLToString(error) );
-	}
+	error = glGetError();
+	ASSERT_M( error == GL_NO_ERROR, GLToString(error) );
 
 
 	/* Sanity check: */
@@ -1809,8 +1783,8 @@ bool RageDisplay_GLFW::SupportsSurfaceFormat( RagePixelFormat pixfmt )
 {
 	switch( GL_PIXFMT_INFO[pixfmt].type )
 	{
-	case GL_UNSIGNED_SHORT_1_5_5_5_REV:
-		return GL_EXT_bgra && g_bReversePackedPixelsWorks;
+	// case GL_UNSIGNED_SHORT_1_5_5_5_REV:
+	// 	return GL_EXT_bgra && g_bReversePackedPixelsWorks;
 	default:
 		return true;
 	}

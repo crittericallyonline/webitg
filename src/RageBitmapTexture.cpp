@@ -155,21 +155,21 @@ void RageBitmapTexture::Create()
 	// Format of the image that we will pass to OpenGL and that we want OpenGL to use
 	RageDisplay::RagePixelFormat pixfmt;
 
-	if( actualID.iGrayscaleBits != -1 && DISPLAY->SupportsTextureFormat(RageDisplay::FMT_PAL) )
-	{
-		RageSurface *dst = RageSurfaceUtils::PalettizeToGrayscale( img, actualID.iGrayscaleBits, actualID.iAlphaBits );
+	// if( actualID.iGrayscaleBits != -1 && DISPLAY->SupportsTextureFormat(RageDisplay::FMT_PAL) )
+	// {
+	// 	RageSurface *dst = RageSurfaceUtils::PalettizeToGrayscale( img, actualID.iGrayscaleBits, actualID.iAlphaBits );
 
-		delete img;
-		img = dst;
-	}
+	// 	delete img;
+	// 	img = dst;
+	// }
 
 	/* Figure out which texture format to use. */
 	// if the source is palleted, load palleted no matter what the prefs
-	if(img->format->BitsPerPixel == 8 && DISPLAY->SupportsTextureFormat(RageDisplay::FMT_PAL))
-	{
-		pixfmt = RageDisplay::FMT_PAL;
-	}
-	else
+	// if(img->format->BitsPerPixel == 8 && DISPLAY->SupportsTextureFormat(RageDisplay::FMT_PAL))
+	// {
+	// 	pixfmt = RageDisplay::FMT_PAL;
+	// }
+	// else
 	{
 		// not paletted
 		switch( actualID.iColorDepth )
