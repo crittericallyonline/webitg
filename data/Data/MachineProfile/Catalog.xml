@@ -9,13 +9,10 @@
 <InternetRankingUploadUrl>http://www.roxorgames.com/itg/redirect.php?location=upload_stats</InternetRankingUploadUrl>
 <InternetRankingViewGuidUrl>http://www.roxorgames.com/itg/redirect.php?location=view_guid&amp;</InternetRankingViewGuidUrl>
 <ProductTitle>In The Groove 2</ProductTitle>
-<Songs>
-</Songs>
+<Songs/>
 <Totals>
-<NumSongsByGroup>
-</NumSongsByGroup>
-<NumStepsByGroup>
-</NumStepsByGroup>
+<NumSongsByGroup/>
+<NumStepsByGroup/>
 <NumUnlockedCourses>0</NumUnlockedCourses>
 <NumUnlockedSongs>0</NumUnlockedSongs>
 <NumUnlockedSteps>0</NumUnlockedSteps>
@@ -73,41 +70,25 @@
 <Meter DisplayAs='11' >Meter11</Meter>
 <Meter DisplayAs='12' >Meter12</Meter>
 <Meter DisplayAs='13' >Meter13</Meter>
-<Meter DisplayAs='14' >Meter14</Meter>
-<Meter DisplayAs='15' >Meter15</Meter>
-<Meter DisplayAs='16' >Meter16</Meter>
-<Meter DisplayAs='17' >Meter17</Meter>
-<Meter DisplayAs='18' >Meter18</Meter>
-<Meter DisplayAs='19' >Meter19</Meter>
-<Meter DisplayAs='20' >Meter20</Meter>
-<Meter DisplayAs='21' >Meter21</Meter>
-<Meter DisplayAs='22' >Meter22</Meter>
-<Meter DisplayAs='23' >Meter23</Meter>
-<Meter DisplayAs='24' >Meter24</Meter>
-<Meter DisplayAs='25' >Meter25</Meter>
-<Meter DisplayAs='26' >Meter26</Meter>
-<Meter DisplayAs='27' >Meter27</Meter>
-<Meter DisplayAs='28' >Meter28</Meter>
-<Meter DisplayAs='29' >Meter29</Meter>
-<Meter DisplayAs='30' >Meter30</Meter>
 </Meter>
 <Modifier>
 <Modifier DisplayAs='-30% Mini' >-30% Mini</Modifier>
+<Modifier DisplayAs='x1.5' >1.5x</Modifier>
 <Modifier DisplayAs='Mini' >100% Mini</Modifier>
+<Modifier DisplayAs='x2.5' >2.5x</Modifier>
 <Modifier DisplayAs='20% Mini' >20% Mini</Modifier>
-<Modifier DisplayAs='2x' >2x</Modifier>
+<Modifier DisplayAs='x2' >2x</Modifier>
 <Modifier DisplayAs='30% Mini' >30% Mini</Modifier>
-<Modifier DisplayAs='3x' >3x</Modifier>
+<Modifier DisplayAs='x3' >3x</Modifier>
 <Modifier DisplayAs='40% Mini' >40% Mini</Modifier>
-<Modifier DisplayAs='4x' >4x</Modifier>
+<Modifier DisplayAs='x4' >4x</Modifier>
 <Modifier DisplayAs='50% Mini' >50% Mini</Modifier>
-<Modifier DisplayAs='5x' >5x</Modifier>
+<Modifier DisplayAs='x5' >5x</Modifier>
 <Modifier DisplayAs='60% Mini' >60% Mini</Modifier>
-<Modifier DisplayAs='6x' >6x</Modifier>
+<Modifier DisplayAs='x6' >6x</Modifier>
 <Modifier DisplayAs='70% Mini' >70% Mini</Modifier>
-<Modifier DisplayAs='7x' >7x</Modifier>
 <Modifier DisplayAs='80% Mini' >80% Mini</Modifier>
-<Modifier DisplayAs='8x' >8x</Modifier>
+<Modifier DisplayAs='x8' >8x</Modifier>
 <Modifier DisplayAs='Alternate' >Alternate</Modifier>
 <Modifier DisplayAs='Beat' >Beat</Modifier>
 <Modifier DisplayAs='Stream' >Big</Modifier>
@@ -122,7 +103,9 @@
 <Modifier DisplayAs='C1200' >C1200</Modifier>
 <Modifier DisplayAs='C1300' >C1300</Modifier>
 <Modifier DisplayAs='C1400' >C1400</Modifier>
+<Modifier DisplayAs='c300' >C300</Modifier>
 <Modifier DisplayAs='C400' >C400</Modifier>
+<Modifier DisplayAs='c450' >C450</Modifier>
 <Modifier DisplayAs='C500' >C500</Modifier>
 <Modifier DisplayAs='C600' >C600</Modifier>
 <Modifier DisplayAs='C700' >C700</Modifier>
@@ -130,10 +113,8 @@
 <Modifier DisplayAs='C900' >C900</Modifier>
 <Modifier DisplayAs='Cel' >Cel</Modifier>
 <Modifier DisplayAs='Centered' >Centered</Modifier>
-<Modifier DisplayAs='CouplesMirror' >CouplesMirror</Modifier>
 <Modifier DisplayAs='Hide Background' >Cover</Modifier>
 <Modifier DisplayAs='Cross' >Cross</Modifier>
-<Modifier DisplayAs='Cyber' >Cyber</Modifier>
 <Modifier DisplayAs='Hide Targets' >Dark</Modifier>
 <Modifier DisplayAs='Distant' >Distant</Modifier>
 <Modifier DisplayAs='Dizzy' >Dizzy</Modifier>
@@ -146,7 +127,6 @@
 <Modifier DisplayAs='Hallway' >Hallway</Modifier>
 <Modifier DisplayAs='Fade Out' >Hidden</Modifier>
 <Modifier DisplayAs='Fade Out Offset' >HiddenOffset</Modifier>
-<Modifier DisplayAs='HoldsToRolls' >HoldsToRolls</Modifier>
 <Modifier DisplayAs='Incoming' >Incoming</Modifier>
 <Modifier DisplayAs='Invert' >Invert</Modifier>
 <Modifier DisplayAs='Left' >Left</Modifier>
@@ -170,19 +150,13 @@
 <Modifier DisplayAs='Robot' >Robot</Modifier>
 <Modifier DisplayAs='Random' >Shuffle</Modifier>
 <Modifier DisplayAs='Skippy' >Skippy</Modifier>
-<Modifier DisplayAs='SmartBlender' >SmartBlender</Modifier>
-<Modifier DisplayAs='SoftShuffle' >SoftShuffle</Modifier>
-<Modifier DisplayAs='Spaceman' >Space</Modifier>
+<Modifier DisplayAs='Space' >Space</Modifier>
 <Modifier DisplayAs='Split' >Split</Modifier>
-<Modifier DisplayAs='SpookyShuffle' >SpookyShuffle</Modifier>
 <Modifier DisplayAs='Invisible' >Stealth</Modifier>
 <Modifier DisplayAs='Stomp' >Stomp</Modifier>
 <Modifier DisplayAs='Fade In' >Sudden</Modifier>
 <Modifier DisplayAs='Fade In Offset' >SuddenOffset</Modifier>
 <Modifier DisplayAs='Blender' >SuperShuffle</Modifier>
-<Modifier DisplayAs='SwapLR' >SwapLeftRight</Modifier>
-<Modifier DisplayAs='SwapSides' >SwapSides</Modifier>
-<Modifier DisplayAs='SwapUD' >SwapUpDown</Modifier>
 <Modifier DisplayAs='Float' >Tipsy</Modifier>
 <Modifier DisplayAs='Tornado' >Tornado</Modifier>
 <Modifier DisplayAs='Twister' >Twister</Modifier>
@@ -200,12 +174,12 @@
 <Modifier DisplayAs='1.2x' >1.2x</Modifier>
 <Modifier DisplayAs='1.3x' >1.3x</Modifier>
 <Modifier DisplayAs='1.4x' >1.4x</Modifier>
-<Modifier DisplayAs='1.5x' >1.5x</Modifier>
+<Modifier DisplayAs='x1.5' >1.5x</Modifier>
 <Modifier DisplayAs='1.6x' >1.6x</Modifier>
 <Modifier DisplayAs='1.7x' >1.7x</Modifier>
 <Modifier DisplayAs='1.8x' >1.8x</Modifier>
 <Modifier DisplayAs='1.9x' >1.9x</Modifier>
-<Modifier DisplayAs='2x' >2.0x</Modifier>
+<Modifier DisplayAs='x2' >2.0x</Modifier>
 <Modifier DisplayAs='Alternate' >Alternate</Modifier>
 <Modifier DisplayAs='Stream' >Big</Modifier>
 <Modifier DisplayAs='Hide Judgment' >Blind</Modifier>
@@ -219,7 +193,7 @@
 <Modifier DisplayAs='Left' >Clear Left</Modifier>
 <Modifier DisplayAs='Right' >Clear Right</Modifier>
 <Modifier DisplayAs='Left' >Collapse Left</Modifier>
-<Modifier DisplayAs='2x' >Compress 2x</Modifier>
+<Modifier DisplayAs='x2' >Compress 2x</Modifier>
 <Modifier DisplayAs='Right' >Copy Left To Right</Modifier>
 <Modifier DisplayAs='Left' >Copy Right To Left</Modifier>
 <Modifier DisplayAs='Cross' >Cross</Modifier>
@@ -229,7 +203,7 @@
 <Modifier DisplayAs='Drift' >Drunk</Modifier>
 <Modifier DisplayAs='Echo' >Echo</Modifier>
 <Modifier DisplayAs='Expand' >Expand</Modifier>
-<Modifier DisplayAs='2x' >Expand 2x</Modifier>
+<Modifier DisplayAs='x2' >Expand 2x</Modifier>
 <Modifier DisplayAs='Flat' >Flat</Modifier>
 <Modifier DisplayAs='Flip' >Flip</Modifier>
 <Modifier DisplayAs='Hallway' >Hallway</Modifier>
@@ -249,14 +223,13 @@
 <Modifier DisplayAs='Overhead' >Overhead</Modifier>
 <Modifier DisplayAs='Planted' >Planted</Modifier>
 <Modifier DisplayAs='Quick' >Quick</Modifier>
-<Modifier DisplayAs='Fade Out Reverse' >Random</Modifier>
 <Modifier DisplayAs='Reverse' >Reverse</Modifier>
 <Modifier DisplayAs='Right' >Right</Modifier>
 <Modifier DisplayAs='Left' >Shift Left</Modifier>
 <Modifier DisplayAs='Right' >Shift Right</Modifier>
 <Modifier DisplayAs='Random' >Shuffle</Modifier>
 <Modifier DisplayAs='Skippy' >Skippy</Modifier>
-<Modifier DisplayAs='Spaceman' >Space</Modifier>
+<Modifier DisplayAs='Space' >Space</Modifier>
 <Modifier DisplayAs='Split' >Split</Modifier>
 <Modifier DisplayAs='Invisible' >Stealth</Modifier>
 <Modifier DisplayAs='Stomp' >Stomp</Modifier>
@@ -268,14 +241,14 @@
 <Modifier DisplayAs='Twister' >Twister</Modifier>
 <Modifier DisplayAs='Wave' >Wave</Modifier>
 <Modifier DisplayAs='Wide' >Wide</Modifier>
-<Modifier DisplayAs='1.5x' >1.5x</Modifier>
+<Modifier DisplayAs='x1.5' >1.5x</Modifier>
 <Modifier DisplayAs='x2.5' >2.5x</Modifier>
-<Modifier DisplayAs='2x' >2x</Modifier>
-<Modifier DisplayAs='3x' >3x</Modifier>
-<Modifier DisplayAs='4x' >4x</Modifier>
-<Modifier DisplayAs='5x' >5x</Modifier>
-<Modifier DisplayAs='6x' >6x</Modifier>
-<Modifier DisplayAs='8x' >8x</Modifier>
+<Modifier DisplayAs='x2' >2x</Modifier>
+<Modifier DisplayAs='x3' >3x</Modifier>
+<Modifier DisplayAs='x4' >4x</Modifier>
+<Modifier DisplayAs='x5' >5x</Modifier>
+<Modifier DisplayAs='x6' >6x</Modifier>
+<Modifier DisplayAs='x8' >8x</Modifier>
 <Modifier DisplayAs='Alternate' >Alternate</Modifier>
 <Modifier DisplayAs='Beat' >Beat</Modifier>
 <Modifier DisplayAs='Stream' >Big</Modifier>
@@ -326,7 +299,7 @@
 <Modifier DisplayAs='Robot' >Robot</Modifier>
 <Modifier DisplayAs='Random' >Shuffle</Modifier>
 <Modifier DisplayAs='Skippy' >Skippy</Modifier>
-<Modifier DisplayAs='Spaceman' >Space</Modifier>
+<Modifier DisplayAs='Space' >Space</Modifier>
 <Modifier DisplayAs='Split' >Split</Modifier>
 <Modifier DisplayAs='Invisible' >Stealth</Modifier>
 <Modifier DisplayAs='Stomp' >Stomp</Modifier>
@@ -350,12 +323,12 @@
 <Modifier DisplayAs='1.2x' >1.2x</Modifier>
 <Modifier DisplayAs='1.3x' >1.3x</Modifier>
 <Modifier DisplayAs='1.4x' >1.4x</Modifier>
-<Modifier DisplayAs='1.5x' >1.5x</Modifier>
+<Modifier DisplayAs='x1.5' >1.5x</Modifier>
 <Modifier DisplayAs='1.6x' >1.6x</Modifier>
 <Modifier DisplayAs='1.7x' >1.7x</Modifier>
 <Modifier DisplayAs='1.8x' >1.8x</Modifier>
 <Modifier DisplayAs='1.9x' >1.9x</Modifier>
-<Modifier DisplayAs='2x' >2.0x</Modifier>
+<Modifier DisplayAs='x2' >2.0x</Modifier>
 <Modifier DisplayAs='Alternate' >Alternate</Modifier>
 <Modifier DisplayAs='Stream' >Big</Modifier>
 <Modifier DisplayAs='Hide Judgment' >Blind</Modifier>
@@ -369,7 +342,7 @@
 <Modifier DisplayAs='Left' >Clear Left</Modifier>
 <Modifier DisplayAs='Right' >Clear Right</Modifier>
 <Modifier DisplayAs='Left' >Collapse Left</Modifier>
-<Modifier DisplayAs='2x' >Compress 2x</Modifier>
+<Modifier DisplayAs='x2' >Compress 2x</Modifier>
 <Modifier DisplayAs='Right' >Copy Left To Right</Modifier>
 <Modifier DisplayAs='Left' >Copy Right To Left</Modifier>
 <Modifier DisplayAs='Cross' >Cross</Modifier>
@@ -379,7 +352,7 @@
 <Modifier DisplayAs='Drift' >Drunk</Modifier>
 <Modifier DisplayAs='Echo' >Echo</Modifier>
 <Modifier DisplayAs='Expand' >Expand</Modifier>
-<Modifier DisplayAs='2x' >Expand 2x</Modifier>
+<Modifier DisplayAs='x2' >Expand 2x</Modifier>
 <Modifier DisplayAs='Flat' >Flat</Modifier>
 <Modifier DisplayAs='Flip' >Flip</Modifier>
 <Modifier DisplayAs='Hallway' >Hallway</Modifier>
@@ -399,14 +372,14 @@
 <Modifier DisplayAs='Overhead' >Overhead</Modifier>
 <Modifier DisplayAs='Planted' >Planted</Modifier>
 <Modifier DisplayAs='Quick' >Quick</Modifier>
-<Modifier DisplayAs='Boomerang' >Random</Modifier>
+<Modifier DisplayAs='Hide Targets' >Random</Modifier>
 <Modifier DisplayAs='Reverse' >Reverse</Modifier>
 <Modifier DisplayAs='Right' >Right</Modifier>
 <Modifier DisplayAs='Left' >Shift Left</Modifier>
 <Modifier DisplayAs='Right' >Shift Right</Modifier>
 <Modifier DisplayAs='Random' >Shuffle</Modifier>
 <Modifier DisplayAs='Skippy' >Skippy</Modifier>
-<Modifier DisplayAs='Spaceman' >Space</Modifier>
+<Modifier DisplayAs='Space' >Space</Modifier>
 <Modifier DisplayAs='Split' >Split</Modifier>
 <Modifier DisplayAs='Invisible' >Stealth</Modifier>
 <Modifier DisplayAs='Stomp' >Stomp</Modifier>
@@ -423,6 +396,7 @@
 <PlayMode DisplayAs='Dance' >Regular</PlayMode>
 <PlayMode DisplayAs='Marathon' >Nonstop</PlayMode>
 <PlayMode DisplayAs='Survival' >Oni</PlayMode>
+<PlayMode DisplayAs='Battle' >Rave</PlayMode>
 </PlayMode>
 <RadarValue>
 <RadarValue DisplayAs='Density' >Stream</RadarValue>
@@ -446,7 +420,6 @@
 <Style DisplayAs='1 Player' Game='dance' Style='single' />
 <Style DisplayAs='2 Player' Game='dance' Style='versus' />
 <Style DisplayAs='Double' Game='dance' Style='double' />
-<Style DisplayAs='Solo' Game='dance' Style='solo' />
 </Style>
 <TapNoteScore>
 <TapNoteScore DisplayAs='None' >None</TapNoteScore>
