@@ -24,7 +24,7 @@ set(HAVE_SDL 0)             # SDL exists but i hate it with my guts.
 #compile all files with these flags
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 # link all of the files together for the final build with these flags
-set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -sALLOW_MEMORY_GROWTH -sALLOW_TABLE_GROWTH -DHAVE_PTHREAD_MUTEX_TIMEDLOCK -sASYNCIFY -sASYNCIFY_STACK_SIZE=8MB -sFULL_ES3 -sUSE_WEBGL2 -sGL_ASSERTIONS=1 --use-port=contrib.glfw3 --bind -sPTHREAD_POOL_SIZE=12 --strip-debug -sOFFSCREEN_FRAMEBUFFER=1 -sINITIAL_MEMORY=1999MB -sUSE_PTHREADS --use-port=vorbis --use-port=ogg --use-port=libpng --use-port=libjpeg -pthread -sWASM_WORKERS -sFORCE_FILESYSTEM=1 -DDEBUG -sWASM_ASYNC_COMPILATION -O0 -sWASM -sGL_UNSAFE_OPTS -sMAX_WEBGL_VERSION=2 -s -sMIN_WEBGL_VERSION=2 -sEXPORT_ALL=1 -sASSERTIONS=0 -lidbfs.js -sTOTAL_STACK=128MB --preload-file ${CMAKE_CURRENT_LIST_DIR}/data@/")
+set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -DUSE_MOVIE_TEXTURE_FFMPEG -sALLOW_MEMORY_GROWTH -sALLOW_TABLE_GROWTH -DHAVE_PTHREAD_MUTEX_TIMEDLOCK -sASYNCIFY -sASYNCIFY_STACK_SIZE=4MB -sFULL_ES3 -sGL_ASSERTIONS=1 --use-port=contrib.glfw3 --bind -sPTHREAD_POOL_SIZE=12 --strip-debug -sOFFSCREEN_FRAMEBUFFER=1 -sINITIAL_MEMORY=1999MB -sUSE_PTHREADS --use-port=vorbis --use-port=ogg --use-port=libpng --use-port=libjpeg -pthread -sWASM_WORKERS -sFORCE_FILESYSTEM=1 -DDEBUG -sWASM_ASYNC_COMPILATION -O0 -sWASM -sGL_UNSAFE_OPTS -sMAX_WEBGL_VERSION=2 -s -sMIN_WEBGL_VERSION=2 -sEXPORT_ALL=0 -sASSERTIONS=1 -lidbfs.js -sTOTAL_STACK=128MB --preload-file ${CMAKE_CURRENT_LIST_DIR}/data@/")
 
 # CRASH_HANDLER -- we dont need this line actually, its just here for no reason; they're already undefined
 # add_compile_definitions(HAS_USBDRIVER_IMPL_WINUSB=0 HAS_USBDRIVER_IMPL_LIBUSB=0)
