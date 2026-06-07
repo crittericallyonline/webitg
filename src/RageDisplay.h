@@ -58,7 +58,7 @@ public:
 		FMT_RGB5A1,
 		FMT_RGB5,
 		FMT_RGB8,
-		// FMT_PAL, // i hate this
+		FMT_PAL,
 		/* The above formats differ between OpenGL and D3D. These are provided as
 		* alternatives for OpenGL that match some format in D3D.  Don't use them
 		* directly; they'll be matched automatically by FindPixelFormat. */
