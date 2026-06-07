@@ -618,7 +618,9 @@ void GameSoundManager::PlayOnceFromDir( CString sPath )
 	/* Add the path to the g_SoundsToPlayOnceFromDir queue. */
 	g_Mutex->Lock();
 	g_SoundsToPlayOnceFromDir.push_back( sPath );
-	g_Mutex->Broadcast();
+	LOG->Trace("GameSoundManager::PlayOnceFromDir() g_SoundsToPlayOnceFromDir.push_back() Successful");
+	// g_Mutex->Broadcast();
+	LOG->Trace("GameSoundManager::PlayOnceFromDir() g_Mutex->Broadcast() Successful");
 	g_Mutex->Unlock();
 }
 

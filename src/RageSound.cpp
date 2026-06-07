@@ -201,7 +201,12 @@ void RageSound::LoadSoundReader( SoundReader *pSound )
 
 	m_iDecodePosition = m_iStoppedPosition = 0;
 
+#ifndef __EMSCRIPTEN__
 	const int iNeededRate = SOUNDMAN->GetDriverSampleRate( pSound->GetSampleRate() );
+#else
+	const int iNeededRate = 44100; // idk what im doing i just need to see first, audio is my second priority right now.
+#endif
+	LOG->Trace("needed rate = %i", iNeededRate);
 	if( iNeededRate != pSound->GetSampleRate() )
 	{
 		RageSoundReader_Resample *Resample = RageSoundReader_Resample::MakeResampler( PREFSMAN->m_SoundResampleQuality );

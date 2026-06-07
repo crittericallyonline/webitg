@@ -153,8 +153,10 @@ void ScreenWithMenuElements::StartPlayingMusic()
 {
 	/* Some screens should leave the music alone (eg. ScreenPlayerOptions music 
 	 * sample left over from ScreenSelectMusic). */
+#ifndef __EMSCRIPTEN__
 	if( PLAY_MUSIC )
 		SOUND->PlayMusic( THEME->GetPathS(m_sName,"music") );
+#endif
 }
 
 void ScreenWithMenuElements::Update( float fDeltaTime )
@@ -192,7 +194,6 @@ void ScreenWithMenuElements::LoadLights()
 		LOG->Trace( "SM file \"%s\" does not exist.", sFilePath.c_str() );
 		return;
 	}
-
 	SMLoader ld;
 	if( !ld.LoadFromSMFile(sFilePath, m_SongData) )
 	{

@@ -1,6 +1,7 @@
 #include "global.h"
 
 #ifdef __EMSCRIPTEN__
+#define GL_GLEXT_PROTOTYPES
 #include <GLFW/emscripten_glfw3.h>
 // #ifdef HAS_GLES3
 #include <GLES3/gl3.h>
@@ -1179,7 +1180,9 @@ void RageDisplay_GLFW::DrawLineStripInternal( const RageSpriteVertex v[], int iN
 	/* Draw a nice AA'd line loop.  One problem with this is that point and line
 	 * sizes don't always precisely match, which doesn't look quite right.
 	 * It's worth it for the AA, though. */
+#ifndef __EMSCRIPTEN__
 	glEnable(GL_LINE_SMOOTH);
+#endif
 
 	/* Our line width is wrt the regular internal SCREEN_WIDTHxSCREEN_HEIGHT screen,
 	 * but these width functions actually want raster sizes (that is, actual pixels).
@@ -1202,8 +1205,9 @@ void RageDisplay_GLFW::DrawLineStripInternal( const RageSpriteVertex v[], int iN
 	/* Draw the line loop: */
 	SetupVertices( v, iNumVerts );
 	glDrawArrays( GL_LINE_STRIP, 0, iNumVerts );
-
+#ifndef __EMSCRIPTEN__
 	glDisable(GL_LINE_SMOOTH);
+#endif
 
 	/* Round off the corners.  This isn't perfect; the point is sometimes a little
 	 * larger than the line, causing a small bump on the edge.  Not sure how to fix
@@ -1222,8 +1226,9 @@ void RageDisplay_GLFW::DrawLineStripInternal( const RageSpriteVertex v[], int iN
 
 	if(mat.m[0][0] < 1e-5 && mat.m[1][1] < 1e-5) 
 		return;
-
+#ifndef __EMSCRIPTEN__
 	glEnable(GL_POINT_SMOOTH);
+#endif
 
 	SetupVertices( v, iNumVerts );
 	glDrawArrays( GL_POINTS, 0, iNumVerts );
@@ -1275,13 +1280,17 @@ void RageDisplay_GLFW::SetTexture( int iTextureUnitIndex, RageTexture* pTexture 
 
 	if( pTexture )
 	{
+#ifndef __EMSCRIPTEN__
 		glEnable( GL_TEXTURE_2D );
+#endif
 		glBindTexture( GL_TEXTURE_2D, pTexture->GetTexHandle() );
 	}
+#ifndef __EMSCRIPTEN__
 	else
 	{
 		glDisable( GL_TEXTURE_2D );
 	}
+#endif
 }
 void RageDisplay_GLFW::SetTextureModeModulate()
 {

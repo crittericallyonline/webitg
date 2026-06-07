@@ -184,8 +184,10 @@ void ScreenManager::Update( float fDeltaTime )
 	/* The music may be started on the first update.  If we're reading from a CD,
 	 * it might not start immediately.  Make sure we start playing the sound before
 	 * continuing, since it's strange to start rendering before the music starts. */
+#ifndef __EMSCRIPTEN__
 	if( bFirstUpdate )
 			SOUND->Flush();
+#endif
 
 	EmptyDeleteQueue();
 
