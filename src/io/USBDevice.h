@@ -5,14 +5,6 @@
 #include "ProductInfo.h" // Used to look for PRODUCT_ID_BARE which means STEPMANIA 5, NOT OITG
 
 /* For "DeviceMatches" */
-#include "PIUIO.h"
-#include "ITGIO.h"
-#include "MiniMaid.h"
-#include "P3IO.h"
-
-#ifndef __EMSCRIPTEN__
-#include <usb.h>
-#endif
 #ifdef PRODUCT_ID_BARE
 #define PSTRING std::string
 #else

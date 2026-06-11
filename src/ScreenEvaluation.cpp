@@ -17,7 +17,6 @@
 #include "RageTimer.h"
 #include "UnlockManager.h"
 #include "Course.h"
-#include "LightsManager.h"
 #include "ProfileManager.h"
 #include "song.h"
 #include "StatsManager.h"
@@ -180,8 +179,6 @@ void ScreenEvaluation::Init()
 	GAMESTATE->CommitStageStats();
 
 	ScreenWithMenuElements::Init();
-
-	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 
 	m_bFailed = STATSMAN->m_CurStageStats.AllFailed();
 

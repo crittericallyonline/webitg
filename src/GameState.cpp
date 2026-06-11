@@ -3,7 +3,6 @@
 #include "RageLog.h"
 #include "Bookkeeper.h"
 #include "GameState.h"
-#include "LightsManager.h"
 #include "MemoryCardManager.h"
 #include "NoteSkinManager.h"
 #include "PrefsManager.h"
@@ -279,8 +278,6 @@ void GameState::Reset()
 	m_bTemporaryEventMode = false;
 	m_bStatsCommitted = false;
 
-	LIGHTSMAN->SetLightsMode( LIGHTSMODE_ATTRACT );
-	
 	m_stEdit.Set( STEPS_TYPE_INVALID );
 	m_pEditSourceSteps.Set( NULL );
 	m_stEditSource.Set( STEPS_TYPE_INVALID );
@@ -802,7 +799,6 @@ void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &ti
 	ASSERT_M( m_fSongBeat > -2000, ssprintf("%f %f", m_fSongBeat, fPositionSeconds) );
 
 	m_fMusicSeconds = fPositionSeconds;
-	m_fLightSongBeat = timing.GetBeatFromElapsedTime( fPositionSeconds + g_fLightsAheadSeconds );
 
 	/* update the Visible values based on the delay */
 	m_fMusicSecondsVisible = fPositionSeconds - PREFSMAN->m_fVisualDelaySeconds;

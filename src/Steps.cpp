@@ -176,16 +176,9 @@ void Steps::Decompress() const
 
 		int iNewTracks = GameManager::StepsTypeToNumTracks(m_StepsType);
 
-		if( this->m_StepsType == STEPS_TYPE_LIGHTS_CABINET )
-		{
-			NoteDataUtil::LoadTransformedLights( notedata, m_NoteData, iNewTracks );
-		}
-		else
-		{
-			NoteDataUtil::LoadTransformedSlidingWindow( notedata, m_NoteData, iNewTracks );
+		NoteDataUtil::LoadTransformedSlidingWindow( notedata, m_NoteData, iNewTracks );
 
-			NoteDataUtil::RemoveStretch( m_NoteData, m_StepsType );
-		}
+		NoteDataUtil::RemoveStretch( m_NoteData, m_StepsType );
 		return;
 	}
 
@@ -230,13 +223,6 @@ void Steps::Decompress() const
 
 void Steps::Compress() const
 {
-	/* Always leave lights data uncompressed. */
-	if( this->m_StepsType == STEPS_TYPE_LIGHTS_CABINET && m_bNoteDataIsFilled )
-	{
-		m_sNoteDataCompressed = CString("");
-		return;
-	}
-
 	if( !m_sFilename.empty() )
 	{
 		/* We have a file on disk; clear all data in memory. */

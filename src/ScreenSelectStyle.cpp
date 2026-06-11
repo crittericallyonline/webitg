@@ -3,7 +3,6 @@
 #include "GameSoundManager.h"
 #include "GameState.h"
 #include "AnnouncerManager.h"
-#include "LightsManager.h"
 #include "CommonMetrics.h"
 
 
@@ -15,7 +14,6 @@
 REGISTER_SCREEN_CLASS( ScreenSelectStyle );
 ScreenSelectStyle::ScreenSelectStyle( CString sClassName ) : ScreenSelect( sClassName )
 {
-	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 }
 
 void ScreenSelectStyle::Init()

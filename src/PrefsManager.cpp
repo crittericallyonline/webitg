@@ -264,9 +264,6 @@ PrefsManager::PrefsManager() :
 	m_sAdditionalFolders			( "AdditionalFolders",			"" ),
 	m_sLastSeenVideoDriver			( "LastSeenVideoDriver",		"" ),
 	m_sLastSeenInputDevices			( "LastSeenInputDevices",		"" ),
-#if defined(WIN32)
-	m_iLastSeenMemory				( "LastSeenMemory",				0 ),
-#endif
 	m_sVideoRenderers				( "VideoRenderers",				"" ),	// StepMania.cpp sets these on first run:
 	m_bSmoothLines					( "SmoothLines",				false ),
 	m_fSoundVolume					( "SoundVolume",				-1 ),	// default
@@ -274,13 +271,10 @@ PrefsManager::PrefsManager() :
 	m_iSoundWriteAhead				( "SoundWriteAhead",			0 ),
 	m_iSoundDevice					( "SoundDevice",				"" ),
 	m_SoundResampleQuality			( "SoundResampleQuality",		RageSoundReader_Resample::RESAMP_NORMAL ),
-	m_sLightsStepsDifficulty		( "LightsStepsDifficulty",		"hard,medium" ),
-	m_bLightsChartsInMenus			( "LightsChartsInMenus",	false ),
 	m_bAllowUnacceleratedRenderer	( "AllowUnacceleratedRenderer",	false ),
 	m_bThreadedInput				( "ThreadedInput",				true ),
 	m_bThreadedMovieDecode			( "ThreadedMovieDecode",		true ),
 	m_bScreenTestMode				( "ScreenTestMode",				false ),
-	m_bDebugLights					( "DebugLights",				false ),
 	m_bMonkeyInput					( "MonkeyInput",				false ),
 	m_sMachineName					( "MachineName",				"" ),
 	m_sIgnoredMessageWindows		( "IgnoredMessageWindows",		"" ),
@@ -297,15 +291,6 @@ PrefsManager::PrefsManager() :
 	/* Game-specific prefs: */
 	m_sTheme						( "Theme",						"default" ),
 	m_sDefaultModifiers				( "DefaultModifiers",			"" )
-
-#if defined(XBOX)
-	,
-	m_bEnableVirtualMemory		( "EnableVirtualMemory",			true ),
-	m_iPageFileSize				( "PageFileSize",					384 ),
-	m_iPageSize					( "PageSize",						16 ),
-	m_iPageThreshold			( "PageThreshold",					8 ),
-	m_bLogVirtualMemory 		( "LogVirtualMemory",				false )
-#endif
 {
 	Init();
 	ReadGlobalPrefsFromDisk();

@@ -31,7 +31,7 @@ fi;
 
 mkdir -p out
 cd out
-emcmake cmake .. -B . -DCMAKE_TOOLCHAIN_FILE=/usr/lib/emscripten/cmake/Modules/Platform/Emscripten.cmake
+emcmake cmake .. -B .
 if emmake make -s -j8; then
     # emstrip --strip-unneeded -S WebITG.js
     # cp WebITG.html ../html

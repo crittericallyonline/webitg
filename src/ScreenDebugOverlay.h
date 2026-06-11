@@ -15,7 +15,6 @@ enum DebugLine
 	DebugLine_CoinMode,
 	DebugLine_Slow,
 	DebugLine_Halt,
-	DebugLine_LightsDebug,
 	DebugLine_MonkeyInput,
 	DebugLine_Stats,
 	DebugLine_Vsync,

@@ -3,7 +3,6 @@
 #include "AnnouncerManager.h"
 #include "GameState.h"
 #include "GameSoundManager.h"
-#include "LightsManager.h"
 #include "song.h"
 
 #define NEXT_SCREEN				THEME->GetMetric (m_sName,"NextScreen")
@@ -26,8 +25,6 @@ void ScreenStage::Init()
 	m_bZeroDeltaOnNextUpdate = false;
 
 	SOUND->StopMusic();
-
-	LIGHTSMAN->SetLightsMode( LIGHTSMODE_STAGE );
 
 	m_Overlay.Load( THEME->GetPathB(m_sName,"overlay") );
 	m_Overlay->SetName( "Overlay" );

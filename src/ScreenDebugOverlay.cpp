@@ -187,7 +187,6 @@ void ScreenDebugOverlay::UpdateText()
 		case DebugLine_CoinMode:			s1="CoinMode";				break;
 		case DebugLine_Slow:				s1="Slow";					break;
 		case DebugLine_Halt:				s1="Halt";					break;
-		case DebugLine_LightsDebug:			s1="Lights Debug";			break;
 		case DebugLine_MonkeyInput:			s1="MonkeyInput";			break;
 		case DebugLine_Stats:				s1="Rendering Stats";		break;
 		case DebugLine_Vsync:				s1="Vsync";					break;
@@ -214,7 +213,6 @@ void ScreenDebugOverlay::UpdateText()
 		case DebugLine_CoinMode:			bOn=true;								break;
 		case DebugLine_Slow:				bOn=g_bIsSlow;							break;
 		case DebugLine_Halt:				bOn=g_bIsHalt;							break;
-		case DebugLine_LightsDebug:			bOn=PREFSMAN->m_bDebugLights.Get();		break;
 		case DebugLine_MonkeyInput:			bOn=PREFSMAN->m_bMonkeyInput.Get();		break;
 		case DebugLine_Stats:				bOn=PREFSMAN->m_bShowStats.Get();		break;
 		case DebugLine_Vsync:				bOn=PREFSMAN->m_bVsync.Get();			break;
@@ -257,7 +255,6 @@ void ScreenDebugOverlay::UpdateText()
 		case DebugLine_CoinMode:			s2=CoinModeToString(PREFSMAN->m_CoinMode);	break;
 		case DebugLine_Slow:				s2=bOn ? "on":"off";	break;
 		case DebugLine_Halt:				s2=bOn ? "on":"off";	break;
-		case DebugLine_LightsDebug:			s2=bOn ? "on":"off";	break;
 		case DebugLine_MonkeyInput:			s2=bOn ? "on":"off";	break;
 		case DebugLine_Stats:				s2=bOn ? "on":"off";	break;
 		case DebugLine_Vsync:				s2=bOn ? "on":"off";	break;
@@ -373,9 +370,6 @@ bool ScreenDebugOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEv
 				g_bIsHalt = !g_bIsHalt;
 				g_HaltTimer.Touch();
 				SetSpeed();
-				break;
-			case DebugLine_LightsDebug:
-				PREFSMAN->m_bDebugLights.Set( !PREFSMAN->m_bDebugLights );
 				break;
 			case DebugLine_MonkeyInput:
 				PREFSMAN->m_bMonkeyInput.Set( !PREFSMAN->m_bMonkeyInput );

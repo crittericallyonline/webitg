@@ -13,14 +13,7 @@
 /* InputHandler loading */
 #include "RageInput.h"
 #include "InputMapper.h"
-#include "arch/InputHandler/InputHandler_Iow.h"
-#ifndef __EMSCRIPTEN__
-#include "arch/InputHandler/InputHandler_PIUIO.h"
-#include "arch/InputHandler/InputHandler_MiniMaid.h"
-#include "arch/InputHandler/InputHandler_P3IO.h"
-#else
-#include "arch/InputHandler/InputHandler_Emscripten.h"
-#endif
+#include "arch/InputHandler/InputHandler_BasicKeyboard.h"
 
 #define NEXT_SCREEN	THEME->GetMetric( m_sName, "NextScreen" )
 
@@ -40,9 +33,6 @@ ScreenArcadeStart::ScreenArcadeStart( CString sClassName ) : ScreenWithMenuEleme
 void ScreenArcadeStart::Init()
 {
 	ScreenWithMenuElements::Init();
-
-	/* Use LIGHTSMODE_JOINING to force all lights off except selection buttons. */
-	LIGHTSMAN->SetLightsMode( LIGHTSMODE_JOINING );
 
 	m_Error.LoadFromFont( THEME->GetPathF( "ScreenArcadeStart", "error" ) );
 	m_Error.SetName( "Error" );
@@ -147,83 +137,11 @@ bool ScreenArcadeStart::CheckForHub()
 
 bool ScreenArcadeStart::LoadHandler()
 {
-#ifndef __EMSCRIPTEN__
-	// this makes it so much easier to keep track of. --Vyhd
-	enum Board { BOARD_NONE, BOARD_ITGIO, BOARD_PIUIO, BOARD_MINIMAID, BOARD_P3IO };
-	Board iBoard = BOARD_NONE;
-
-	{
-		vector<USBDevice> vDevices;
-		GetUSBDeviceList( vDevices );
-
-		for( unsigned i = 0; i < vDevices.size(); i++ )
-		{
-			if( vDevices[i].IsITGIO() )
-				iBoard = BOARD_ITGIO;
-			else if( vDevices[i].IsPIUIO() )
-				iBoard = BOARD_PIUIO;
-			else if( vDevices[i].IsMiniMaid() )
-				iBoard = BOARD_MINIMAID;
-			else if( vDevices[i].IsP3IO() )
-				iBoard = BOARD_P3IO;
-
-			// early abort if we found something
-			if( iBoard != BOARD_NONE )
-				break;
-		}
-	}
-
-	USBDriver *pDriver;
-
-	if( iBoard == BOARD_ITGIO )
-		pDriver = new ITGIO;
-	else if( iBoard == BOARD_PIUIO )
-		pDriver = new PIUIO;
-	else if( iBoard == BOARD_MINIMAID )
-		pDriver = new MiniMaid;
-	else
-#endif
-#ifdef ITG_ARCADE
-	{
-		m_sMessage = "The input/lights controller is not connected or is not receiving power.\n\nPlease consult the service manual.";
-		return false;
-	}
-#else
 	{
 		/* Return true if PC, even though it doesn't load. */
 		LOG->Warn( "ScreenArcadeStart: I/O board not found. Continuing anyway..." );
 		return true;
 	}
-#endif
-#ifndef __EMSCRIPTEN__
-	/* Attempt a connection */
-	if( !pDriver->Open() )
-	{
-		m_sMessage = "The input/lights controller could not be initialized.\n\nPlease consult the service manual.";
-
-		SAFE_DELETE( pDriver );
-		return false;
-	}
-
-	pDriver->Close();
-	SAFE_DELETE( pDriver );
-
-	if( iBoard == BOARD_ITGIO )
-		INPUTMAN->AddHandler( new InputHandler_Iow );
-	// else if( iBoard == BOARD_PIUIO )
-	// 	INPUTMAN->AddHandler( new InputHandler_PIUIO );
-	// else if( iBoard == BOARD_MINIMAID )
-	// 	INPUTMAN->AddHandler( new InputHandler_MiniMaid );
-	else
-		ASSERT(0);
-
-	LOG->Trace( "Remapping joysticks after loading driver." );
-
-	INPUTMAPPER->AutoMapJoysticksForCurrentGame();
-	INPUTMAPPER->SaveMappingsToDisk();
-
-	return true;
-#endif
 	return false;
 }
 

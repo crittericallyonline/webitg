@@ -899,11 +899,6 @@ void Song::ReCalculateRadarValuesAndLastBeat( float fSeconds )
 		 * only if they were in the original .SM file to begin with. */
 		if( pSteps->IsAPlayerEdit() )
 			continue;
-		
-		// Don't set first/last beat based on lights.  They often start very 
-		// early and end very late.
-		if( pSteps->m_StepsType == STEPS_TYPE_LIGHTS_CABINET )
-			continue;
 
 		NoteData tempNoteData;
 		pSteps->GetNoteData( tempNoteData );
@@ -1156,13 +1151,6 @@ void Song::AddAutoGenNotes()
 		if( HasNotes[stMissing] )
 			continue;
 
-		/* If m_bAutogenSteps is disabled, only autogen lights. */
-		if( !PREFSMAN->m_bAutogenSteps && stMissing != STEPS_TYPE_LIGHTS_CABINET )
-			continue;
-		/* XXX: disable lights autogen for now */
-		if( stMissing  == STEPS_TYPE_LIGHTS_CABINET )
-			continue;
-
 		// missing Steps of this type
 		int iNumTracksOfMissing = GAMEMAN->StepsTypeToNumTracks(stMissing);
 
@@ -1258,8 +1246,6 @@ bool Song::IsTutorial() const
 	// A Song is a tutorial song is it has only Beginner steps.
 	FOREACH_CONST( Steps*, m_vpSteps, s )
 	{
-		if( (*s)->m_StepsType == STEPS_TYPE_LIGHTS_CABINET )
-			continue;	// ignore
 		if( (*s)->GetDifficulty() != DIFFICULTY_BEGINNER )
 			return false;
 	}

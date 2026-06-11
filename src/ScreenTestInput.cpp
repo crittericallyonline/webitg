@@ -1,7 +1,6 @@
 #include "global.h"
 #include "RageLog.h"
 #include "RageInput.h"
-#include "LightsManager.h"
 #include "InputMapper.h"
 #include "GameState.h"
 #include "GameManager.h"
@@ -15,8 +14,6 @@ REGISTER_SCREEN_CLASS( ScreenTestInput );
 ScreenTestInput::ScreenTestInput( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
 	LOG->Trace( "ScreenTestInput::ScreenTestInput()" );
-
-	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 }
 
 void ScreenTestInput::Init()

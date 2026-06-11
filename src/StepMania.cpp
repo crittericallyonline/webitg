@@ -52,26 +52,11 @@
 #include "BannerCache.h"
 #include "UnlockManager.h"
 #include "Bookkeeper.h"
-#include "LightsManager.h"
 #include "ModelManager.h"
 #include "CryptManager.h"
 #include "NetworkSyncManager.h"
 #include "StatsManager.h"
 #include "UserPackManager.h"
-
-// XXX: for I/O error reports
-#if !defined(XBOX)
-#include "io/ITGIO.h"
-#endif
-
-#if defined(XBOX)
-#include "Archutils/Xbox/VirtualMemory.h"
-#endif
-
-#if defined(WIN32) && !defined(XBOX)
-#include <windows.h>
-#include "archutils/Win32/VideoDriverInfo.h"
-#endif
 
 #if defined(UNIX)
 #include <cerrno>
@@ -258,7 +243,6 @@ void ShutdownGame()
 	SAFE_DELETE( THEME );
 	SAFE_DELETE( ANNOUNCER );
 	SAFE_DELETE( BOOKKEEPER );
-	SAFE_DELETE( LIGHTSMAN );
 	SAFE_DELETE( SOUNDMAN );
 	SAFE_DELETE( FONT );
 	SAFE_DELETE( TEXTUREMAN );
@@ -1156,7 +1140,6 @@ int main(int argc, char* argv[])
 	SOUNDMAN->SetPrefs( PREFSMAN->GetSoundVolume() );
 	SOUND		= new GameSoundManager;
 	BOOKKEEPER	= new Bookkeeper;
-	LIGHTSMAN	= new LightsManager;
 	INPUTFILTER	= new InputFilter;
 	INPUTMAPPER	= new InputMapper;
 	INPUTQUEUE	= new InputQueue;
@@ -1333,7 +1316,6 @@ void InsertCoin( int iNum, bool bRecord )
 	if( bRecord )
 	{
 		BOOKKEEPER->CoinInserted();
-		LIGHTSMAN->PulseCoinCounter();
 	}
 	else
 	{
@@ -1571,17 +1553,6 @@ static void GameLoop()
 		 * Update
 		 */
 
-#ifndef XBOX
-		// XXX: the Iow InputHandler acts as a singleton removed from
-		// the game loop. It needs an external error monitor because
-		// it waits until reconnecting to continue...can we improve this?
-		if( !ITGIO::m_sInputError.empty() )
-		{
-			SCREENMAN->SystemMessage( ITGIO::m_sInputError );
-			ITGIO::m_sInputError.clear();
-		}
-#endif
-
 		float fDeltaTime = timer.GetDeltaTime();
 
 		if( PREFSMAN->m_fConstantUpdateDeltaSeconds > 0 )
@@ -1619,7 +1590,6 @@ static void GameLoop()
 		/* Important:  Process input AFTER updating game logic, or input will be acting on song beat from last frame */
 		HandleInputEvents( fDeltaTime );
 
-		LIGHTSMAN->Update( fDeltaTime );
 		HOOKS->Update( fDeltaTime );
 
 		/*

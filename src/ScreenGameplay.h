@@ -65,10 +65,8 @@ protected:
 	void LoadNextSong();
 	void LoadCourseSongNumber( int SongNumber );
 	float StartPlayingSong(float MinTimeToNotes, float MinTimeToMusic);
-	void LoadLights();
 	void PauseGame( bool bPause, GameController gc = GAME_CONTROLLER_INVALID );
 	void PlayAnnouncer( CString type, float fSeconds );
-	void UpdateLights();
 	void SendCrossedMessages();
 	void BackOutFromGameplay();
 
@@ -170,8 +168,6 @@ protected:
 	RageSound		*m_pSoundMusic;
 
 	BeginnerHelper	m_BeginnerHelper;
-
-	NoteData		m_CabinetLightsNoteData;
 
 	/* used for Event Mode comparison messages */
 	bool			m_bCompareScores;

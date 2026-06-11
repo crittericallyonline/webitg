@@ -220,7 +220,6 @@ void DiagnosticsUtil::SetInputType( const CString &sType )
 #include "LuaFunctions.h"
 
 LuaFunction_NoArgs( GetUptime,			SecondsToHHMMSS( (int)RageTimer::GetTimeSinceStart() ) ); 
-LuaFunction_NoArgs( GetNumIOErrors,		ITGIO::m_iInputErrorCount );
 
 // disk space functions
 LuaFunction_NoArgs( GetDiskSpaceFree,		DiagnosticsUtil::GetDiskSpaceFree() );

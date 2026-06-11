@@ -7,7 +7,6 @@
 #include "Foreach.h"
 #include "XmlFile.h"
 #include "ThemeManager.h"
-#include "LightsManager.h" // for NUM_CABINET_LIGHTS
 
 
 // lua start
@@ -17,8 +16,6 @@ LUA_REGISTER_CLASS( Actor )
 
 float Actor::g_fCurrentBGMTime = 0, Actor::g_fCurrentBGMBeat;
 
-static float g_fCabinetLights[NUM_CABINET_LIGHTS];
-
 void Actor::SetBGMTime( float fTime, float fBeat )
 {
 	g_fCurrentBGMTime = fTime;
@@ -27,8 +24,6 @@ void Actor::SetBGMTime( float fTime, float fBeat )
 
 void Actor::SetBGMLight( int iLightNumber, float fCabinetLights )
 {
-	ASSERT( iLightNumber < NUM_CABINET_LIGHTS );
-	g_fCabinetLights[iLightNumber] = fCabinetLights;
 }
 
 /* This is Reset instead of Init since many derived classes have Init() functions
@@ -583,12 +578,6 @@ void Actor::UpdateInternal( float fDeltaTime )
 		m_fSecsIntoEffect = g_fCurrentBGMTime;
 		break;
 	default:
-		if( m_EffectClock >= CLOCK_LIGHT_1 && m_EffectClock <= CLOCK_LIGHT_LAST )
-		{
-			int i = m_EffectClock - CLOCK_LIGHT_1;
-			m_fEffectDelta = g_fCabinetLights[i] - m_fSecsIntoEffect;
-			m_fSecsIntoEffect = g_fCabinetLights[i];
-		}
 		break;
 	}
 
@@ -725,17 +714,6 @@ void Actor::SetEffectClockString( const CString &s )
 	else if(s.CompareNoCase("beat")==0)		this->SetEffectClock( CLOCK_BGM_BEAT );
 	else if(s.CompareNoCase("music")==0)	this->SetEffectClock( CLOCK_BGM_TIME );
 	else if(s.CompareNoCase("bgm")==0)		this->SetEffectClock( CLOCK_BGM_BEAT ); // compat, deprecated
-	else
-	{
-		CabinetLight cl = StringToCabinetLight( s );
-		if( cl != LIGHT_INVALID )
-		{
-			this->SetEffectClock( (EffectClock) (cl + CLOCK_LIGHT_1) );
-			return;
-		}
-		else
-			ASSERT(0);
-	}
 }
 
 void Actor::StretchTo( const RectF &r )

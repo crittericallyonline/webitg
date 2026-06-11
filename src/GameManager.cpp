@@ -6,7 +6,6 @@
 #include "NoteSkinManager.h"
 #include "RageInputDevice.h"
 #include "ThemeManager.h"
-#include "LightsManager.h"	// for NUM_CABINET_LIGHTS
 #include "Game.h"
 #include "Style.h"
 
@@ -44,7 +43,6 @@ enum
 	GAME_MANIAX,		// DanceManiax
 	GAME_TECHNO,		// TechnoMotion
 	GAME_PNM,		// pop n music
-	GAME_LIGHTS,		// cabinet lights (not really a game)
 	NUM_GAMES,		// leave this at the end
 	GAME_INVALID,
 };
@@ -93,7 +91,6 @@ struct {
 	{ "techno-double5", 10 },
 	{ "pnm-five",		5 },
 	{ "pnm-nine",		9 },
-	{ "lights-cabinet",	NUM_CABINET_LIGHTS },
 };
 
 //
@@ -933,102 +930,6 @@ Game g_Games[NUM_GAMES] =
 		TNS_GREAT,		// m_mapGreatTo
 		TNS_GREAT,		// m_mapGoodTo
 		TNS_MISS,		// m_mapBooTo
-	},
-	{	// GAME_LIGHTS
-		"lights",			// m_szName
-		"Lights",			// m_szDescription
-		1,				// m_iNumControllers
-		false,				// m_bCountNotesSeparately
-		NUM_LIGHTS_BUTTONS,		// m_iButtonsPerController
-		{	// m_szButtonNames
-			"MenuLeft",
-			"MenuRight",
-			"MenuUp",
-			"MenuDown",
-			"Start",
-			"Select",
-			"Back",
-			"Insert Coin",
-			"Operator",
-
-			"MarqueeUpLeft",
-			"MarqueeUpRight",
-			"MarqueeLrLeft",
-			"MarqueeLrRight",
-			"ButtonsLeft",
-			"ButtonsRight",
-			"BassLeft",
-			"BassRight",
-		},
-		{	// m_DedicatedMenuButton
-			GAME_BUTTON_MENULEFT,		// MENU_BUTTON_LEFT
-			GAME_BUTTON_MENURIGHT,		// MENU_BUTTON_RIGHT
-			GAME_BUTTON_MENUUP,		// MENU_BUTTON_UP
-			GAME_BUTTON_MENUDOWN,		// MENU_BUTTON_DOWN
-			GAME_BUTTON_START,		// MENU_BUTTON_START
-			GAME_BUTTON_SELECT,		// MENU_BUTTON_SELECT
-			GAME_BUTTON_BACK,		// MENU_BUTTON_BACK
-			GAME_BUTTON_COIN,		// MENU_BUTTON_COIN
-			GAME_BUTTON_OPERATOR		// MENU_BUTTON_OPERATOR
-		},
-		{	// m_SecondaryMenuButton
-			LIGHTS_BUTTON_MARQUEE_UP_LEFT,		// MENU_BUTTON_LEFT
-			LIGHTS_BUTTON_MARQUEE_UP_RIGHT,		// MENU_BUTTON_RIGHT
-			LIGHTS_BUTTON_MARQUEE_LR_LEFT,		// MENU_BUTTON_UP
-			LIGHTS_BUTTON_MARQUEE_LR_RIGHT,		// MENU_BUTTON_DOWN
-			GAME_BUTTON_START,			// MENU_BUTTON_START
-			GAME_BUTTON_SELECT,			// MENU_BUTTON_SELECT
-			GAME_BUTTON_BACK,			// MENU_BUTTON_BACK
-			GAME_BUTTON_COIN,			// MENU_BUTTON_COIN
-			GAME_BUTTON_OPERATOR,			// MENU_BUTTON_OPERATOR
-		},
-		{	// m_iDefaultKeyboardKey
-			{	// PLAYER_1
-				KEY_DEL,			// GAME_BUTTON_MENULEFT
-				KEY_PGDN,			// GAME_BUTTON_MENURIGHT
-				KEY_HOME,			// GAME_BUTTON_MENUUP
-				KEY_END,			// GAME_BUTTON_MENUDOWN
-				KEY_ENTER,			// GAME_BUTTON_START
-				NO_DEFAULT_KEY,			// GAME_BUTTON_SELECT
-				KEY_ESC,			// GAME_BUTTON_BACK
-				KEY_F1,				// GAME_BUTTON_COIN
-				KEY_SCRLLOCK,			// GAME_BUTTON_OPERATOR
-
-				KEY_Cq,				// LIGHTS_BUTTON_MARQUEE_UP_LEFT
-				KEY_Cw,				// LIGHTS_BUTTON_MARQUEE_UP_RIGHT
-				KEY_Ce,				// LIGHTS_BUTTON_MARQUEE_LR_LEFT
-				KEY_Cr,				// LIGHTS_BUTTON_MARQUEE_LR_RIGHT
-				KEY_Ct,			 	// LIGHTS_BUTTON_BUTTONS_LEFT
-				KEY_Cy,				// LIGHTS_BUTTON_BUTTONS_RIGHT
-				KEY_Cu,				// LIGHTS_BUTTON_BASS_LEFT
-				KEY_Ci,				// LIGHTS_BUTTON_BASS_RIGHT
-			},
-			{	// PLAYER_2
-				NO_DEFAULT_KEY,		// LIGHTS_BUTTON_MENULEFT
-				NO_DEFAULT_KEY,		// LIGHTS_BUTTON_MENURIGHT
-				NO_DEFAULT_KEY,		// LIGHTS_BUTTON_MENUUP
-				NO_DEFAULT_KEY,		// LIGHTS_BUTTON_MENUDOWN
-				NO_DEFAULT_KEY,		// LIGHTS_BUTTON_START
-				NO_DEFAULT_KEY,		// LIGHTS_BUTTON_SELECT
-				NO_DEFAULT_KEY,		// LIGHTS_BUTTON_BACK
-				NO_DEFAULT_KEY,		// LIGHTS_BUTTON_COIN
-				NO_DEFAULT_KEY,		// LIGHTS_BUTTON_OPERATOR
-
-				NO_DEFAULT_KEY,		// LIGHTS_BUTTON_MARQUEE_UP_LEFT
-				NO_DEFAULT_KEY,		// LIGHTS_BUTTON_MARQUEE_UP_RIGHT
-				NO_DEFAULT_KEY,		// LIGHTS_BUTTON_MARQUEE_LR_LEFT
-				NO_DEFAULT_KEY,		// LIGHTS_BUTTON_MARQUEE_LR_RIGHT
-				NO_DEFAULT_KEY,		// LIGHTS_BUTTON_BUTTONS_LEFT
-				NO_DEFAULT_KEY,		// LIGHTS_BUTTON_BUTTONS_RIGHT
-				NO_DEFAULT_KEY,		// LIGHTS_BUTTON_BASS_LEFT
-				NO_DEFAULT_KEY,		// LIGHTS_BUTTON_BASS_RIGHT
-			},
-		},
-		TNS_MARVELOUS,	// m_mapMarvelousTo
-		TNS_PERFECT,	// m_mapPerfectTo
-		TNS_GREAT,		// m_mapGreatTo
-		TNS_GOOD,		// m_mapGoodTo
-		TNS_BOO,		// m_mapBooTo
 	},
 };
 
@@ -2530,48 +2431,6 @@ Style g_Styles[] =
 		},
 		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 			0,1,2,3,4,5,6,7,8
-		},
-		false, // m_bNeedsZoomOutWith2Players
-		false, // m_bCanUseBeginnerHelper
-	},
-	{	// STYLE_LIGHTS_CABINET
-		&g_Games[GAME_LIGHTS],				// m_Game
-		true,									// m_bUsedForGameplay
-		true,									// m_bUsedForEdit
-		false,									// m_bUsedForDemonstration
-		false,									// m_bUsedForHowToPlay
-		"cabinet",								// m_szName
-		STEPS_TYPE_LIGHTS_CABINET,				// m_StepsType
-		ONE_PLAYER_ONE_SIDE,		// m_StyleType
-		NUM_CABINET_LIGHTS,						// m_iColsPerPlayer
-		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
-			{	// PLAYER_1
-				{ TRACK_1,	-DANCE_COL_SPACING*3.5f, NULL },
-				{ TRACK_2,	-DANCE_COL_SPACING*2.5f, NULL },
-				{ TRACK_3,	-DANCE_COL_SPACING*1.5f, NULL },
-				{ TRACK_4,	-DANCE_COL_SPACING*0.5f, NULL },
-				{ TRACK_5,	+DANCE_COL_SPACING*0.5f, NULL },
-				{ TRACK_6,	+DANCE_COL_SPACING*1.5f, NULL },
-				{ TRACK_7,	+DANCE_COL_SPACING*2.5f, NULL },
-				{ TRACK_8,	+DANCE_COL_SPACING*3.5f, NULL },
-			},
-			{	// PLAYER_2
-				{ TRACK_1,	-DANCE_COL_SPACING*3.5f, NULL },
-				{ TRACK_2,	-DANCE_COL_SPACING*2.5f, NULL },
-				{ TRACK_3,	-DANCE_COL_SPACING*1.5f, NULL },
-				{ TRACK_4,	-DANCE_COL_SPACING*0.5f, NULL },
-				{ TRACK_5,	+DANCE_COL_SPACING*0.5f, NULL },
-				{ TRACK_6,	+DANCE_COL_SPACING*1.5f, NULL },
-				{ TRACK_7,	+DANCE_COL_SPACING*2.5f, NULL },
-				{ TRACK_8,	+DANCE_COL_SPACING*3.5f, NULL },
-			},
-		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
-			{ 0, 1, 2, 3, 4, 5, 6, 7, 8, Style::END_MAPPING },
-			{ 0, 1, 2, 3, 4, 5, 6, 7, 8, Style::END_MAPPING },
-		},
-		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
-			0,1,2,3,4,5,6,7
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper

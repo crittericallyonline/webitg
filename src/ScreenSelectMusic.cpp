@@ -11,7 +11,6 @@
 #include "RageTextureManager.h"
 #include "ProfileManager.h"
 #include "MenuTimer.h"
-#include "LightsManager.h"
 #include "StatsManager.h"
 #include "Style.h"
 #include "PlayerState.h"
@@ -80,8 +79,6 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
         USE_OPTIONS_LIST( m_sName, "UseOptionsList" )
 {
 	LOG->Trace( "ScreenSelectMusic::ScreenSelectMusic()" );
-
-	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 
 	if( PREFSMAN->m_bScreenTestMode )
 	{

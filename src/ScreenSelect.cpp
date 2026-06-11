@@ -3,7 +3,6 @@
 #include "GameSoundManager.h"
 #include "RageLog.h"
 #include "GameState.h"
-#include "LightsManager.h"
 
 #define CHOICE_NAMES			THEME->GetMetric (m_sName,"ChoiceNames")
 #define CHOICE( sChoiceName )	THEME->GetMetricM(m_sName,ssprintf("Choice%s",sChoiceName.c_str()))
@@ -80,9 +79,6 @@ void ScreenSelect::Init()
 
 	if( !m_aGameCommands.size() )
 		RageException::Throw( "Screen \"%s\" does not set any choices", m_sName.c_str() );
-
-	// derived classes can override if they want
-	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 }
 
 

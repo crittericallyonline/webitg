@@ -17,7 +17,6 @@
 #include "GameSoundManager.h"
 #include "CombinedLifeMeterTug.h"
 #include "NoteDataUtil.h"
-#include "LightsManager.h"
 #include "ProfileManager.h"
 #include "StatsManager.h"
 #include "PlayerAI.h"	// for NUM_SKILL_LEVELS
@@ -70,9 +69,6 @@ AutoScreenMessage( SM_StopHereWeGo )
 
 static Preference<float> g_fNetStartOffset( "NetworkStartOffset",	-3.0 );
 static Preference<float> g_fGiveUpTime( "GiveUpTime", 2.5f );
-
-// define which steps type we autogen lights from
-const StepsType LIGHTS_AUTOGEN_TYPE = STEPS_TYPE_DANCE_SINGLE;
 
 REGISTER_SCREEN_CLASS( ScreenGameplay );
 ScreenGameplay::ScreenGameplay( CString sName ) : ScreenWithMenuElements(sName)
@@ -1058,90 +1054,6 @@ void ScreenGameplay::LoadNextSong()
 	m_pSoundMusic = m_AutoKeysounds.GetSound();
 }
 
-void ScreenGameplay::LoadLights()
-{
-	if( !LIGHTSMAN->IsEnabled() )
-		return;
-
-	//
-	// First, check if the song has explicit lights
-	//
-	m_CabinetLightsNoteData.Init();
-	ASSERT( GAMESTATE->m_pCurSong );
-
-	const Steps *pSteps = GAMESTATE->m_pCurSong->GetClosestNotes( STEPS_TYPE_LIGHTS_CABINET, DIFFICULTY_MEDIUM );
-	if( pSteps != NULL )
-	{
-		pSteps->GetNoteData( m_CabinetLightsNoteData );
-		return;
-	}
-
-	//
-	// No explicit lights.  Create autogen lights.
-	//
-	if( PREFSMAN->m_bEasterEggs2 )
-	{
-		CString sGroup = GAMESTATE->m_pCurSong->m_sGroupName;
-		sGroup.MakeLower();
-
-		if( sGroup.find("dance dance revolution") != CString::npos || sGroup.find("ddr") != CString::npos )
-		{
-			m_bEasterEgg = true;
-			pSteps = GAMESTATE->m_pCurSong->GetClosestNotes( STEPS_TYPE_DANCE_SINGLE, DIFFICULTY_MEDIUM );
-			NoteData in;
-			pSteps->GetNoteData( in );
-			NoteDataUtil::LoadTransformedLightsDDR( in, m_CabinetLightsNoteData, GameManager::StepsTypeToNumTracks(STEPS_TYPE_LIGHTS_CABINET) );
-			return;
-		}
-	}		
-
-	CString sDifficulty = PREFSMAN->m_sLightsStepsDifficulty;
-	vector<CString> asDifficulties;
-	split( sDifficulty, ",", asDifficulties );
-
-	Difficulty d1 = DIFFICULTY_INVALID;
-	if( asDifficulties.size() > 0 )
-		d1 = StringToDifficulty( asDifficulties[0] );
-
-	pSteps = GAMESTATE->m_pCurSong->GetClosestNotes( LIGHTS_AUTOGEN_TYPE, d1 );
-
-	// One last try...
-	if( pSteps == NULL )
-		pSteps = GAMESTATE->m_pCurSong->GetClosestNotes( GAMESTATE->GetCurrentStyle()->m_StepsType, d1 );
-
-	// If we can't find anything at all, stop.
-	if( pSteps == NULL )
-		return;
-
-	NoteData TapNoteData1;
-	pSteps->GetNoteData( TapNoteData1 );
-
-	if( asDifficulties.size() > 1 )
-	{
-		Difficulty d2 = StringToDifficulty( asDifficulties[1] );
-
-		Steps *pSteps2;
-
-		pSteps2 = GAMESTATE->m_pCurSong->GetClosestNotes( LIGHTS_AUTOGEN_TYPE, d2 );
-
-		if( pSteps2 == NULL )
-			pSteps2 = GAMESTATE->m_pCurSong->GetClosestNotes( GAMESTATE->GetCurrentStyle()->m_StepsType, d2 );
-
-		// this will fail if pSteps2 is NULL - if pSteps were NULL, we would've returned already.
-		if( pSteps != pSteps2 )
-		{
-			NoteData TapNoteData2;
-			pSteps2->GetNoteData( TapNoteData2 );
-			NoteDataUtil::LoadTransformedLightsFromTwo( TapNoteData1, TapNoteData2, m_CabinetLightsNoteData );
-			return;
-		}
-
-		/* fall through */
-	}
-
-	NoteDataUtil::LoadTransformedLights( TapNoteData1, m_CabinetLightsNoteData, GameManager::StepsTypeToNumTracks(STEPS_TYPE_LIGHTS_CABINET) );
-}
-
 float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusic)
 {
 	ASSERT(MinTimeToNotes >= 0);
@@ -1346,11 +1258,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 	if( m_bFirstUpdate )
 	{
-		// load the lights and manually update, then set the state below,
-		// so we avoid skipping between the stage and gameplay.
-		LoadLights();
-		UpdateLights();
-
 		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo( "gameplay intro" ));	// crowd cheer
 
 		//
@@ -1399,11 +1306,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 			/*float delay =*/ StartPlayingSong( fMinTimeToNotes, fMinTimeToMusic );
 		}
-
-		if( GAMESTATE->m_bDemonstrationOrJukebox )
-			LIGHTSMAN->SetLightsMode( LIGHTSMODE_DEMONSTRATION );
-		else
-			LIGHTSMAN->SetLightsMode( LIGHTSMODE_GAMEPLAY );
 	}
 
 
@@ -1712,8 +1614,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 	PlayTicks();
 
-	UpdateLights();
-
 	SendCrossedMessages();
 
 	if( NSMAN->useSMserver )
@@ -1727,110 +1627,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 				m_Scoreboard[cn].SetText( NSMAN->m_Scoreboard[cn] );
 	}
 }
-
-void ScreenGameplay::UpdateLights()
-{
-	if( !LIGHTSMAN->IsEnabled() )
-		return;
-	if( m_CabinetLightsNoteData.GetNumTracks() == 0 )	// light data wasn't loaded
-		return;
-
-	const Style* pStyle = GAMESTATE->GetCurrentStyle();
-	bool bBlinkCabinetLight[NUM_CABINET_LIGHTS];
-	bool bBlinkGameButton[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS];
-	ZERO( bBlinkCabinetLight );
-	ZERO( bBlinkGameButton );
-	{
-		const float fSongBeat = GAMESTATE->m_fLightSongBeat;
-		const int iSongRow = BeatToNoteRowNotRounded( fSongBeat );
-
-		static int iRowLastCrossed = 0;
-
-		FOREACH_CabinetLight( cl )
-		{	
-			// for each index we crossed since the last update:
-			FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( m_CabinetLightsNoteData, cl, r, iRowLastCrossed+1, iSongRow+1 )
-			{
-				if( m_CabinetLightsNoteData.GetTapNote( cl, r ).type != TapNote::empty )
-					bBlinkCabinetLight[cl] = true;
-			}
-
-			if( m_CabinetLightsNoteData.IsHoldNoteAtBeat( cl, iSongRow ) )
-				bBlinkCabinetLight[cl] = true;
-		}
-
-		FOREACH_EnabledPlayer( pn )
-		{
-			for( int t=0; t<m_Player[pn].m_NoteData.GetNumTracks(); t++ )
-			{
-				bool bBlink = false;
-
-				// for each index we crossed since the last update:
-				FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( m_Player[pn].m_NoteData, t, r, iRowLastCrossed+1, iSongRow+1 )
-				{
-					TapNote tn = m_Player[pn].m_NoteData.GetTapNote(t,r);
-					if( tn.type != TapNote::empty && tn.type != TapNote::mine )
-						bBlink = true;
-				}
-
-				// check if a hold should be active
-				if( m_Player[pn].m_NoteData.IsHoldNoteAtBeat( t, iSongRow ) )
-					bBlink = true;
-
-				if( bBlink )
-				{
-					StyleInput si( pn, t );
-					GameInput gi = pStyle->StyleInputToGameInput( si );
-					bBlinkGameButton[gi.controller][gi.button] = true;
-				}
-			}
-		}
-
-		iRowLastCrossed = iSongRow;
-	}
-
-	// Before the first beat of the song, all cabinet lights solid on (except for menu buttons).
-	bool bOverrideCabinetBlink = !m_bEasterEgg && (GAMESTATE->m_fSongBeat < GAMESTATE->m_pCurSong->m_fFirstBeat);
-	FOREACH_CabinetLight( cl )
-	{
-		switch( cl )
-		{
-		case LIGHT_BUTTONS_LEFT:
-		case LIGHT_BUTTONS_RIGHT:
-			// don't blink
-			break;
-		default:
-			bBlinkCabinetLight[cl] |= bOverrideCabinetBlink;
-			break;
-		}
-	}
-
-	// perform some voodoo
-	float fLength = 0;
-	if( m_bEasterEgg )
-	{
-		int iSeg = GAMESTATE->m_pCurSong->m_Timing.GetBPMSegmentIndexAtBeat( GAMESTATE->m_fSongBeat + 0.5 );
-		fLength = (0.25 / GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments[iSeg].m_fBPS) + 0.01;
-		fLength = max( fLength, 0.0425f );
-	}	
-
-	// Send blink data.
-	FOREACH_CabinetLight( cl )
-	{
-		if( bBlinkCabinetLight[cl] )
-			LIGHTSMAN->BlinkCabinetLight( cl, fLength );
-	}
-
-	FOREACH_GameController( gc )
-	{
-		FOREACH_GameButton( gb )
-		{
-			if( bBlinkGameButton[gc][gb] )
-				LIGHTSMAN->BlinkGameButton( GameInput(gc,gb), fLength );
-		}
-	}
-}
-
 void ScreenGameplay::SendCrossedMessages()
 {
 	{
@@ -2252,8 +2048,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		GAMESTATE->RemoveAllActiveAttacks();
 		FOREACH_EnabledPlayer( p )
 			m_ActiveAttackList[p].Refresh();
-
-		LIGHTSMAN->SetLightsMode( LIGHTSMODE_ALL_CLEARED );
 
 		bool bAllReallyFailed = STATSMAN->m_CurStageStats.AllFailed();
 

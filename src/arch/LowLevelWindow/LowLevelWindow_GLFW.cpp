@@ -1,11 +1,8 @@
 #include "global.h"
 #include "LowLevelWindow_GLFW.h"
-#include <GLFW/glfw3.h>
 
-#ifdef __EMSCRIPTEN__ // --use-port=contrib.glfw3
 #include <GLFW/emscripten_glfw3.h>
 #include <emscripten/html5_webgl.h>
-#endif
 
 #include "RageLog.h"
 #include "RageDisplay.h" // for REFRESH_DEFAULT
@@ -32,14 +29,13 @@ static void *CloseEvent(GLFWwindow* glfwDisplay) {
 
 LowLevelWindow_GLFW::LowLevelWindow_GLFW()
 {
+    LOG->Trace("LowLevelWindow_GLFW::LowLevelWindow_GLFW()");
     if(!glfwInit()) {
         LOG->Trace("glfwInit() Failed, exiting program.");
         throw "UNABLE TO INITIALIZE GLFW";
     }
 
-#ifdef __EMSCRIPTEN__
     emscripten::glfw3::SetNextWindowCanvasSelector("#canvas");
-#endif
 
     glfwDisplay = glfwCreateWindow(640, 480, "GLFW Window", 0, 0);
     glfwMakeContextCurrent(glfwDisplay);
@@ -53,41 +49,21 @@ LowLevelWindow_GLFW::LowLevelWindow_GLFW()
 
 LowLevelWindow_GLFW::~LowLevelWindow_GLFW()
 {
-#ifndef __EMSCRIPTEN__
     emscripten::glfw3::UnmakeCanvasResizable(glfwDisplay);
     glfwDestroyWindow(glfwDisplay);
     glfwMakeContextCurrent(0);
     glfwTerminate();
-#else
-    emscripten_webgl_destroy_context(WebGL_contextHandle);
-    WebGL_contextHandle = 0;
-#endif
 }
 
 void *LowLevelWindow_GLFW::GetProcAddress(CString s)
 {
-#ifndef __EMSCRIPTEN__
-	return (void *) glfwGetProcAddress(s.c_str());
-#else
     return emscripten_webgl2_get_proc_address("#canvas");
-#endif
 }
 
 // we never actually delete and make a new context so yea
 CString LowLevelWindow_GLFW::TryVideoMode( RageDisplay::VideoModeParams p, bool &bNewDeviceOut )
 {
 	CurrentParams = p;
-#ifndef __EMSCRIPTEN__
-    glfwSetWindowTitle(glfwDisplay, p.sWindowTitle);
-
-    // use (p.sIconFile)
-    // magic here too 
-
-	ASSERT( p.bpp == 16 || p.bpp == 32 );
-
-#else
-    // do some magic with javascript to change the page icon and title
-#endif
 
 	switch( p.bpp )
 	{
@@ -132,17 +108,12 @@ CString LowLevelWindow_GLFW::TryVideoMode( RageDisplay::VideoModeParams p, bool 
 
 void LowLevelWindow_GLFW::SwapBuffers()
 {
-#ifndef __EMSCRIPTEN__
 	glfwSwapBuffers(glfwDisplay);
-#else
     emscripten_webgl_commit_frame();
-#endif
 }
 void LowLevelWindow_GLFW::Update(float fDeltaTime)
 {
-#ifndef __EMSCRIPTEN__ // browser handles events
     glfwPollEvents();
-#endif
 }
 
 

@@ -10,7 +10,6 @@
 #include "OptionRowHandler.h"
 #include "ScreenOptionsMasterPrefs.h"
 #include "CommonMetrics.h"
-#include "LightsManager.h"
 #include "ScreenAttract.h" // XXX
 
 #define LINE_NAMES					THEME->GetMetric (m_sName,"LineNames")
@@ -32,9 +31,7 @@ void ScreenOptionsMaster::Init()
 {
 	ScreenOptions::Init();
 
-	// make sure volume is set to full in options, and menu lights are on
 	ScreenAttract::SetAttractVolume( false );
-	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 
 	CStringArray asLineNames;
 	split( LINE_NAMES, ",", asLineNames );

@@ -9,8 +9,6 @@
 #include "GameSoundManager.h"
 #include "AnnouncerManager.h"
 
-/* XXX: lights loading stuff...can we trim this down? */
-#include "LightsManager.h"
 #include "NotesLoaderSM.h"
 
 #define TIMER_SECONDS			THEME->GetMetricF(m_sName,"TimerSeconds")
@@ -163,8 +161,6 @@ void ScreenWithMenuElements::Update( float fDeltaTime )
 {
 	if( m_bFirstUpdate )
 	{
-		LoadLights();
-
 		/* Don't play sounds during the ctor, since derived classes havn't loaded yet.
 		 * Play sounds after so loading so we don't thrash while loading files. */
 		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sName+" intro") );
@@ -176,101 +172,7 @@ void ScreenWithMenuElements::Update( float fDeltaTime )
 	}
 
 	Screen::Update( fDeltaTime );
-
-	UpdateLights();
 }
-
-void ScreenWithMenuElements::LoadLights()
-{
-	LOG->Trace( "ScreenWithMenuElements::LoadLights()" );
-
-	/* XXX: surely there's a better way to do this... */
-	CString sDir, sName, sExt, sFilePath;
-	splitpath( THEME->GetPathS(m_sName, "music"), sDir, sName, sExt );
-	sFilePath = sDir + sName + ".sm";
-
-	if( !IsAFile(sFilePath) )
-	{
-		LOG->Trace( "SM file \"%s\" does not exist.", sFilePath.c_str() );
-		return;
-	}
-	SMLoader ld;
-	if( !ld.LoadFromSMFile(sFilePath, m_SongData) )
-	{
-		LOG->Trace( "SM file loading failed. Lights are disabled." );
-		return;
-	}
-
-	Steps* pLights = m_SongData.GetClosestNotes( STEPS_TYPE_LIGHTS_CABINET, DIFFICULTY_MEDIUM );
-
-	if( pLights == NULL )
-	{
-		LOG->Trace( "SM file \"%s\" has no lights-cabinet charts.", sFilePath.c_str() );
-		return;
-	}
-
-	pLights->GetNoteData( m_NoteData );
-
-	/* UGLY DISGUSTING HACK: if we have any notes defined for marquee lights, run them.
-	 * otherwise, let LIGHTSMAN control the marquee and we'll keep the bass. */
-
-	int iRow = -1; bool bUseMarquee = false;
-	for( int t = 0; t <= LIGHT_MARQUEE_LR_RIGHT; t++ )
-	{
-		if( m_NoteData.GetNextTapNoteRowForTrack(t, iRow) )
-		{
-			bUseMarquee = true;
-			break;
-		}
-	}
-
-	if( bUseMarquee )
-		LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU_LIGHTS );
-	else
-		LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU_BASS );
-}
-
-void ScreenWithMenuElements::UpdateLights()
-{
-	/* this is here instead of LoadLights() in case someone
-	 * switches on debug after the screen's already loaded. */
-	if( !LIGHTSMAN->IsEnabled() )
-		return;
-
-	/* data wasn't loaded */
-	if( m_NoteData.GetNumTracks() == 0 )
-		return;
-
-	static bool bBlinkCabinetLight[NUM_CABINET_LIGHTS];
-	ZERO( bBlinkCabinetLight );
-
-	/* update the lights data */
-	{
-		const float fSongBeat = GAMESTATE->m_fLightSongBeat;
-		const int iSongRow = BeatToNoteRowNotRounded( fSongBeat );
-
-		static int iRowLastCrossed = 0;
-
-		FOREACH_CabinetLight( cl )
-		{
-			FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( m_NoteData, cl, r, iRowLastCrossed+1, iSongRow+1 )
-				if( m_NoteData.GetTapNote(cl, r).type != TapNote::empty )
-					bBlinkCabinetLight[cl] = true;
-
-			if( m_NoteData.IsHoldNoteAtBeat(cl, iSongRow) )
-				bBlinkCabinetLight[cl] = true;
-		}
-
-		iRowLastCrossed = iSongRow;
-
-	}
-
-	/* ...and apply it */
-	FOREACH_CabinetLight( cl )
-		if( bBlinkCabinetLight[cl] )
-			LIGHTSMAN->BlinkCabinetLight( cl );
-}
-
 
 void ScreenWithMenuElements::ResetTimer()
 {

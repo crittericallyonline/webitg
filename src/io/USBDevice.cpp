@@ -3,10 +3,6 @@
 #include "RageLog.h"
 
 #include "io/USBDevice.h"
-#include "io/PIUIO.h"
-#include "io/ITGIO.h"
-#include "io/MiniMaid.h"
-#include "io/P3IO.h"
 
 #include <map>
 #ifndef __EMSCRIPTEN__
@@ -32,31 +28,20 @@ static PSTRING sClassDescriptions[] = {
 
 PSTRING USBDevice::GetClassDescription( unsigned iClass )
 {
-#ifndef __EMSCRIPTEN__
 	if ( iClass == 255 ) return "Vendor";
 	if ( iClass > 10)
 		return "Unknown";
 	return sClassDescriptions[iClass];
-#else
-	return "Unknown";
-#endif
 }
 
 PSTRING USBDevice::GetDescription()
 {
-#ifndef __EMSCRIPTEN__
-	if( IsITGIO() || IsPIUIO() || IsMiniMaid() || IsP3IO() )
-		return "Input/lights controller";
-	
 	vector<PSTRING> sInterfaceDescriptions;
 
 	for (unsigned i = 0; i < m_iInterfaceClasses.size(); i++)
 		sInterfaceDescriptions.push_back( GetClassDescription(m_iInterfaceClasses[i]) );
 
 	return join( ", ", sInterfaceDescriptions );
-#else
-	return "";
-#endif
 }
 
 bool USBDevice::GetDeviceProperty( const PSTRING &sProperty, PSTRING &out )
@@ -100,26 +85,22 @@ bool USBDevice::IsHub()
 
 bool USBDevice::IsITGIO()
 {
-	return ITGIO::DeviceMatches( m_iIdVendor, m_iIdProduct );
+	return false;
 }
 
 bool USBDevice::IsPIUIO()
 {
-	return PIUIO::DeviceMatches( m_iIdVendor, m_iIdProduct );
+	return false;
 }
 
 bool USBDevice::IsMiniMaid()
 {
-	return MiniMaid::DeviceMatches( m_iIdVendor, m_iIdProduct );
+	return false;
 }
 
 bool USBDevice::IsP3IO()
 {
-#ifndef __EMSCRIPTEN__
-	return P3IO::DeviceMatches( m_iIdVendor, m_iIdProduct );
-#else
 	return false;
-#endif
 }
 
 bool USBDevice::Load(const PSTRING &nDeviceDir, const vector<PSTRING> &interfaces)

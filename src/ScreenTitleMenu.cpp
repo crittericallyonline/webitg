@@ -10,7 +10,6 @@
 #include "GameSoundManager.h"
 #include "RageTextureManager.h"
 #include "UnlockManager.h"
-#include "LightsManager.h"
 #include "CommonMetrics.h"
 #include "Game.h"
 #include "ScreenOptionsMasterPrefs.h"
@@ -43,8 +42,6 @@ ScreenTitleMenu::ScreenTitleMenu( CString sScreenName ) :
 	GAMESTATE->Reset();
 
 	// TRICKY: Do this after GameState::Reset.
-	LIGHTSMAN->SetLightsMode( LIGHTSMODE_JOINING );
-
 	this->SubscribeToMessage( PREFSMAN->m_CoinMode.GetName()+"Changed" );
 }
 
