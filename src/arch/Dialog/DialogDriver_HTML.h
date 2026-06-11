@@ -1,20 +1,21 @@
-#ifndef DIALOG_BOX_DRIVER_COCOA_H
-#define DIALOG_BOX_DRIVER_COCOA_H
+#ifndef DIALOG_BOX_DRIVER_HTML_H
+#define DIALOG_BOX_DRIVER_HTML_H
 
 #include "DialogDriver.h"
 
-class DialogDriver_Cocoa: public DialogDriver
+class DialogDriver_HTML: public DialogDriver
 {
 public:
-	void Error( CString sError, CString sID );
+	void Error( CString sMessage, CString sID );
 	void OK( CString sMessage, CString sID );
 	Dialog::Result AbortRetryIgnore( CString sMessage, CString sID );
+	Dialog::Result AbortRetry( CString sMessage, CString sID );
 };
-    
-#endif /* DIALOG_BOX_DRIVER_COCOA_H */
+
+#endif
 
 /*
- * (c) 2003-2004 Steve Checkoway
+ * (c) 2003-2004 Glenn Maynard, Chris Danford
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

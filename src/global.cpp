@@ -1,31 +1,13 @@
 #include "global.h"
 
-#if defined(_WINDOWS)
-#  define _WIN32_WINDOWS 0x0410 // include Win98 stuff
-#  include "windows.h"
-#  include "archutils/Win32/Crash.h"
-#elif defined(_XBOX)
-#else
-#  include <unistd.h>
-#endif
+#include <unistd.h>
 
-#if defined(CRASH_HANDLER) && (defined(LINUX) || defined(DARWIN))
+#if defined(CRASH_HANDLER) && (defined(LINUX) || defined(DARWIN) || defined(__EMSCRIPTEN__))
 #include "archutils/Unix/CrashHandler.h"
-#elif defined(CRASH_HANDLER) && defined(__EMSCRIPTEN__)
-#include "archutils/Emscripten/CrashHandler.h"
 #endif
 
 void NORETURN sm_crash( const char *reason )
 {
-#if defined(_WINDOWS)
-	/* If we're being debugged, throw a debug break so it'll suspend the process. */
-	if( IsDebuggerPresent() )
-	{
-		DebugBreak();
-		while(1); /* don't return */
-	}
-#endif
-
 #if defined(CRASH_HANDLER)
 	ForceCrashHandler( reason );
 #else
@@ -36,13 +18,7 @@ void NORETURN sm_crash( const char *reason )
 	while(1);
 #endif
 
-#if defined(_WINDOWS)
-	/* Do something after the above, so the call/return isn't optimized to a jmp; that
-	 * way, this function will appear in backtrace stack traces. */
-	_asm nop;
-#else
 	_exit( 1 );
-#endif
 }
 
 /*
