@@ -18,8 +18,7 @@ replacement for the ITG binary on arcade cabinents.
 
 * Project homepage: https://github.com/crittericallyonline/webitg/wiki
 * Project bug tracker: https://github.com/crittericallyonline/webitg/issues
-<!-- * Project IRC channel: #openitg on irc.badnik.com -->
-* Project source code: https://github.com/openitg/openitg
+* Project source code: https://github.com/crittericallyonline/webitg
 
 ## TODOs
 
@@ -96,49 +95,3 @@ emmake make -j -s # its laggy but faster, to make your pc usable remove -j or sp
 5. Create the directory in which you will put the final build of the wasm in. `mkdir -p <BUILD_DIR>` then `cd <BUILD_DIR>`
     - . for how many directorys youve made, you will put `../` for each directory entered when building to reach `CMakeLists.txt`.
 6. `emcmake cmake ../
-
-## How to build for arcade
-
-1. Choose a location for your chroot:  MY_CHROOT=/home/cmyers/chroot
-2. Install debootstrap and chroot (on debian/ubuntu, apt-get install chroot debootstrap)
-3. Set up chroot, from root dir of source, as the root user, run: ``./chroot-arcade.sh `pwd` $MY_CHROOT``
-4. `cd /root/openitg-dev/ && ./build-arcade.sh`
-
-NOTE: the chroot will be created in the location you choose for MY_CHROOT.  This
-will build an entire Debian Sarge Linux system (the same OS used by arcade
-machines).  This will take approximately 350MB.  A full clone of the repo is
-about 300MB after you build all artifacts, so expect to have at least 650MB of
-free space to work with.
-
-## How to build for home on 32-bit linux:
-
-TODO: No chroot necessary, need script to install dependencies on various
-distributions...
-
-## How to build for home on 64-bit Ubuntu:
-```shell
-# Install required dependencies
-sudo apt install git build-essential autoconf automake \
-libgl1-mesa-dev libglu1-mesa-dev libpng12-dev \
-libjpeg62-dev liblua5.1-0-dev libvorbis-dev libmad0-dev \
-libusb-dev libxrandr-dev libavcodec-dev libswscale-dev \
-libavformat-dev libasound2-dev libavutil-dev
-
-# Clone the software
-git clone https://github.com/openitg/openitg.git
-
-# Change to the OpenITG directory
-cd openitg
-
-# Build OpenITG
-./build-home.sh
-```
-
-## How to build for home on windows:
-
-1. Open visual studio (2010, 2013, and 2015 have been tested)
-2. Select "File -> Open Project" and pick src\Stepmania-net2010.sln
-3. 5 Projects will load in the solution explorer. Right click each and select properties.
-4. For each of the project properties, under the configurations drop-down, select "All Configurations" and under Configuration "Options->General" select the appropriate platform toolset for your VS Version.
-5. If you use Visual Studio 2013, depending on your edition of it, there is a bug, you will need to add the /FS flag to Additional Options under "C/C++ -> Command Line", or you can simply build twice the first time you build.
-6. To compile the release, select the appropriate profile (usually the SSE2 build), then select "Build -> Rebuild Solution".
