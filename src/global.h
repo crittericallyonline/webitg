@@ -13,15 +13,7 @@
 #define __STDC_CONSTANT_MACROS // for INT64_C, etc
 
 /* Platform-specific fixes. */
-#if defined(_WIN32)
-#include "archutils/Win32/arch_setup.h"
-#elif defined(PBBUILD)
-#include "archutils/Darwin/arch_setup.h"
-#elif defined(UNIX)
-#include "archutils/Unix/arch_setup.h"
-#elif defined(__EMSCRIPTEN__)
 #include "archutils/Emscripten/arch_setup.h"
-#endif
 
 /* Set one of these in arch_setup.h.  (Don't bother trying to fall back on BYTE_ORDER
  * if it was already set; too many systems are missing endian.h.) */
