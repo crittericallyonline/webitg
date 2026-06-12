@@ -1,7 +1,6 @@
 #include "global.h"
 #include "RageLog.h"
 #include "ScreenArcadeDiagnostics.h"
-#include "io/USBDevice.h"
 
 REGISTER_SCREEN_CLASS( ScreenArcadeDiagnostics );
 
@@ -55,38 +54,10 @@ void ScreenArcadeDiagnostics::Update( float fDeltaTime )
 
 void ScreenArcadeDiagnostics::UpdateElements()
 {
-	// update the USB devices list
-	vector<USBDevice> vDevList;
-	GetUSBDeviceList( vDevList );
-
-	/* Nothing's changed, why go through the list? */
-	if( vDevList.size() == m_iLastSeenDevices )
-		return;
-
-	if ( vDevList.size() == 0 )
-	{
-		m_USBInfo.SetText("No USB Devices");
-		m_Title.SetText("");
-		m_iLastSeenDevices = 0;
-		return;
-	}
-
-	CString sInfo, sTitleInfo;
-
-	for (unsigned i = 0; i < vDevList.size(); i++)
-	{
-		sTitleInfo += vDevList[i].GetDeviceDir() + ":\n";
-		CString sDevInfo = ssprintf("%04X:%04X: %s (%dmA)\n",
-			vDevList[i].GetIdVendor(),
-			vDevList[i].GetIdProduct(),
-			vDevList[i].GetDescription().c_str(),
-			vDevList[i].GetMaxPower() );
-		sInfo += sDevInfo;
-	}
-	m_iLastSeenDevices = vDevList.size();
-	
-	m_USBInfo.SetText( sInfo );
-	m_Title.SetText( sTitleInfo );
+	m_USBInfo.SetText("No USB Devices");
+	m_Title.SetText("");
+	m_iLastSeenDevices = 0;
+	return;
 }
 
 void ScreenArcadeDiagnostics::DrawPrimitives()

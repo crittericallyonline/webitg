@@ -8,7 +8,6 @@
 
 #include "XmlFile.h"
 #include "ProductInfo.h"
-#include "io/USBDevice.h"
 
 #include "iButton.h"
 

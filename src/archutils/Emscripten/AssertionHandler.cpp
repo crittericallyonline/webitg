@@ -9,11 +9,7 @@
 /* We can define this symbol to catch failed assert() calls.  This is only used
  * for library code that uses assert(); internally we always use ASSERT, which
  * does this for all platforms, not just glibc. */
-#ifdef __EMSCRIPTEN__
 _Noreturn void __assert_fail (const char *assertion, const char *, unsigned int, const char *function)
-#else
-extern "C" void __assert_fail( const char *assertion, const char *file, unsigned int line, const char *function ) throw()
-#endif
 {
 	const CString error = ssprintf( "Assertion failure: %s: %s", function, assertion );
 

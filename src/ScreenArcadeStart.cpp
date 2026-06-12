@@ -5,11 +5,6 @@
 /* diagnostics functions */
 #include "DiagnosticsUtil.h"
 
-/* USBDevice tests */
-#include "io/USBDevice.h"
-
-/* Input board loading/testing */
-
 /* InputHandler loading */
 #include "RageInput.h"
 #include "InputMapper.h"

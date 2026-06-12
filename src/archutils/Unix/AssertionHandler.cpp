@@ -9,7 +9,7 @@
  * for library code that uses assert(); internally we always use ASSERT, which
  * does this for all platforms, not just glibc. */
 
-extern "C" void __assert_fail( const char *assertion, const char *file, unsigned int line, const char *function ) throw()
+_Noreturn void __assert_fail (const char *assertion, const char *, unsigned int, const char *function) throw()
 {
 	const CString error = ssprintf( "Assertion failure: %s: %s", function, assertion );
 
